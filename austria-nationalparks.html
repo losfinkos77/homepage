@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Austria's National Parks | Los Finkos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e1e;
+      color: white;
+      padding: 40px 20px;
+      margin: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 46px;
+      font-weight: 700;
+      color: #00bfff;
+      text-shadow: 0 0 10px #00bfff44;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #ccc;
+      font-size: 18px;
+      margin-bottom: 35px;
+    }
+
+    .menu-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+
+    .menu-button {
+      flex: 1 1 40%;
+      background: #2c2c2c;
+      color: #00bfff;
+      text-decoration: none;
+      border-radius: 18px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      padding: 22px;
+      font-size: 17px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .menu-button i {
+      font-size: 20px;
+    }
+
+    .menu-button:hover {
+      background: #00bfff;
+      color: #1e1e1e;
+      transform: scale(1.05);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.4);
+    }
+
+    .back-button {
+      max-width: 280px;
+      margin: 40px auto 0 auto;
+    }
+
+    @media (max-width: 600px) {
+      .menu-button {
+        flex: 1 1 100%;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Austria's National Parks</h1>
+  <p>The six national parks of Austria</p>
+
+  <div class="menu-container">
+    <a href="https://www.donauauen.at/" class="menu-button" target="_blank" rel="noopener noreferrer">
+      <i class="fas fa-water"></i> Nationalpark Donau-Auen
+    </a>
+
+    <a href="https://nationalpark-gesaeuse.at/" class="menu-button" target="_blank" rel="noopener noreferrer">
+      <i class="fas fa-mountain"></i> Nationalpark Gesäuse
+    </a>
+
+    <a href="https://hohetauern.at/" class="menu-button" target="_blank" rel="noopener noreferrer">
+      <i class="fas fa-mountain-sun"></i> Nationalpark Hohe Tauern
+    </a>
+
+    <a href="https://www.kalkalpen.at/" class="menu-button" target="_blank" rel="noopener noreferrer">
+      <i class="fas fa-tree"></i> Nationalpark Kalkalpen
+    </a>
+
+    <a href="https://www.nationalparkneusiedlersee.at/" class="menu-button" target="_blank" rel="noopener noreferrer">
+      <i class="fas fa-dove"></i> Nationalpark Neusiedler See - Seewinkel
+    </a>
+
+    <a href="https://www.np-thayatal.at/" class="menu-button" target="_blank" rel="noopener noreferrer">
+      <i class="fas fa-leaf"></i> Nationalpark Thayatal
+    </a>
+  </div>
+
+  <a href="nationalparks.html" class="menu-button back-button">
+    <i class="fas fa-arrow-left"></i> Back to National Parks
+  </a>
+
+  <a href="index.html" class="menu-button back-button">
+    <i class="fas fa-house"></i> Back to home
+  </a>
+</body>
+</html>
