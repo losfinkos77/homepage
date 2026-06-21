@@ -135,18 +135,54 @@
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    #neo-wrapper {
+    #neo-wrapper,
+    #parks-wrapper {
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.6s ease;
     }
 
-    #arrow-icon {
+    #arrow-icon,
+    #parks-arrow-icon {
       transition: transform 0.3s ease;
     }
 
-    #arrow-icon.rotate {
+    #arrow-icon.rotate,
+    #parks-arrow-icon.rotate {
       transform: rotate(180deg);
+    }
+
+    .sub-menu-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 800px;
+      margin: 20px auto 0;
+      gap: 16px;
+    }
+
+    .sub-menu-button {
+      flex: 1 1 45%;
+      background: #252525;
+      color: #00bfff;
+      text-decoration: none;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      padding: 18px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .sub-menu-button:hover {
+      background: #00bfff;
+      color: #1e1e1e;
+      transform: scale(1.04);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.4);
     }
   </style>
 </head>
@@ -168,12 +204,37 @@
     <a id="load-neo" href="#" class="menu-button">
       <i class="fas fa-meteor"></i> <span data-i18n="neo">Load Near-Earth Asteroids</span> <i id="arrow-icon" class="fas fa-chevron-down"></i>
     </a>
-    <a href="https://losfinkos77.github.io/NationalParks/" class="menu-button"><i class="fas fa-leaf"></i> <span data-i18n="parks">Austria's National Parks</span></a>
+    <a id="load-parks" href="#" class="menu-button">
+      <i class="fas fa-leaf"></i> <span data-i18n="parks">National Parks</span> <i id="parks-arrow-icon" class="fas fa-chevron-down"></i>
+    </a>
     <!--
     <a href="mailto:losfinkos@aon.at?subject=Kontakt%20%C3%BCber%20Website&body=Hallo%20Los%20Finkos%2C%0D%0Aich%20habe%20eine%20Frage..." class="menu-button" target="_blank" rel="noopener noreferrer">
       <i class="fas fa-envelope"></i> Contact
     </a>
   -->
+  </div>
+
+  <div id="parks-wrapper">
+    <div class="sub-menu-container">
+      <a href="https://losfinkos77.github.io/NationalParks/" class="sub-menu-button" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-mountain-sun"></i> <span data-i18n="parksAustria">Austria's National Parks</span>
+      </a>
+      <a href="https://www.nationalpark-bayerischer-wald.bayern.de/english/index.htm" class="sub-menu-button" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-tree"></i> <span data-i18n="parksBavarian">Bavarian Forest National Park</span>
+      </a>
+      <a href="https://np-plitvicka-jezera.hr/en/plitvice-lakes-national-park/" class="sub-menu-button" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-water"></i> <span data-i18n="parksPlitvice">Plitvice Lakes National Park</span>
+      </a>
+      <a href="https://www.tnp.si/en/" class="sub-menu-button" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-mountain"></i> <span data-i18n="parksTriglav">Triglav National Park</span>
+      </a>
+      <a href="https://nationalpark-saechsische-schweiz.de/en/welcome-to-the-national-park-saxon-switzerland" class="sub-menu-button" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-route"></i> <span data-i18n="parksSaxon">Saxon Switzerland National Park</span>
+      </a>
+      <a href="https://www.europarc.org/" class="sub-menu-button" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-map-location-dot"></i> <span data-i18n="parksEurope">More European National Parks</span>
+      </a>
+    </div>
   </div>
 
   <div id="neo-wrapper">
@@ -197,7 +258,13 @@
         hurricane: "Hurricane Warning USA",
         rocket: "Rocket Launch",
         neo: "Load Near-Earth Asteroids",
-        parks: "Austria's National Parks",
+        parks: "National Parks",
+        parksAustria: "Austria's National Parks",
+        parksBavarian: "Bavarian Forest National Park",
+        parksPlitvice: "Plitvice Lakes National Park",
+        parksTriglav: "Triglav National Park",
+        parksSaxon: "Saxon Switzerland National Park",
+        parksEurope: "More European National Parks",
         apodTitle: "NASA Picture of the Day",
         ipLoading: "Loading IP address...",
         ipError: "Could not load IP address.",
@@ -215,7 +282,13 @@
         hurricane: "Hurrikan-Warnung USA",
         rocket: "Raketenstart",
         neo: "Erdnahe Asteroiden laden",
-        parks: "Nationalparks Österreichs",
+        parks: "National Parks",
+        parksAustria: "Nationalparks Österreichs",
+        parksBavarian: "Nationalpark Bayerischer Wald",
+        parksPlitvice: "Nationalpark Plitvicer Seen",
+        parksTriglav: "Nationalpark Triglav",
+        parksSaxon: "Nationalpark Sächsische Schweiz",
+        parksEurope: "Weitere Nationalparks in Europa",
         apodTitle: "NASA Bild des Tages",
         ipLoading: "Lade IP-Adresse...",
         ipError: "IP-Adresse konnte nicht geladen werden.",
@@ -279,6 +352,18 @@
         apodFailed = true;
         document.getElementById("apod-title").textContent = translations[currentLang].apodError;
       });
+
+    const loadParksButton = document.getElementById("load-parks");
+    const parksWrapper = document.getElementById("parks-wrapper");
+    const parksArrowIcon = document.getElementById("parks-arrow-icon");
+    let parksOpen = false;
+
+    loadParksButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      parksOpen = !parksOpen;
+      parksWrapper.style.maxHeight = parksOpen ? "1000px" : "0";
+      parksArrowIcon.classList.toggle("rotate", parksOpen);
+    });
 
     const loadNeoButton = document.getElementById("load-neo");
     const neoWrapper = document.getElementById("neo-wrapper");
