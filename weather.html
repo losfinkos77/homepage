@@ -1,1 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weather | Los Finkos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e1e;
+      color: white;
+      padding: 40px 20px;
+      margin: 0;
+      text-align: center;
+    }
+
+    .lang-switch {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 50;
+      display: flex;
+      gap: 6px;
+      background: #2c2c2c;
+      border-radius: 30px;
+      padding: 5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: #888;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .lang-btn:hover {
+      color: #ccc;
+    }
+
+    .lang-btn.active {
+      background: #00bfff;
+      color: #1e1e1e;
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 700;
+      color: #00bfff;
+      text-shadow: 0 0 10px #00bfff44;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #ccc;
+      max-width: 760px;
+      margin: 0 auto 35px auto;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .section {
+      max-width: 950px;
+      margin: 0 auto 40px auto;
+      text-align: left;
+    }
+
+    .section h2 {
+      color: #00bfff;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 26px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .info-card {
+      background: #2c2c2c;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+      transition: all 0.3s ease;
+      border: 1px solid #333;
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      border-color: #00bfff66;
+    }
+
+    .info-card i {
+      color: #00bfff;
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .info-card h3 {
+      margin: 8px 0;
+      color: white;
+      font-size: 20px;
+    }
+
+    .info-card p {
+      color: #ccc;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      background: #00bfff;
+      color: #1e1e1e;
+      text-decoration: none;
+      border-radius: 24px;
+      padding: 10px 16px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    .button-link:hover {
+      background: white;
+      transform: scale(1.04);
+    }
+
+    .weather-box {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #252525;
+      border-radius: 18px;
+      padding: 25px;
+      color: #ccc;
+      line-height: 1.7;
+      border-left: 4px solid #00bfff;
+    }
+
+    .weather-box strong {
+      color: #00bfff;
+    }
+
+    .quick-list {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #252525;
+      border-radius: 18px;
+      padding: 25px;
+      color: #ccc;
+      line-height: 1.8;
+      text-align: left;
+    }
+
+    .quick-list h2 {
+      color: #00bfff;
+      text-align: center;
+    }
+
+    .quick-list ul {
+      padding-left: 20px;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 35px;
+      background: #2c2c2c;
+      color: #00bfff;
+      text-decoration: none;
+      border-radius: 18px;
+      padding: 16px 24px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: #00bfff;
+      color: #1e1e1e;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 34px;
+      }
+
+      .subtitle {
+        font-size: 15px;
+      }
+
+      .lang-switch {
+        position: static;
+        justify-content: center;
+        width: fit-content;
+        margin: 0 auto 25px auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="lang-switch">
+    <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+  </div>
+
+  <h1><i class="fas fa-cloud-sun-rain"></i> <span data-i18n="title">Weather Radar</span></h1>
+
+  <p class="subtitle" data-i18n="subtitle">
+    Weather tools for photography, travel, hiking and storm tracking. Starting point: Austria.
+  </p>
+
+  <div class="section">
+    <h2 data-i18n="austriaTitle">Austria Weather Tools</h2>
+
+    <div class="card-grid">
+
+      <div class="info-card">
+        <i class="fas fa-cloud-sun"></i>
+        <h3>GeoSphere Austria</h3>
+        <p data-i18n="geosphereText">
+          Official Austrian weather service. Useful for forecasts, warnings, radar and weather maps.
+        </p>
+        <a class="button-link" href="https://www.geosphere.at/" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open GeoSphere
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-cloud-showers-heavy"></i>
+        <h3>Rain Radar</h3>
+        <p data-i18n="rainText">
+          Useful when you want to check rain, showers and storms before going outside with your camera.
+        </p>
+        <a class="button-link" href="https://www.wetteronline.at/regenradar" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open Rain Radar
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-bolt"></i>
+        <h3>Lightning Map</h3>
+        <p data-i18n="lightningText">
+          Check current lightning activity. Helpful for storms, safety and dramatic weather photography.
+        </p>
+        <a class="button-link" href="https://www.lightningmaps.org/" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open Lightning Map
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-wind"></i>
+        <h3>Windy</h3>
+        <p data-i18n="windyText">
+          Great visual weather map for wind, clouds, rain, temperature and different weather models.
+        </p>
+        <a class="button-link" href="https://www.windy.com/" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open Windy
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-mountain-sun"></i>
+        <h3>Bergfex Weather</h3>
+        <p data-i18n="bergfexText">
+          Useful for mountains, hiking, skiing areas and trips into the Alps.
+        </p>
+        <a class="button-link" href="https://www.bergfex.at/oesterreich/wetter/" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open Bergfex
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-moon"></i>
+        <h3>Clear Outside</h3>
+        <p data-i18n="clearText">
+          Useful for astrophotography: clouds, visibility, darkness and observing conditions.
+        </p>
+        <a class="button-link" href="https://clearoutside.com/" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open Clear Outside
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="weather-box">
+    <strong data-i18n="photoTipTitle">Photography weather tip:</strong>
+    <span data-i18n="photoTipText">
+      For landscape and wildlife photography, check rain radar, wind and cloud cover. For astrophotography, clouds and moonlight are the most important factors.
+    </span>
+  </div>
+
+  <div class="quick-list">
+    <h2 data-i18n="quickTitle">Quick Weather Guide</h2>
+    <ul>
+      <li data-i18n="guide1">For official Austrian weather warnings: use GeoSphere Austria.</li>
+      <li data-i18n="guide2">For rain before a photo trip: check rain radar.</li>
+      <li data-i18n="guide3">For storms and lightning: use Lightning Maps.</li>
+      <li data-i18n="guide4">For wind, clouds and big weather systems: use Windy.</li>
+      <li data-i18n="guide5">For hiking and mountain weather: use Bergfex.</li>
+      <li data-i18n="guide6">For Milky Way and night photography: check Clear Outside and moonlight.</li>
+    </ul>
+  </div>
+
+  <a href="index.html" class="back-button">
+    <i class="fas fa-arrow-left"></i>
+    <span data-i18n="back">Back to Home</span>
+  </a>
+
+  <script>
+    const translations = {
+      en: {
+        title: "Weather Radar",
+        subtitle: "Weather tools for photography, travel, hiking and storm tracking. Starting point: Austria.",
+        austriaTitle: "Austria Weather Tools",
+        geosphereText: "Official Austrian weather service. Useful for forecasts, warnings, radar and weather maps.",
+        rainText: "Useful when you want to check rain, showers and storms before going outside with your camera.",
+        lightningText: "Check current lightning activity. Helpful for storms, safety and dramatic weather photography.",
+        windyText: "Great visual weather map for wind, clouds, rain, temperature and different weather models.",
+        bergfexText: "Useful for mountains, hiking, skiing areas and trips into the Alps.",
+        clearText: "Useful for astrophotography: clouds, visibility, darkness and observing conditions.",
+        photoTipTitle: "Photography weather tip:",
+        photoTipText: "For landscape and wildlife photography, check rain radar, wind and cloud cover. For astrophotography, clouds and moonlight are the most important factors.",
+        quickTitle: "Quick Weather Guide",
+        guide1: "For official Austrian weather warnings: use GeoSphere Austria.",
+        guide2: "For rain before a photo trip: check rain radar.",
+        guide3: "For storms and lightning: use Lightning Maps.",
+        guide4: "For wind, clouds and big weather systems: use Windy.",
+        guide5: "For hiking and mountain weather: use Bergfex.",
+        guide6: "For Milky Way and night photography: check Clear Outside and moonlight.",
+        back: "Back to Home"
+      },
+      de: {
+        title: "Wetter Radar",
+        subtitle: "Wetter-Werkzeuge für Fotografie, Reisen, Wandern und Sturmbeobachtung. Ausgangspunkt: Österreich.",
+        austriaTitle: "Wetter-Tools für Österreich",
+        geosphereText: "Offizieller österreichischer Wetterdienst. Nützlich für Vorhersagen, Warnungen, Radar und Wetterkarten.",
+        rainText: "Nützlich, wenn du Regen, Schauer und Gewitter prüfen willst, bevor du mit der Kamera rausgehst.",
+        lightningText: "Zeigt aktuelle Blitzaktivität. Hilfreich für Gewitter, Sicherheit und dramatische Wetterfotografie.",
+        windyText: "Sehr gute visuelle Wetterkarte für Wind, Wolken, Regen, Temperatur und verschiedene Wettermodelle.",
+        bergfexText: "Nützlich für Berge, Wandern, Skigebiete und Ausflüge in die Alpen.",
+        clearText: "Nützlich für Astrofotografie: Wolken, Sichtbarkeit, Dunkelheit und Beobachtungsbedingungen.",
+        photoTipTitle: "Fotografie-Wetter-Tipp:",
+        photoTipText: "Für Landschafts- und Wildlife-Fotografie prüfe Regenradar, Wind und Bewölkung. Für Astrofotografie sind Wolken und Mondlicht besonders wichtig.",
+        quickTitle: "Kurzanleitung Wetter",
+        guide1: "Für offizielle österreichische Wetterwarnungen: GeoSphere Austria verwenden.",
+        guide2: "Für Regen vor einer Fototour: Regenradar prüfen.",
+        guide3: "Für Gewitter und Blitze: Lightning Maps verwenden.",
+        guide4: "Für Wind, Wolken und große Wettersysteme: Windy verwenden.",
+        guide5: "Für Wandern und Bergwetter: Bergfex verwenden.",
+        guide6: "Für Milchstraße und Nachtfotografie: Clear Outside und Mondlicht prüfen.",
+        back: "Zurück zur Startseite"
+      }
+    };
+
+    function setLang(lang) {
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+      });
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
