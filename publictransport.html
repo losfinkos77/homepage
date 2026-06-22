@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Public Transport | Los Finkos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e1e;
+      color: white;
+      padding: 40px 20px;
+      margin: 0;
+      text-align: center;
+    }
+
+    .lang-switch {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 50;
+      display: flex;
+      gap: 6px;
+      background: #2c2c2c;
+      border-radius: 30px;
+      padding: 5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: #888;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .lang-btn:hover {
+      color: #ccc;
+    }
+
+    .lang-btn.active {
+      background: #00bfff;
+      color: #1e1e1e;
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 700;
+      color: #00bfff;
+      text-shadow: 0 0 10px #00bfff44;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #ccc;
+      max-width: 760px;
+      margin: 0 auto 35px auto;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .country-tabs {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .country-tab {
+      background: #2c2c2c;
+      color: #00bfff;
+      border: 1px solid #00bfff55;
+      border-radius: 25px;
+      padding: 10px 18px;
+      font-size: 15px;
+      cursor: default;
+    }
+
+    .country-tab.active {
+      background: #00bfff;
+      color: #1e1e1e;
+      font-weight: 700;
+    }
+
+    .section {
+      max-width: 950px;
+      margin: 0 auto 40px auto;
+      text-align: left;
+    }
+
+    .section h2 {
+      color: #00bfff;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 26px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .info-card {
+      background: #2c2c2c;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+      transition: all 0.3s ease;
+      border: 1px solid #333;
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      border-color: #00bfff66;
+    }
+
+    .info-card i {
+      color: #00bfff;
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .info-card h3 {
+      margin: 8px 0;
+      color: white;
+      font-size: 20px;
+    }
+
+    .info-card p {
+      color: #ccc;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      background: #00bfff;
+      color: #1e1e1e;
+      text-decoration: none;
+      border-radius: 24px;
+      padding: 10px 16px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    .button-link:hover {
+      background: white;
+      transform: scale(1.04);
+    }
+
+    .tip-box {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #252525;
+      border-left: 4px solid #00bfff;
+      border-radius: 12px;
+      padding: 20px;
+      color: #ccc;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    .tip-box strong {
+      color: #00bfff;
+    }
+
+    .quick-list {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #252525;
+      border-radius: 18px;
+      padding: 25px;
+      color: #ccc;
+      line-height: 1.8;
+    }
+
+    .quick-list ul {
+      padding-left: 20px;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 35px;
+      background: #2c2c2c;
+      color: #00bfff;
+      text-decoration: none;
+      border-radius: 18px;
+      padding: 16px 24px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: #00bfff;
+      color: #1e1e1e;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 34px;
+      }
+
+      .subtitle {
+        font-size: 15px;
+      }
+
+      .lang-switch {
+        position: static;
+        justify-content: center;
+        width: fit-content;
+        margin: 0 auto 25px auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="lang-switch">
+    <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+  </div>
+
+  <h1><i class="fas fa-train"></i> <span data-i18n="title">Public Transport</span></h1>
+
+  <p class="subtitle" data-i18n="subtitle">
+    Country-specific public transport links and travel tools. Starting point: Austria.
+  </p>
+
+  <div class="country-tabs">
+    <div class="country-tab active">🇦🇹 Austria</div>
+    <div class="country-tab">🇩🇪 Germany soon</div>
+    <div class="country-tab">🇨🇭 Switzerland soon</div>
+    <div class="country-tab">🇹🇼 Taiwan soon</div>
+  </div>
+
+  <div class="section">
+    <h2 data-i18n="austriaTitle">Austria Public Transport</h2>
+
+    <div class="card-grid">
+
+      <div class="info-card">
+        <i class="fas fa-train-subway"></i>
+        <h3>ÖBB Scotty</h3>
+        <p data-i18n="oebbText">
+          Best starting point for train, bus and public transport connections across Austria. Useful for live departures, delays and route planning.
+        </p>
+        <a class="button-link" href="https://fahrplan.oebb.at/" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open ÖBB Scotty
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-bus"></i>
+        <h3>BusBahnBim</h3>
+        <p data-i18n="busbahnbimText">
+          Very useful for Styria and Austria. Good for bus, train and tram connections, especially around Graz, Weiz and regional routes.
+        </p>
+        <a class="button-link" href="https://verkehrsauskunft.verbundlinie.at/" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open BusBahnBim
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-map-location-dot"></i>
+        <h3>Verbund Linie Steiermark</h3>
+        <p data-i18n="verbundText">
+          Official public transport information for Styria: routes, tickets, timetable downloads and traffic updates.
+        </p>
+        <a class="button-link" href="https://www.verbundlinie.at/" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open Verbund Linie
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-city"></i>
+        <h3>Graz Linien</h3>
+        <p data-i18n="grazText">
+          Useful for public transport inside Graz: tram, bus, route planner and city connections.
+        </p>
+        <a class="button-link" href="https://www.holding-graz.at/de/mobilitaet/routenplaner/" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open Graz Route Planner
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-location-dot"></i>
+        <h3>Wiener Linien</h3>
+        <p data-i18n="viennaText">
+          Best option for Vienna public transport: subway, tram, bus, route planner and network maps.
+        </p>
+        <a class="button-link" href="https://www.wienerlinien.at/route-planen" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open Wiener Linien
+        </a>
+      </div>
+
+      <div class="info-card">
+        <i class="fas fa-ticket"></i>
+        <h3>ÖBB Tickets</h3>
+        <p data-i18n="ticketText">
+          For buying train tickets, checking prices and planning longer trips across Austria and beyond.
+        </p>
+        <a class="button-link" href="https://shop.oebbtickets.at/de/ticket" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-arrow-up-right-from-square"></i> Open ÖBB Tickets
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong data-i18n="tipTitle">Beginner tip:</strong>
+    <span data-i18n="tipText">
+      For Austria, start with ÖBB Scotty or BusBahnBim. Enter your start and destination, then compare travel time, transfers and walking distance.
+    </span>
+  </div>
+
+  <div class="quick-list">
+    <h2 style="color:#00bfff; text-align:center;" data-i18n="quickTitle">Quick Austria Guide</h2>
+    <ul>
+      <li data-i18n="guide1">For trains across Austria: use ÖBB Scotty.</li>
+      <li data-i18n="guide2">For Styria, Graz, Weiz and regional buses: use BusBahnBim or Verbund Linie.</li>
+      <li data-i18n="guide3">For Vienna: use Wiener Linien.</li>
+      <li data-i18n="guide4">Always check platform, transfer time and live delay information before departure.</li>
+      <li data-i18n="guide5">For tickets, compare ÖBB ticket shop, regional ticket options and Klimaticket if available.</li>
+    </ul>
+  </div>
+
+  <a href="index.html" class="back-button">
+    <i class="fas fa-arrow-left"></i>
+    <span data-i18n="back">Back to Home</span>
+  </a>
+
+  <script>
+    const translations = {
+      en: {
+        title: "Public Transport",
+        subtitle: "Country-specific public transport links and travel tools. Starting point: Austria.",
+        austriaTitle: "Austria Public Transport",
+        oebbText: "Best starting point for train, bus and public transport connections across Austria. Useful for live departures, delays and route planning.",
+        busbahnbimText: "Very useful for Styria and Austria. Good for bus, train and tram connections, especially around Graz, Weiz and regional routes.",
+        verbundText: "Official public transport information for Styria: routes, tickets, timetable downloads and traffic updates.",
+        grazText: "Useful for public transport inside Graz: tram, bus, route planner and city connections.",
+        viennaText: "Best option for Vienna public transport: subway, tram, bus, route planner and network maps.",
+        ticketText: "For buying train tickets, checking prices and planning longer trips across Austria and beyond.",
+        tipTitle: "Beginner tip:",
+        tipText: "For Austria, start with ÖBB Scotty or BusBahnBim. Enter your start and destination, then compare travel time, transfers and walking distance.",
+        quickTitle: "Quick Austria Guide",
+        guide1: "For trains across Austria: use ÖBB Scotty.",
+        guide2: "For Styria, Graz, Weiz and regional buses: use BusBahnBim or Verbund Linie.",
+        guide3: "For Vienna: use Wiener Linien.",
+        guide4: "Always check platform, transfer time and live delay information before departure.",
+        guide5: "For tickets, compare ÖBB ticket shop, regional ticket options and Klimaticket if available.",
+        back: "Back to Home"
+      },
+      de: {
+        title: "Öffentliche Verkehrsmittel",
+        subtitle: "Länderspezifische Links und Werkzeuge für öffentliche Verkehrsmittel. Ausgangspunkt: Österreich.",
+        austriaTitle: "Öffentliche Verkehrsmittel in Österreich",
+        oebbText: "Der beste Startpunkt für Zug-, Bus- und Öffi-Verbindungen in ganz Österreich. Nützlich für Live-Abfahrten, Verspätungen und Routenplanung.",
+        busbahnbimText: "Sehr nützlich für die Steiermark und Österreich. Gut für Bus, Bahn und Bim, besonders rund um Graz, Weiz und regionale Strecken.",
+        verbundText: "Offizielle Informationen für den öffentlichen Verkehr in der Steiermark: Verbindungen, Tickets, Fahrplandownloads und Verkehrsmeldungen.",
+        grazText: "Nützlich für öffentliche Verkehrsmittel in Graz: Straßenbahn, Bus, Routenplaner und Stadtverbindungen.",
+        viennaText: "Beste Option für öffentliche Verkehrsmittel in Wien: U-Bahn, Straßenbahn, Bus, Routenplaner und Netzpläne.",
+        ticketText: "Zum Kaufen von Zugtickets, Preise prüfen und längere Reisen in Österreich und darüber hinaus planen.",
+        tipTitle: "Anfänger-Tipp:",
+        tipText: "Für Österreich starte mit ÖBB Scotty oder BusBahnBim. Gib Start und Ziel ein und vergleiche Fahrzeit, Umstiege und Gehwege.",
+        quickTitle: "Kurzanleitung Österreich",
+        guide1: "Für Züge in ganz Österreich: ÖBB Scotty verwenden.",
+        guide2: "Für Steiermark, Graz, Weiz und regionale Busse: BusBahnBim oder Verbund Linie verwenden.",
+        guide3: "Für Wien: Wiener Linien verwenden.",
+        guide4: "Vor der Abfahrt immer Bahnsteig, Umstiegszeit und Live-Verspätungen prüfen.",
+        guide5: "Bei Tickets ÖBB Ticketshop, regionale Ticketoptionen und eventuell Klimaticket vergleichen.",
+        back: "Zurück zur Startseite"
+      }
+    };
+
+    function setLang(lang) {
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+      });
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
