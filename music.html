@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music | Los Finkos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e1e;
+      color: white;
+      padding: 40px 20px;
+      margin: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      color: #00bfff;
+      text-shadow: 0 0 10px #00bfff44;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    p.subtitle {
+      color: #ccc;
+      font-size: 18px;
+      margin-bottom: 35px;
+    }
+
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      max-width: 700px;
+      margin: 0 auto;
+      gap: 18px;
+    }
+
+    .track-card {
+      background: #2c2c2c;
+      border-radius: 18px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-align: left;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .track-card:hover {
+      box-shadow: 0 8px 22px rgba(0,0,0,0.4);
+    }
+
+    .play-btn {
+      flex-shrink: 0;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: #00bfff;
+      color: #1e1e1e;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .play-btn.playing {
+      background: #ff4d4d;
+    }
+
+    .track-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .track-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #00bfff;
+      margin: 0 0 4px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-meta {
+      font-size: 13px;
+      color: #999;
+      margin: 0 0 8px 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      accent-color: #00bfff;
+      background: #444;
+    }
+
+    .time {
+      font-size: 12px;
+      color: #777;
+      font-family: monospace;
+      flex-shrink: 0;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #2c2c2c;
+      color: #00bfff;
+      text-decoration: none;
+      border-radius: 18px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      padding: 16px 28px;
+      font-size: 16px;
+      font-weight: 500;
+      margin-top: 40px;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: #00bfff;
+      color: #1e1e1e;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 38px;
+      }
+      .track-card {
+        flex-wrap: wrap;
+      }
+      .time {
+        order: 3;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Music</h1>
+  <p class="subtitle">My songs — tap play to listen</p>
+
+  <div class="track-list" id="track-list">
+    <!-- Platzhalter-Tracks: src und Titel später durch echte mp3-Dateien ersetzen -->
+    <div class="track-card" data-src="songs/track1.mp3">
+      <button class="play-btn"><i class="fas fa-play"></i></button>
+      <div class="track-info">
+        <p class="track-title">Track 1 — Song Title</p>
+        <p class="track-meta">Artist Name</p>
+        <input type="range" class="progress-bar" value="0" min="0" max="100" step="0.1">
+      </div>
+      <span class="time">0:00</span>
+    </div>
+
+    <div class="track-card" data-src="songs/track2.mp3">
+      <button class="play-btn"><i class="fas fa-play"></i></button>
+      <div class="track-info">
+        <p class="track-title">Track 2 — Song Title</p>
+        <p class="track-meta">Artist Name</p>
+        <input type="range" class="progress-bar" value="0" min="0" max="100" step="0.1">
+      </div>
+      <span class="time">0:00</span>
+    </div>
+
+    <div class="track-card" data-src="songs/track3.mp3">
+      <button class="play-btn"><i class="fas fa-play"></i></button>
+      <div class="track-info">
+        <p class="track-title">Track 3 — Song Title</p>
+        <p class="track-meta">Artist Name</p>
+        <input type="range" class="progress-bar" value="0" min="0" max="100" step="0.1">
+      </div>
+      <span class="time">0:00</span>
+    </div>
+  </div>
+
+  <a href="index.html" class="back-button">
+    <i class="fas fa-arrow-left"></i> Back to home
+  </a>
+
+  <script>
+    // Jede .track-card bekommt ihr eigenes Audio-Objekt, Play/Pause und Fortschrittsanzeige.
+    // Beim Abspielen eines Tracks werden alle anderen automatisch pausiert.
+
+    const cards = document.querySelectorAll(".track-card");
+    let currentAudio = null;
+
+    function formatTime(sec) {
+      if (isNaN(sec)) return "0:00";
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60).toString().padStart(2, "0");
+      return `${m}:${s}`;
+    }
+
+    cards.forEach(card => {
+      const src = card.dataset.src;
+      const audio = new Audio(src);
+      const playBtn = card.querySelector(".play-btn");
+      const icon = playBtn.querySelector("i");
+      const progressBar = card.querySelector(".progress-bar");
+      const timeLabel = card.querySelector(".time");
+
+      audio.addEventListener("loadedmetadata", () => {
+        progressBar.max = audio.duration;
+        timeLabel.textContent = formatTime(audio.duration);
+      });
+
+      audio.addEventListener("timeupdate", () => {
+        progressBar.value = audio.currentTime;
+        timeLabel.textContent = formatTime(audio.currentTime);
+      });
+
+      audio.addEventListener("ended", () => {
+        playBtn.classList.remove("playing");
+        icon.classList.remove("fa-pause");
+        icon.classList.add("fa-play");
+        progressBar.value = 0;
+        timeLabel.textContent = formatTime(audio.duration);
+      });
+
+      audio.addEventListener("error", () => {
+        card.querySelector(".track-meta").textContent = "Audio file not found";
+      });
+
+      playBtn.addEventListener("click", () => {
+        if (audio.paused) {
+          // Alle anderen Tracks pausieren
+          cards.forEach(otherCard => {
+            if (otherCard !== card) {
+              const otherBtn = otherCard.querySelector(".play-btn");
+              const otherIcon = otherBtn.querySelector("i");
+              otherBtn.classList.remove("playing");
+              otherIcon.classList.remove("fa-pause");
+              otherIcon.classList.add("fa-play");
+            }
+          });
+          if (currentAudio && currentAudio !== audio) {
+            currentAudio.pause();
+          }
+          audio.play();
+          currentAudio = audio;
+          playBtn.classList.add("playing");
+          icon.classList.remove("fa-play");
+          icon.classList.add("fa-pause");
+        } else {
+          audio.pause();
+          playBtn.classList.remove("playing");
+          icon.classList.remove("fa-pause");
+          icon.classList.add("fa-play");
+        }
+      });
+
+      progressBar.addEventListener("input", () => {
+        audio.currentTime = progressBar.value;
+      });
+    });
+  </script>
+</body>
+</html>
