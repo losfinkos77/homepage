@@ -1,5 +1,780 @@
-<a href="family-tree.html" class="card">
-  <i class="fa-solid fa-sitemap"></i>
-  <h2>Family Tree</h2>
-  <p>Explore the family history.</p>
-</a>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Family Tree | Los Finkos</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e1e;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 45px 20px 25px;
+      background: linear-gradient(135deg, #111, #1e1e1e);
+      border-bottom: 1px solid #333;
+    }
+
+    header h1 {
+      font-size: 48px;
+      color: #00bfff;
+      margin: 0 0 10px;
+      text-shadow: 0 0 12px #00bfff55;
+      letter-spacing: 2px;
+    }
+
+    header p {
+      color: #ccc;
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 22px;
+      color: #00bfff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 30px 20px 60px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #444;
+      background: #2a2a2a;
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #00bfff;
+      box-shadow: 0 0 8px #00bfff44;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 25px;
+      align-items: start;
+    }
+
+    .section-box {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 0 18px #00000055;
+    }
+
+    .section-title {
+      margin: 0 0 18px;
+      color: #00bfff;
+      font-size: 24px;
+    }
+
+    .people-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .person-card {
+      background: #2f2f2f;
+      border: 1px solid #444;
+      border-radius: 15px;
+      padding: 18px;
+      cursor: pointer;
+      transition: 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .person-card:hover {
+      transform: translateY(-4px);
+      border-color: #00bfff;
+      box-shadow: 0 0 14px #00bfff44;
+    }
+
+    .person-card.active {
+      border-color: #00bfff;
+      box-shadow: 0 0 18px #00bfff66;
+    }
+
+    .person-card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      color: white;
+    }
+
+    .person-card p {
+      margin: 5px 0;
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .country-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: #00bfff22;
+      color: #00bfff;
+      border: 1px solid #00bfff55;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+
+    .detail-box {
+      min-height: 380px;
+    }
+
+    .empty-detail {
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    .person-header {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .avatar {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: #00bfff22;
+      border: 2px solid #00bfff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 34px;
+      color: #00bfff;
+      flex-shrink: 0;
+    }
+
+    .person-header h2 {
+      margin: 0;
+      color: white;
+      font-size: 28px;
+    }
+
+    .person-header p {
+      margin: 6px 0 0;
+      color: #ccc;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .info-item {
+      background: #303030;
+      border: 1px solid #444;
+      border-radius: 12px;
+      padding: 12px 14px;
+      line-height: 1.5;
+    }
+
+    .info-item strong {
+      color: #00bfff;
+    }
+
+    .relation-list {
+      margin-top: 20px;
+    }
+
+    .relation-list h3 {
+      color: #00bfff;
+      margin-bottom: 10px;
+    }
+
+    .relation-button {
+      display: inline-block;
+      margin: 5px 5px 5px 0;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #333;
+      color: white;
+      border: 1px solid #555;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .relation-button:hover {
+      background: #00bfff;
+      color: #111;
+      border-color: #00bfff;
+    }
+
+    .tree-area {
+      margin-top: 25px;
+    }
+
+    .mini-tree {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .tree-row {
+      background: #303030;
+      border: 1px solid #444;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .tree-row strong {
+      color: #00bfff;
+    }
+
+    .map-area {
+      margin-top: 25px;
+    }
+
+    .country-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .country-card {
+      background: #303030;
+      border: 1px solid #444;
+      border-radius: 14px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .country-card i {
+      color: #00bfff;
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .country-card h3 {
+      margin: 5px 0;
+      font-size: 18px;
+    }
+
+    .country-card p {
+      color: #ccc;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .note {
+      margin-top: 20px;
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 850px) {
+      header h1 {
+        font-size: 36px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .person-header {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1><i class="fa-solid fa-sitemap"></i> Family Tree</h1>
+    <p>Interaktiver Stammbaum mit Personen, Beziehungen und Ländern</p>
+
+    <a href="index.html" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i> Back to Homepage
+    </a>
+  </header>
+
+  <main class="container">
+
+    <div class="controls">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Person suchen: Name, Ort, Land, Beruf..."
+      >
+
+      <select id="countryFilter">
+        <option value="all">Alle Länder</option>
+      </select>
+    </div>
+
+    <div class="layout">
+
+      <section class="section-box">
+        <h2 class="section-title">
+          <i class="fa-solid fa-users"></i> Personen
+        </h2>
+
+        <div id="peopleGrid" class="people-grid"></div>
+      </section>
+
+      <section class="section-box detail-box">
+        <h2 class="section-title">
+          <i class="fa-solid fa-circle-info"></i> Details
+        </h2>
+
+        <div id="personDetail" class="empty-detail">
+          Klicke links auf eine Person, um Details, Eltern, Partner und Kinder zu sehen.
+        </div>
+      </section>
+
+    </div>
+
+    <section class="section-box tree-area">
+      <h2 class="section-title">
+        <i class="fa-solid fa-diagram-project"></i> Mini-Stammbaum
+      </h2>
+
+      <div id="miniTree" class="mini-tree">
+        <div class="tree-row">
+          Wähle eine Person aus, dann wird hier die direkte Familie angezeigt.
+        </div>
+      </div>
+    </section>
+
+    <section class="section-box map-area">
+      <h2 class="section-title">
+        <i class="fa-solid fa-earth-europe"></i> Länderübersicht
+      </h2>
+
+      <div id="countryOverview" class="country-list"></div>
+
+      <p class="note">
+        Hinweis: Das ist zuerst eine einfache Länderübersicht. Später können wir hier eine echte interaktive Karte einbauen,
+        zum Beispiel mit Leaflet oder einer SVG-Weltkarte.
+      </p>
+    </section>
+
+  </main>
+
+  <script>
+    /*
+      HIER SIND DEINE PERSONEN-DATEN.
+
+      Wichtig:
+      - Jede Person braucht eine eindeutige id.
+      - parents enthält Vater/Mutter als ID.
+      - partners enthält Partner als ID.
+      - children enthält Kinder als ID.
+
+      Später können wir diese Daten in eine eigene Datei data.js auslagern.
+    */
+
+    const people = [
+      {
+        id: "p001",
+        firstName: "Johann",
+        lastName: "Muster",
+        birth: "1880",
+        death: "1945",
+        birthPlace: "Graz",
+        country: "Austria",
+        profession: "Landwirt",
+        parents: [],
+        partners: ["p002"],
+        children: ["p003"],
+        notes: "Beispielperson der ersten Generation."
+      },
+      {
+        id: "p002",
+        firstName: "Maria",
+        lastName: "Muster",
+        birth: "1885",
+        death: "1950",
+        birthPlace: "Weiz",
+        country: "Austria",
+        profession: "Hausfrau",
+        parents: [],
+        partners: ["p001"],
+        children: ["p003"],
+        notes: "Ehefrau von Johann Muster."
+      },
+      {
+        id: "p003",
+        firstName: "Franz",
+        lastName: "Muster",
+        birth: "1910",
+        death: "1988",
+        birthPlace: "Wien",
+        country: "Austria",
+        profession: "Tischler",
+        parents: ["p001", "p002"],
+        partners: ["p004"],
+        children: ["p005", "p006"],
+        notes: "Zweite Generation."
+      },
+      {
+        id: "p004",
+        firstName: "Anna",
+        lastName: "Muster",
+        birth: "1915",
+        death: "1992",
+        birthPlace: "Budapest",
+        country: "Hungary",
+        profession: "Schneiderin",
+        parents: [],
+        partners: ["p003"],
+        children: ["p005", "p006"],
+        notes: "Geboren in Ungarn, später nach Österreich gezogen."
+      },
+      {
+        id: "p005",
+        firstName: "Karl",
+        lastName: "Muster",
+        birth: "1940",
+        death: "2010",
+        birthPlace: "Graz",
+        country: "Austria",
+        profession: "Mechaniker",
+        parents: ["p003", "p004"],
+        partners: [],
+        children: [],
+        notes: "Dritte Generation."
+      },
+      {
+        id: "p006",
+        firstName: "Elisabeth",
+        lastName: "Muster",
+        birth: "1945",
+        death: "",
+        birthPlace: "Munich",
+        country: "Germany",
+        profession: "Lehrerin",
+        parents: ["p003", "p004"],
+        partners: [],
+        children: [],
+        notes: "Lebt laut Beispieldaten in Deutschland."
+      }
+    ];
+
+    const peopleGrid = document.getElementById("peopleGrid");
+    const personDetail = document.getElementById("personDetail");
+    const miniTree = document.getElementById("miniTree");
+    const searchInput = document.getElementById("searchInput");
+    const countryFilter = document.getElementById("countryFilter");
+    const countryOverview = document.getElementById("countryOverview");
+
+    let selectedPersonId = null;
+
+    function getFullName(person) {
+      return `${person.firstName} ${person.lastName}`;
+    }
+
+    function findPersonById(id) {
+      return people.find(person => person.id === id);
+    }
+
+    function getPersonNames(ids) {
+      if (!ids || ids.length === 0) {
+        return [];
+      }
+
+      return ids
+        .map(id => findPersonById(id))
+        .filter(Boolean)
+        .map(person => getFullName(person));
+    }
+
+    function renderPeople() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const selectedCountry = countryFilter.value;
+
+      const filteredPeople = people.filter(person => {
+        const searchableText = `
+          ${person.firstName}
+          ${person.lastName}
+          ${person.birth}
+          ${person.death}
+          ${person.birthPlace}
+          ${person.country}
+          ${person.profession}
+          ${person.notes}
+        `.toLowerCase();
+
+        const matchesSearch = searchableText.includes(searchTerm);
+        const matchesCountry = selectedCountry === "all" || person.country === selectedCountry;
+
+        return matchesSearch && matchesCountry;
+      });
+
+      peopleGrid.innerHTML = "";
+
+      if (filteredPeople.length === 0) {
+        peopleGrid.innerHTML = `
+          <p class="empty-detail">
+            Keine Person gefunden.
+          </p>
+        `;
+        return;
+      }
+
+      filteredPeople.forEach(person => {
+        const card = document.createElement("div");
+        card.className = "person-card";
+
+        if (person.id === selectedPersonId) {
+          card.classList.add("active");
+        }
+
+        card.innerHTML = `
+          <h3>${getFullName(person)}</h3>
+          <p><i class="fa-solid fa-cake-candles"></i> ${person.birth || "?"} ${person.death ? "– " + person.death : ""}</p>
+          <p><i class="fa-solid fa-location-dot"></i> ${person.birthPlace || "Unbekannt"}</p>
+          <p><i class="fa-solid fa-briefcase"></i> ${person.profession || "Unbekannt"}</p>
+          <span class="country-badge">${person.country || "Unknown"}</span>
+        `;
+
+        card.addEventListener("click", () => {
+          selectedPersonId = person.id;
+          renderPeople();
+          renderPersonDetail(person.id);
+          renderMiniTree(person.id);
+        });
+
+        peopleGrid.appendChild(card);
+      });
+    }
+
+    function renderPersonDetail(personId) {
+      const person = findPersonById(personId);
+
+      if (!person) {
+        personDetail.innerHTML = "Person nicht gefunden.";
+        return;
+      }
+
+      const parentNames = getPersonNames(person.parents);
+      const partnerNames = getPersonNames(person.partners);
+      const childrenNames = getPersonNames(person.children);
+
+      personDetail.className = "";
+
+      personDetail.innerHTML = `
+        <div class="person-header">
+          <div class="avatar">
+            <i class="fa-solid fa-user"></i>
+          </div>
+
+          <div>
+            <h2>${getFullName(person)}</h2>
+            <p>${person.birth || "?"} ${person.death ? "– " + person.death : ""}</p>
+          </div>
+        </div>
+
+        <div class="info-list">
+          <div class="info-item">
+            <strong>Geburtsort:</strong><br>
+            ${person.birthPlace || "Unbekannt"}
+          </div>
+
+          <div class="info-item">
+            <strong>Land:</strong><br>
+            ${person.country || "Unbekannt"}
+          </div>
+
+          <div class="info-item">
+            <strong>Beruf:</strong><br>
+            ${person.profession || "Unbekannt"}
+          </div>
+
+          <div class="info-item">
+            <strong>Notizen:</strong><br>
+            ${person.notes || "Keine Notizen vorhanden."}
+          </div>
+        </div>
+
+        <div class="relation-list">
+          <h3>Eltern</h3>
+          ${renderRelationButtons(person.parents)}
+
+          <h3>Partner</h3>
+          ${renderRelationButtons(person.partners)}
+
+          <h3>Kinder</h3>
+          ${renderRelationButtons(person.children)}
+        </div>
+      `;
+
+      addRelationButtonEvents();
+    }
+
+    function renderRelationButtons(ids) {
+      if (!ids || ids.length === 0) {
+        return `<p class="empty-detail">Keine Einträge vorhanden.</p>`;
+      }
+
+      return ids.map(id => {
+        const relatedPerson = findPersonById(id);
+
+        if (!relatedPerson) {
+          return "";
+        }
+
+        return `
+          <button class="relation-button" data-person-id="${relatedPerson.id}">
+            ${getFullName(relatedPerson)}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function addRelationButtonEvents() {
+      const buttons = document.querySelectorAll(".relation-button");
+
+      buttons.forEach(button => {
+        button.addEventListener("click", () => {
+          const personId = button.getAttribute("data-person-id");
+          selectedPersonId = personId;
+          renderPeople();
+          renderPersonDetail(personId);
+          renderMiniTree(personId);
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+        });
+      });
+    }
+
+    function renderMiniTree(personId) {
+      const person = findPersonById(personId);
+
+      if (!person) {
+        return;
+      }
+
+      const parentNames = getPersonNames(person.parents);
+      const partnerNames = getPersonNames(person.partners);
+      const childrenNames = getPersonNames(person.children);
+
+      miniTree.innerHTML = `
+        <div class="tree-row">
+          <strong>Eltern:</strong><br>
+          ${parentNames.length ? parentNames.join(" & ") : "Keine Eltern eingetragen"}
+        </div>
+
+        <div class="tree-row">
+          <strong>Ausgewählte Person:</strong><br>
+          ${getFullName(person)}
+        </div>
+
+        <div class="tree-row">
+          <strong>Partner:</strong><br>
+          ${partnerNames.length ? partnerNames.join(" & ") : "Kein Partner eingetragen"}
+        </div>
+
+        <div class="tree-row">
+          <strong>Kinder:</strong><br>
+          ${childrenNames.length ? childrenNames.join(", ") : "Keine Kinder eingetragen"}
+        </div>
+      `;
+    }
+
+    function renderCountryFilter() {
+      const countries = [...new Set(people.map(person => person.country).filter(Boolean))].sort();
+
+      countries.forEach(country => {
+        const option = document.createElement("option");
+        option.value = country;
+        option.textContent = country;
+        countryFilter.appendChild(option);
+      });
+    }
+
+    function renderCountryOverview() {
+      const countryCounts = {};
+
+      people.forEach(person => {
+        if (!person.country) {
+          return;
+        }
+
+        if (!countryCounts[person.country]) {
+          countryCounts[person.country] = 0;
+        }
+
+        countryCounts[person.country]++;
+      });
+
+      countryOverview.innerHTML = "";
+
+      Object.keys(countryCounts).sort().forEach(country => {
+        const card = document.createElement("div");
+        card.className = "country-card";
+
+        card.innerHTML = `
+          <i class="fa-solid fa-earth-europe"></i>
+          <h3>${country}</h3>
+          <p>${countryCounts[country]} Person(en)</p>
+        `;
+
+        countryOverview.appendChild(card);
+      });
+    }
+
+    searchInput.addEventListener("input", renderPeople);
+    countryFilter.addEventListener("change", renderPeople);
+
+    renderCountryFilter();
+    renderCountryOverview();
+    renderPeople();
+  </script>
+
+</body>
+</html>
