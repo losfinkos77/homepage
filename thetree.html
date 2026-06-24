@@ -325,20 +325,21 @@
     }
 
     .tree-node.main::after {
-      content: "Ausgewählt";
+      content: "✦";
       position: absolute;
-      top: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 4px 10px;
-      border-radius: 999px;
+      top: -10px;
+      right: -10px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
       background: #00bfff;
       color: #061018;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .4px;
-      box-shadow: 0 0 15px rgba(0,191,255,.7);
-      white-space: nowrap;
+      font-size: 16px;
+      font-weight: 900;
+      box-shadow: 0 0 16px rgba(0,191,255,.8);
       pointer-events: none;
     }
 
