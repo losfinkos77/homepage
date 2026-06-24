@@ -390,7 +390,7 @@
   <section class="side-by-side-layout">
     <aside class="search-column">
       <div class="top-panel">
-        <input id="searchInput" type="text" placeholder="Person suchen: Name, Ort, Datum, Land..." autocomplete="off">
+        <input id="searchInput" type="text" placeholder="Person suchen und Enter drücken..." autocomplete="off">
         <select id="countryFilter"><option value="all">Alle Länder</option></select>
         <div id="searchStatus" class="search-status">Tippe einen Namen ein.</div>
       </div>
@@ -436,7 +436,7 @@ const translations = {
   de: {
     langName:'Deutsch', htmlLang:'de', pageTitle:'The Tree | Los Finkos', language:'🌐', backHome:'← Zurück zur Homepage', subtitle:'Interaktiver Stammbaum aus deiner Excel-Datei',
     people:'Personen', countries:'Länder', surnames:'Nachnamen', quickHint:'Links suchen oder filtern. Beim Klick auf eine Person öffnet sich der Stammbaum sofort rechts daneben.',
-    treeTab:'🌳 Stammbaum Ansicht', searchTab:'🔍 Suche & Ergebnisse', searchPlaceholder:'Person suchen: Name, Ort, Datum, Land...', allCountries:'Alle Länder', countriesOverview:'🌍 Länderübersicht', countriesNote:'Klicke auf ein Land, um rechts den passenden Landes-Stammbaum anzuzeigen.', surnamesTitle:'🔤 Nachnamen', surnamesNote:'Klicke auf einen Nachnamen, um passende Personen anzuzeigen.',
+    treeTab:'🌳 Stammbaum Ansicht', searchTab:'🔍 Suche & Ergebnisse', searchPlaceholder:'Person suchen und Enter drücken...', allCountries:'Alle Länder', countriesOverview:'🌍 Länderübersicht', countriesNote:'Klicke auf ein Land, um rechts den passenden Landes-Stammbaum anzuzeigen.', surnamesTitle:'🔤 Nachnamen', surnamesNote:'Klicke auf einen Nachnamen, um passende Personen anzuzeigen.',
     searchResults:'🔍 Suche & Ergebnisse', details:'🔎 Details', detailsPlaceholder:'Klicke auf eine Person. Dann erscheinen hier Details, Eltern, Partner und Kinder.', treeTitle:'🌳 Stammbaum-Ansicht', treePlaceholder:'Wähle links eine Person aus. Der Stammbaum öffnet sich hier direkt daneben.', backToSearch:'← Zur Suche', treeLegend:'Tipp: Du kannst auch im Stammbaum auf Personen klicken.',
     startMessage:'Klicke oben auf <strong>Personen</strong>, wähle ein <strong>Land</strong> oder klicke auf einen <strong>Nachnamen</strong>.<br><br>Du kannst auch direkt im Suchfeld suchen.', noPersonFound:'Keine Person gefunden.', allPeopleShown:'Alle Personen werden angezeigt.', surnameResult:'Nachname: {surname} — {count} Person(en) gefunden', personCount:'{count} Person(en)',
     birthPlace:'Geburtsort', deathPlace:'Sterbeort', country:'Land', wedding:'Hochzeit', profession:'Beruf', notes:'Notizen', parents:'Eltern', partner:'Partner', children:'Kinder', unknown:'Unbekannt', noNotes:'Keine Notizen vorhanden.', noEntries:'Keine Einträge vorhanden.',
@@ -725,24 +725,25 @@ backToSearchButton.addEventListener('click',()=>setView('search'));
 peopleQuickButton.addEventListener('click',showAllPeople);
 countriesQuickButton.addEventListener('click',showCountries);
 surnamesQuickButton.addEventListener('click',showSurnames);
-searchInput.addEventListener('input',handlePersonSearch);
-searchInput.addEventListener('keyup',handlePersonSearch);
-searchInput.addEventListener('change',handlePersonSearch);
+searchInput.addEventListener('input',()=>{
+  if (searchStatus) {
+    const term = searchInput.value.trim();
+    searchStatus.classList.toggle('active', term !== '');
+    searchStatus.textContent = term !== '' ? 'Enter drücken zum Suchen' : '';
+  }
+});
+
+searchInput.addEventListener('keydown',(event)=>{
+  if(event.key === 'Enter'){
+    event.preventDefault();
+    handlePersonSearch();
+  }
+});
 countryFilter.addEventListener('change',()=>{activeSurnameFilter=null; if(searchInput.value.trim()===''&&countryFilter.value==='all'){activeCountryTree=null; showStartMessage(); renderFamilyTree(selectedPersonId||'p001');} else {renderPeople(); if(countryFilter.value!=='all')selectCountry(countryFilter.value);} });
 languageSelect.addEventListener('change',()=>{currentLang=languageSelect.value; try { localStorage.setItem('thetreeLang',currentLang); } catch(e) {} refreshLanguage();});
 
 applyStaticTranslations(); renderCountryFilter('all'); renderCountries(); renderSurnames(); updateStats(); selectedPersonId='p001'; renderPersonDetail('p001'); renderFamilyTree('p001'); showStartMessage(); setView('tree');
 
-
-// Zusätzliche Absicherung: Suchfeld immer direkt verbinden.
-document.addEventListener('DOMContentLoaded', () => {
-  const input = document.getElementById('searchInput');
-  if (input) {
-    ['input','keyup','change','search','paste'].forEach(evt => {
-      input.addEventListener(evt, () => setTimeout(handlePersonSearch, 0));
-    });
-  }
-});
 
 </script>
 </body>
