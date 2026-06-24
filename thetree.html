@@ -46,22 +46,28 @@
     .relation-button:hover { background:#00bfff; color:#111; border-color:#00bfff; }
     .empty { color:#aaa; line-height:1.6; }
     .tree-box { margin-top:22px; overflow-x:auto; }
-    .visual-tree { min-width:700px; padding:25px 10px 10px; text-align:center; }
-    .tree-level { display:flex; justify-content:center; gap:20px; position:relative; margin:0 auto; flex-wrap:wrap; }
-    .tree-level.parents, .tree-level.main-level { margin-bottom:45px; }
-    .tree-node { min-width:180px; max-width:250px; padding:14px 16px; border-radius:20px; background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.15); box-shadow:0 12px 25px rgba(0,0,0,.28); cursor:pointer; position:relative; transition:.2s; }
+    .visual-tree { min-width:1150px; padding:45px 25px 25px; text-align:center; }
+    .tree-level { display:flex; justify-content:center; gap:26px; position:relative; margin:0 auto; flex-wrap:wrap; }
+    .tree-level.parents, .tree-level.main-level, .tree-level.children { margin-bottom:55px; }
+    .tree-node { min-width:215px; max-width:280px; padding:17px 18px; border-radius:22px; background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.15); box-shadow:0 12px 25px rgba(0,0,0,.28); cursor:pointer; position:relative; transition:.2s; }
     .tree-node:hover { transform:translateY(-3px); border-color:#00bfff; box-shadow:0 0 22px rgba(0,191,255,.30); }
     .tree-node.main { background:linear-gradient(145deg,rgba(0,191,255,.32),rgba(0,191,255,.10)); border-color:#00bfff; box-shadow:0 0 28px rgba(0,191,255,.35); transform:scale(1.04); }
     .tree-node.partner { border-color:rgba(0,255,170,.45); background:linear-gradient(145deg,rgba(0,255,170,.17),rgba(255,255,255,.04)); }
     .tree-node.empty-node { cursor:default; color:#aaa; opacity:.7; }
+    .tree-level.children { align-items:stretch; }
+    .tree-level.grandchildren { gap:16px; margin-bottom:20px; }
+    .tree-node.child { border-color:rgba(0,191,255,.32); }
+    .tree-node.grandchild { min-width:175px; max-width:230px; padding:13px 14px; border-radius:18px; font-size:14px; opacity:.95; }
+    .children-count { color:#ccc; font-size:13px; margin-top:-8px; margin-bottom:18px; text-align:center; }
+
     .node-icon { font-size:28px; margin-bottom:6px; }
     .node-name { font-weight:bold; font-size:17px; margin-bottom:5px; }
     .node-date { color:#ccc; font-size:13px; }
-    .tree-label { text-align:center; color:#9be7ff; font-size:13px; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; }
-    .tree-connector-down, .tree-connector-up { width:2px; height:35px; background:rgba(0,191,255,.7); margin:0 auto; box-shadow:0 0 10px rgba(0,191,255,.6); }
+    .tree-label { text-align:center; color:#9be7ff; font-size:14px; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:15px; }
+    .tree-connector-down, .tree-connector-up { width:2px; height:45px; background:rgba(0,191,255,.7); margin:0 auto; box-shadow:0 0 10px rgba(0,191,255,.6); }
     .tree-connector-down { margin-top:10px; }
     .tree-connector-up { margin-bottom:10px; }
-    .tree-connector-horizontal { width:60%; max-width:620px; min-width:260px; height:2px; background:rgba(0,191,255,.7); margin:0 auto; box-shadow:0 0 10px rgba(0,191,255,.6); }
+    .tree-connector-horizontal { width:75%; max-width:900px; min-width:360px; height:2px; background:rgba(0,191,255,.7); margin:0 auto; box-shadow:0 0 10px rgba(0,191,255,.6); }
     .tree-middle-line { display:flex; flex-direction:column; align-items:center; margin:-28px 0 10px; }
     .tree-legend { margin-top:18px; color:#aaa; font-size:14px; text-align:center; }
     .map-box { margin-top:22px; }
@@ -80,7 +86,7 @@
     .view-section { display:none; }
     .view-section.active { display:block; }
     .tree-action-row { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:16px; }
-    @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:620px;} }
+    @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:950px;} .tree-node{min-width:190px;} }
   </style>
 </head>
 <body>
@@ -125,8 +131,44 @@ function selectPerson(id){selectedPersonId=id; renderPeople(); renderPersonDetai
 function renderPersonDetail(id){const p=findPersonById(id); if(!p){personDetail.innerHTML='<p class="empty">Person nicht gefunden.</p>'; return;} personDetail.className=''; personDetail.innerHTML=`<div class="detail-header"><div class="avatar">${avatarContent(p)}</div><div><h2>${getFullName(p)}</h2><p>${life(p)}</p></div></div><div class="info"><div class="info-item"><strong>Geburtsort:</strong><br>${p.birthPlace||'Unbekannt'}</div><div class="info-item"><strong>Sterbeort:</strong><br>${p.deathPlace||'Unbekannt'}</div><div class="info-item"><strong>Land:</strong><br>${p.flag||''} ${p.country||'Unbekannt'}</div><div class="info-item"><strong>Hochzeit:</strong><br>${p.wedding||'Unbekannt'}</div><div class="info-item"><strong>Beruf:</strong><br>${p.profession||'Unbekannt'}</div><div class="info-item"><strong>Notizen:</strong><br>${p.notes||'Keine Notizen vorhanden.'}</div></div><div class="relation-section"><h3>Eltern</h3>${renderRelationButtons(p.parents)}<h3>Partner</h3>${renderRelationButtons(p.partners)}<h3>Kinder</h3>${renderRelationButtons(p.children)}</div>`; addRelationEvents();}
 function renderRelationButtons(ids){const related=getPeopleByIds(ids); if(related.length===0)return '<p class="empty">Keine Einträge vorhanden.</p>'; return related.map(p=>`<button class="relation-button" data-id="${p.id}">${p.flag||'👤'} ${getFullName(p)}</button>`).join('');}
 function addRelationEvents(){document.querySelectorAll('.relation-button').forEach(b=>b.addEventListener('click',()=>{selectPerson(b.getAttribute('data-id')); window.scrollTo({top:0,behavior:'smooth'});}));}
-function renderFamilyTree(id){const p=findPersonById(id); if(!p)return; const parents=getPeopleByIds(p.parents), partners=getPeopleByIds(p.partners), children=getPeopleByIds(p.children); familyTree.innerHTML=`<div class="tree-label">Eltern</div><div class="tree-level parents">${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}</div><div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div><div class="tree-label">Person und Partner</div><div class="tree-level main-level"><div class="tree-node main" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>${partners.length?partners.map(partnerNode).join(''):''}</div><div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div><div class="tree-label">Kinder</div><div class="tree-level children">${children.length?children.map(treeNode).join(''):emptyNode('Keine Kinder eingetragen')}</div>`; document.querySelectorAll('.tree-node[data-id]').forEach(item=>item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id'))));}
+function uniquePeople(list){const seen=new Set(); return list.filter(p=>{if(!p||seen.has(p.id))return false; seen.add(p.id); return true;});}
+function getChildrenForFamily(person){
+  const partnerIds=person.partners||[];
+  const familyIds=[person.id,...partnerIds];
+  const explicit=getPeopleByIds(person.children||[]);
+  const partnerChildren=partnerIds.flatMap(pid=>getPeopleByIds((findPersonById(pid)||{}).children||[]));
+  const byParents=people.filter(candidate=>(candidate.parents||[]).some(parentId=>familyIds.includes(parentId)));
+  return uniquePeople([...explicit,...partnerChildren,...byParents]);
+}
+function getGrandchildren(children){return uniquePeople(children.flatMap(child=>getChildrenForFamily(child)));}
+function renderFamilyTree(id){
+  const p=findPersonById(id); if(!p)return;
+  const parents=getPeopleByIds(p.parents), partners=getPeopleByIds(p.partners), children=getChildrenForFamily(p), grandchildren=getGrandchildren(children);
+  familyTree.innerHTML=`
+    <div class="tree-label">Eltern</div>
+    <div class="tree-level parents">${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}</div>
+
+    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
+    <div class="tree-label">Person und Partner</div>
+    <div class="tree-level main-level">
+      <div class="tree-node main" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>
+      ${partners.length?partners.map(partnerNode).join(''):''}
+    </div>
+
+    <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
+    <div class="tree-label">Alle Kinder</div>
+    <div class="children-count">${children.length?children.length+' Kind(er) gefunden':'Keine Kinder gefunden'}</div>
+    <div class="tree-level children">${children.length?children.map(childNode).join(''):emptyNode('Keine Kinder eingetragen')}</div>
+
+    ${grandchildren.length?`<div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div><div class="tree-label">Enkel / nächste Generation</div><div class="children-count">${grandchildren.length} Person(en) in der nächsten Generation</div><div class="tree-level grandchildren">${grandchildren.map(grandchildNode).join('')}</div>`:''}
+  `;
+  document.querySelectorAll('.tree-node[data-id]').forEach(item=>item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id'))));
+}
 function treeNode(p){return `<div class="tree-node" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
+function childNode(p){return `<div class="tree-node child" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
+function grandchildNode(p){return `<div class="tree-node grandchild" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
 function partnerNode(p){return `<div class="tree-node partner" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
 function emptyNode(text){return `<div class="tree-node empty-node"><div class="node-icon">—</div><div class="node-name">${text}</div></div>`;}
 function renderCountryFilter(){[...new Set(people.map(p=>p.country).filter(Boolean))].sort().forEach(c=>{const o=document.createElement('option'); o.value=c; o.textContent=c; countryFilter.appendChild(o);});}
