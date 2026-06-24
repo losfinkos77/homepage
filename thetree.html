@@ -203,6 +203,89 @@
       border-color:rgba(0,191,255,.32);
     }
 
+
+
+    /* Suche links, Stammbaum rechts daneben */
+    .hidden-tabs { display:none; }
+    .side-by-side-layout { display:grid; grid-template-columns:430px minmax(0,1fr); gap:22px; align-items:start; }
+    .search-column { display:flex; flex-direction:column; gap:18px; min-width:0; }
+    .search-column .top-panel { grid-template-columns:1fr; margin-bottom:0; }
+    .tree-column { margin-top:0; position:sticky; top:18px; max-height:calc(100vh - 36px); overflow:auto; }
+    .results-box { max-height:430px; overflow:auto; }
+    .details-under-results { max-height:520px; overflow:auto; }
+    .compact-results { grid-template-columns:1fr; }
+    .compact-results .person-card { padding:14px 15px; border-radius:18px; }
+    .compact-results .person-card h3 { font-size:18px; margin-bottom:8px; }
+    .compact-results .person-card p { font-size:13px; }
+    .tree-column .visual-tree { min-width:1450px; }
+    .tree-action-row { display:none; }
+    .view-section { display:block; }
+    .view-section.active { display:block; }
+
+
+    /* Landes-Stammbaum: Personen eines Landes als Generationen anzeigen */
+    .country-tree-header {
+      display:inline-block;
+      margin:0 auto 28px;
+      padding:14px 20px;
+      border-radius:20px;
+      background:rgba(0,191,255,.12);
+      border:1px solid rgba(0,191,255,.30);
+      color:#dff7ff;
+      font-size:16px;
+      line-height:1.5;
+    }
+    .country-tree-header strong { color:#fff; font-size:20px; }
+    .country-generation-label {
+      text-align:center;
+      color:#9be7ff;
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:1.5px;
+      margin:28px 0 14px;
+    }
+    .country-generation-row {
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .country-tree-node {
+      min-width:170px;
+      max-width:235px;
+      padding:14px 14px;
+      border-radius:20px;
+      background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.15);
+      box-shadow:0 12px 25px rgba(0,0,0,.25);
+      cursor:pointer;
+      transition:.2s;
+      text-align:center;
+    }
+    .country-tree-node:hover {
+      transform:translateY(-3px);
+      border-color:#00bfff;
+      box-shadow:0 0 22px rgba(0,191,255,.30);
+    }
+    .country-tree-node .node-name { font-size:15px; }
+    .country-tree-node .node-date { font-size:12px; }
+    .country-spouse-line {
+      margin-top:7px;
+      padding-top:7px;
+      border-top:1px solid rgba(255,255,255,.10);
+      color:#9fffdc;
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    @media(max-width:1200px) {
+      .side-by-side-layout { grid-template-columns:1fr; }
+      .tree-column { position:relative; top:auto; max-height:none; }
+      .results-box, .details-under-results { max-height:none; }
+    }
+
     @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:950px;} .tree-node{min-width:190px;} }
   </style>
 </head>
@@ -213,24 +296,47 @@
   <p class="subtitle">Interaktiver Stammbaum aus deiner Excel-Datei</p>
 </header>
 <main>
-  <section class="stats"><button id="peopleQuickButton" class="stat-card" type="button"><strong id="statPeople">0</strong><span>Personen</span></button><button id="countriesQuickButton" class="stat-card" type="button"><strong id="statCountries">0</strong><span>Länder</span></button><button id="surnamesQuickButton" class="stat-card" type="button"><strong id="statFamilies">0</strong><span>Nachnamen</span></button></section>
-  <p class="quick-hint">Klicke auf Personen, Länder oder Nachnamen, um direkt zu filtern.</p>
+  <section class="stats">
+    <button id="peopleQuickButton" class="stat-card" type="button"><strong id="statPeople">0</strong><span>Personen</span></button>
+    <button id="countriesQuickButton" class="stat-card" type="button"><strong id="statCountries">0</strong><span>Länder</span></button>
+    <button id="surnamesQuickButton" class="stat-card" type="button"><strong id="statFamilies">0</strong><span>Nachnamen</span></button>
+  </section>
+  <p class="quick-hint">Links suchen oder filtern. Beim Klick auf eine Person öffnet sich der Stammbaum sofort rechts daneben.</p>
 
-  <div class="view-tabs">
+  <div class="view-tabs hidden-tabs">
     <button id="treeTab" class="view-tab active" type="button">🌳 Stammbaum Ansicht</button>
-    <button id="searchTab" class="view-tab" type="button">🔍 Suche & Ergebnisse</button>
+    <button id="searchTab" class="view-tab active" type="button">🔍 Suche & Ergebnisse</button>
   </div>
 
-  <section id="treeView" class="view-section active">
-    <section class="box tree-box"><h2 class="box-title">🌳 Stammbaum-Ansicht</h2><div id="familyTree" class="visual-tree"><div class="empty">Wähle eine Person aus. Dann wird hier die direkte Familie als Stammbaum angezeigt.</div></div><div class="tree-action-row"><button id="backToSearchButton" class="view-tab" type="button">← Zur Suche</button></div><div class="tree-legend">Tipp: Du kannst auch im Stammbaum auf Personen klicken.</div></section>
+  <section class="side-by-side-layout">
+    <aside class="search-column">
+      <div class="top-panel">
+        <input id="searchInput" type="text" placeholder="Person suchen: Name, Ort, Datum, Land...">
+        <select id="countryFilter"><option value="all">Alle Länder</option></select>
+      </div>
+
+      <section id="searchView" class="box view-section active results-box">
+        <h2 class="box-title">🔍 Suche & Ergebnisse</h2>
+        <div id="peopleGrid" class="people-grid compact-results"></div>
+      </section>
+
+      <aside class="box details-under-results">
+        <h2 class="box-title">🔎 Details</h2>
+        <div id="personDetail" class="empty">Klicke auf eine Person. Dann erscheinen hier Details, Eltern, Partner und Kinder.</div>
+      </aside>
+    </aside>
+
+    <section id="treeView" class="box tree-box view-section active tree-column">
+      <h2 class="box-title">🌳 Stammbaum-Ansicht</h2>
+      <div id="familyTree" class="visual-tree">
+        <div class="empty">Wähle links eine Person aus. Der Stammbaum öffnet sich hier direkt daneben.</div>
+      </div>
+      <div class="tree-action-row"><button id="backToSearchButton" class="view-tab" type="button">← Zur Suche</button></div>
+      <div class="tree-legend">Tipp: Du kannst auch im Stammbaum auf Personen klicken.</div>
+    </section>
   </section>
 
-  <section id="searchView" class="view-section">
-    <div class="top-panel"><input id="searchInput" type="text" placeholder="Person suchen: Name, Ort, Datum, Land..."><select id="countryFilter"><option value="all">Alle Länder</option></select></div>
-    <div class="dashboard"><section class="box"><h2 class="box-title">🔍 Suche & Ergebnisse</h2><div id="peopleGrid" class="people-grid"></div></section><aside class="box"><h2 class="box-title">🔎 Details</h2><div id="personDetail" class="empty">Klicke auf eine Person. Dann erscheinen hier Details, Eltern, Partner und Kinder.</div></aside></div>
-  </section>
-
-  <section class="box map-box" id="countryBox"><h2 class="box-title">🌍 Länderübersicht</h2><div id="countryOverview" class="country-grid"></div><p class="note">Klicke auf ein Land, um die Personen aus diesem Land anzuzeigen.</p></section>
+  <section class="box map-box" id="countryBox"><h2 class="box-title">🌍 Länderübersicht</h2><div id="countryOverview" class="country-grid"></div><p class="note">Klicke auf ein Land, um rechts den passenden Landes-Stammbaum anzuzeigen.</p></section>
 
   <section class="box surname-box" id="surnameBox"><h2 class="box-title">🔤 Nachnamen</h2><div id="surnameOverview" class="surname-grid"></div><p class="note">Klicke auf einen Nachnamen, um passende Personen anzuzeigen.</p></section>
 </main>
@@ -245,10 +351,10 @@ function findPersonById(id){return people.find(p=>p.id===id);}
 function getPeopleByIds(ids){return (ids||[]).map(id=>findPersonById(id)).filter(Boolean);}
 function life(p){return `${p.birth||'?'}${p.death?' – '+p.death:''}`;}
 function avatarContent(p){return p.photo?`<img src="images/${p.photo}" alt="${getFullName(p)}">`:(p.flag||'👤');}
-function setView(view){const showTree=view==='tree'; searchView.classList.toggle('active',!showTree); treeView.classList.toggle('active',showTree); searchTab.classList.toggle('active',!showTree); treeTab.classList.toggle('active',showTree);}
+function setView(view){searchView.classList.add('active'); treeView.classList.add('active'); if(searchTab)searchTab.classList.add('active'); if(treeTab)treeTab.classList.add('active');}
 function showStartMessage(){peopleGrid.innerHTML=`<div class="empty">Klicke oben auf <strong>Personen</strong>, wähle ein <strong>Land</strong> oder klicke auf einen <strong>Nachnamen</strong>.<br><br>Du kannst auch direkt im Suchfeld suchen.</div>`;}
 function renderPeople(){const searchTerm=searchInput.value.toLowerCase().trim(), selectedCountry=countryFilter.value; const filtered=people.filter(p=>{const text=`${p.firstName} ${p.lastName} ${p.birth} ${p.death} ${p.birthPlace} ${p.deathPlace} ${p.country} ${p.profession} ${p.notes}`.toLowerCase(); return text.includes(searchTerm)&&(selectedCountry==='all'||p.country===selectedCountry);}); peopleGrid.innerHTML=''; if(filtered.length===0){peopleGrid.innerHTML='<p class="empty">Keine Person gefunden.</p>'; return;} filtered.forEach(p=>{const button=document.createElement('button'); button.className='person-card'; if(p.id===selectedPersonId)button.classList.add('active'); button.innerHTML=`<h3>${p.flag||'👤'} ${getFullName(p)}</h3><p>🎂 ${life(p)}</p><p>📍 ${p.birthPlace||'Unbekannt'}</p><div class="badge-row"><span class="badge">${p.country||'Unknown'}</span></div>`; button.addEventListener('click',()=>selectPerson(p.id)); peopleGrid.appendChild(button);});}
-function selectPerson(id){selectedPersonId=id; renderPeople(); renderPersonDetail(id); renderFamilyTree(id); setView('tree');}
+function selectPerson(id){selectedPersonId=id; renderPeople(); renderPersonDetail(id); renderFamilyTree(id); if(window.innerWidth<1200){treeView.scrollIntoView({behavior:'smooth',block:'start'});} }
 function renderPersonDetail(id){const p=findPersonById(id); if(!p){personDetail.innerHTML='<p class="empty">Person nicht gefunden.</p>'; return;} personDetail.className=''; personDetail.innerHTML=`<div class="detail-header"><div class="avatar">${avatarContent(p)}</div><div><h2>${getFullName(p)}</h2><p>${life(p)}</p></div></div><div class="info"><div class="info-item"><strong>Geburtsort:</strong><br>${p.birthPlace||'Unbekannt'}</div><div class="info-item"><strong>Sterbeort:</strong><br>${p.deathPlace||'Unbekannt'}</div><div class="info-item"><strong>Land:</strong><br>${p.flag||''} ${p.country||'Unbekannt'}</div><div class="info-item"><strong>Hochzeit:</strong><br>${p.wedding||'Unbekannt'}</div><div class="info-item"><strong>Beruf:</strong><br>${p.profession||'Unbekannt'}</div><div class="info-item"><strong>Notizen:</strong><br>${p.notes||'Keine Notizen vorhanden.'}</div></div><div class="relation-section"><h3>Eltern</h3>${renderRelationButtons(p.parents)}<h3>Partner</h3>${renderRelationButtons(p.partners)}<h3>Kinder</h3>${renderRelationButtons(p.children)}</div>`; addRelationEvents();}
 function renderRelationButtons(ids){const related=getPeopleByIds(ids); if(related.length===0)return '<p class="empty">Keine Einträge vorhanden.</p>'; return related.map(p=>`<button class="relation-button" data-id="${p.id}">${p.flag||'👤'} ${getFullName(p)}</button>`).join('');}
 function addRelationEvents(){document.querySelectorAll('.relation-button').forEach(b=>b.addEventListener('click',()=>{selectPerson(b.getAttribute('data-id')); window.scrollTo({top:0,behavior:'smooth'});}));}
@@ -394,8 +500,117 @@ function renderSurnames(){
     surnameOverview.appendChild(card);
   });
 }
+
+function getBirthYearNumber(p){
+  const text=(p.birth||'').toString();
+  const match=text.match(/(\d{4})/);
+  return match?parseInt(match[1],10):9999;
+}
+function getCountryPeople(country){
+  return people.filter(p=>p.country===country);
+}
+function getSameCountryParents(person,country){
+  return getPeopleByIds(person.parents||[]).filter(parent=>parent.country===country);
+}
+function getSameCountryPartners(person,country){
+  return getPeopleByIds(person.partners||[]).filter(partner=>partner.country===country);
+}
+function calculateCountryGeneration(person,country,memo={},visiting=new Set()){
+  if(memo[person.id]!==undefined)return memo[person.id];
+  if(visiting.has(person.id))return 0;
+  visiting.add(person.id);
+  const parents=getSameCountryParents(person,country);
+  if(parents.length===0){
+    memo[person.id]=0;
+  } else {
+    memo[person.id]=Math.max(...parents.map(parent=>calculateCountryGeneration(parent,country,memo,visiting)+1));
+  }
+  visiting.delete(person.id);
+  return memo[person.id];
+}
+function renderCountryTree(country){
+  const countryPeople=getCountryPeople(country).sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),'de'));
+  if(countryPeople.length===0){
+    familyTree.innerHTML='<div class="empty">Für dieses Land sind noch keine Personen eingetragen.</div>';
+    return;
+  }
+
+  const flag=countryPeople.find(p=>p.flag)?.flag||'🌍';
+  const memo={};
+  const groups={};
+  countryPeople.forEach(person=>{
+    const generation=calculateCountryGeneration(person,country,memo);
+    if(!groups[generation])groups[generation]=[];
+    groups[generation].push(person);
+  });
+
+  const generationNames=[
+    'Älteste bekannte Generation',
+    'Nächste Generation',
+    'Weitere Generation',
+    'Kinder-Generation',
+    'Enkel-Generation',
+    'Urenkel / spätere Generation'
+  ];
+
+  const rows=Object.keys(groups).map(Number).sort((a,b)=>a-b).map(generation=>{
+    const persons=groups[generation].sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),'de'));
+    const label=generationNames[generation]||`Generation ${generation+1}`;
+    return `
+      <div class="country-generation-label">${label} · ${persons.length} Person(en)</div>
+      <div class="country-generation-row">
+        ${persons.map(countryNode).join('')}
+      </div>
+      ${generation < Object.keys(groups).length-1 ? '<div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>' : ''}
+    `;
+  }).join('');
+
+  familyTree.innerHTML=`
+    <div class="country-tree-header">
+      <strong>${flag} ${country}</strong><br>
+      ${countryPeople.length} Person(en) aus diesem Land · nach Generationen sortiert
+    </div>
+    ${rows}
+  `;
+
+  document.querySelectorAll('.country-tree-node[data-id]').forEach(item=>{
+    item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id')));
+  });
+}
+function countryNode(p){
+  const partners=getSameCountryPartners(p,p.country);
+  const partnerLine=partners.length?`<div class="country-spouse-line">Partner: ${partners.map(getFullName).join(', ')}</div>`:'';
+  return `
+    <div class="country-tree-node" data-id="${p.id}">
+      <div class="node-icon">${p.flag||'👤'}</div>
+      <div class="node-name">${getFullName(p)}</div>
+      <div class="node-date">${life(p)}</div>
+      ${partnerLine}
+    </div>
+  `;
+}
+function selectCountry(country){
+  countryFilter.value=country;
+  renderPeople();
+  renderCountryTree(country);
+  personDetail.className='';
+  const count=getCountryPeople(country).length;
+  const flag=(getCountryPeople(country).find(p=>p.flag)||{}).flag||'🌍';
+  personDetail.innerHTML=`
+    <div class="detail-header">
+      <div class="avatar">${flag}</div>
+      <div><h2>${country}</h2><p>${count} Person(en)</p></div>
+    </div>
+    <div class="info">
+      <div class="info-item"><strong>Landesansicht:</strong><br>Rechts wird der Stammbaum / die Generationenübersicht für dieses Land angezeigt.</div>
+      <div class="info-item"><strong>Tipp:</strong><br>Klicke rechts auf eine Person, um wieder ihren persönlichen Stammbaum zu öffnen.</div>
+    </div>
+  `;
+  if(window.innerWidth<1200){treeView.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+
 function renderCountryFilter(){[...new Set(people.map(p=>p.country).filter(Boolean))].sort().forEach(c=>{const o=document.createElement('option'); o.value=c; o.textContent=c; countryFilter.appendChild(o);});}
-function renderCountries(){const result={}; people.forEach(p=>{if(!p.country)return; if(!result[p.country])result[p.country]={count:0,flag:p.flag||'🌍'}; result[p.country].count++;}); countryOverview.innerHTML=''; Object.keys(result).sort().forEach(country=>{const card=document.createElement('div'); card.className='country-card'; card.innerHTML=`<div class="flag">${result[country].flag}</div><h3>${country}</h3><p>${result[country].count} Person(en)</p>`; card.addEventListener('click',()=>{countryFilter.value=country; renderPeople(); setView('search'); window.scrollTo({top:0,behavior:'smooth'});}); countryOverview.appendChild(card);});}
+function renderCountries(){const result={}; people.forEach(p=>{if(!p.country)return; if(!result[p.country])result[p.country]={count:0,flag:p.flag||'🌍'}; result[p.country].count++;}); countryOverview.innerHTML=''; Object.keys(result).sort().forEach(country=>{const card=document.createElement('div'); card.className='country-card'; card.innerHTML=`<div class="flag">${result[country].flag}</div><h3>${country}</h3><p>${result[country].count} Person(en)</p>`; card.addEventListener('click',()=>{selectCountry(country);}); countryOverview.appendChild(card);});}
 function updateStats(){document.getElementById('statPeople').textContent=people.length; document.getElementById('statCountries').textContent=new Set(people.map(p=>p.country).filter(Boolean)).size; document.getElementById('statFamilies').textContent=new Set(people.map(p=>cleanSurname(p.lastName)).filter(Boolean)).size;}
 searchTab.addEventListener('click',()=>setView('search'));
 treeTab.addEventListener('click',()=>setView('tree'));
@@ -404,7 +619,7 @@ peopleQuickButton.addEventListener('click',showAllPeople);
 countriesQuickButton.addEventListener('click',showCountries);
 surnamesQuickButton.addEventListener('click',showSurnames);
 searchInput.addEventListener('input',()=>{setView('search'); if(searchInput.value.trim()===''&&countryFilter.value==='all')showStartMessage(); else renderPeople();});
-countryFilter.addEventListener('change',()=>{setView('search'); if(searchInput.value.trim()===''&&countryFilter.value==='all')showStartMessage(); else renderPeople();});
+countryFilter.addEventListener('change',()=>{if(searchInput.value.trim()===''&&countryFilter.value==='all'){showStartMessage(); renderFamilyTree(selectedPersonId||'p001');} else {renderPeople(); if(countryFilter.value!=='all'){renderCountryTree(countryFilter.value);} }});
 renderCountryFilter(); renderCountries(); renderSurnames(); updateStats(); selectedPersonId='p001'; renderPersonDetail('p001'); renderFamilyTree('p001'); showStartMessage(); setView('tree');
 </script>
 </body>
