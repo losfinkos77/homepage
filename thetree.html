@@ -291,6 +291,61 @@
       .results-box, .details-under-results { max-height:none; }
     }
 
+
+
+    /* Sichtbarer Fokus: ausgewählte Person im Stammbaum */
+    @keyframes selectedRingSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes selectedGlowPulse {
+      0%, 100% { box-shadow: 0 0 28px rgba(0,191,255,.45), 0 0 55px rgba(0,191,255,.18); }
+      50% { box-shadow: 0 0 38px rgba(0,191,255,.75), 0 0 85px rgba(0,255,170,.25); }
+    }
+
+    .tree-node.main {
+      position: relative;
+      z-index: 2;
+      border: 2px solid transparent !important;
+      animation: selectedGlowPulse 2.4s ease-in-out infinite;
+    }
+
+    .tree-node.main::before {
+      content: "";
+      position: absolute;
+      inset: -5px;
+      border-radius: 27px;
+      background: conic-gradient(
+        from 0deg,
+        rgba(0,191,255,0),
+        rgba(0,191,255,1),
+        rgba(0,255,170,1),
+        rgba(255,255,255,.95),
+        rgba(0,191,255,1),
+        rgba(0,191,255,0)
+      );
+      animation: selectedRingSpin 3s linear infinite;
+      z-index: -1;
+    }
+
+    .tree-node.main::after {
+      content: "Ausgewählt";
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #00bfff;
+      color: #061018;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .4px;
+      box-shadow: 0 0 15px rgba(0,191,255,.7);
+      white-space: nowrap;
+    }
+
     @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:950px;} .tree-node{min-width:190px;} }
   </style>
 </head>
