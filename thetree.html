@@ -390,7 +390,7 @@
   <section class="side-by-side-layout">
     <aside class="search-column">
       <div class="top-panel">
-        <input id="searchInput" type="text" placeholder="Person suchen: Name, Ort, Datum, Land...">
+        <input id="searchInput" type="text" placeholder="Person suchen: Name, Ort, Datum, Land..." oninput="handlePersonSearch()" onkeyup="handlePersonSearch()" onchange="handlePersonSearch()">
         <select id="countryFilter"><option value="all">Alle Länder</option></select>
       </div>
 
@@ -665,29 +665,37 @@ function selectCountry(country){
 function renderCountryFilter(preserveValue){const value=preserveValue||countryFilter.value||'all'; countryFilter.innerHTML=''; const all=document.createElement('option'); all.value='all'; all.textContent=t('allCountries'); countryFilter.appendChild(all); [...new Set(people.map(p=>p.country).filter(Boolean))].sort((a,b)=>a.localeCompare(b,currentLang)).forEach(c=>{const o=document.createElement('option'); o.value=c; o.textContent=c; countryFilter.appendChild(o);}); countryFilter.value=[...countryFilter.options].some(o=>o.value===value)?value:'all';}
 function renderCountries(){const result={}; people.forEach(p=>{if(!p.country)return; if(!result[p.country])result[p.country]={count:0,flag:p.flag||'🌍'}; result[p.country].count++;}); countryOverview.innerHTML=''; Object.keys(result).sort((a,b)=>a.localeCompare(b,currentLang)).forEach(country=>{const card=document.createElement('div'); card.className='country-card'; card.innerHTML=`<div class="flag">${result[country].flag}</div><h3>${country}</h3><p>${t('personCount',{count:result[country].count})}</p>`; card.addEventListener('click',()=>selectCountry(country)); countryOverview.appendChild(card);});}
 function updateStats(){document.getElementById('statPeople').textContent=people.length; document.getElementById('statCountries').textContent=new Set(people.map(p=>p.country).filter(Boolean)).size; document.getElementById('statFamilies').textContent=new Set(people.map(p=>cleanSurname(p.lastName)).filter(Boolean)).size;}
+function handlePersonSearch(){
+  const term=searchInput.value.trim();
+  activeSurnameFilter=null;
+  activeCountryTree=null;
+  document.querySelectorAll('.surname-card').forEach(card=>card.classList.remove('active'));
+  setView('search');
+
+  // Beim Tippen immer über ALLE Personen suchen.
+  // Vorherige Länder-/Nachnamenfilter werden aufgehoben.
+  if(term !== ''){
+    countryFilter.value='all';
+    renderPeople();
+    return;
+  }
+
+  if(countryFilter.value==='all'){
+    showStartMessage();
+  } else {
+    renderPeople();
+  }
+}
+
 searchTab.addEventListener('click',()=>setView('search'));
 treeTab.addEventListener('click',()=>setView('tree'));
 backToSearchButton.addEventListener('click',()=>setView('search'));
 peopleQuickButton.addEventListener('click',showAllPeople);
 countriesQuickButton.addEventListener('click',showCountries);
 surnamesQuickButton.addEventListener('click',showSurnames);
-searchInput.addEventListener('input',()=>{
-  activeSurnameFilter=null;
-  activeCountryTree=null;
-  document.querySelectorAll('.surname-card').forEach(card=>card.classList.remove('active'));
-  setView('search');
-
-  // Beim Tippen soll immer wirklich die komplette Personenliste durchsucht werden.
-  // Ein zuvor gewähltes Land oder ein Nachname darf die Suche nicht blockieren.
-  if(searchInput.value.trim()!==''){
-    countryFilter.value='all';
-    renderPeople();
-    return;
-  }
-
-  if(countryFilter.value==='all')showStartMessage();
-  else renderPeople();
-});
+searchInput.addEventListener('input',handlePersonSearch);
+searchInput.addEventListener('keyup',handlePersonSearch);
+searchInput.addEventListener('change',handlePersonSearch);
 countryFilter.addEventListener('change',()=>{activeSurnameFilter=null; if(searchInput.value.trim()===''&&countryFilter.value==='all'){activeCountryTree=null; showStartMessage(); renderFamilyTree(selectedPersonId||'p001');} else {renderPeople(); if(countryFilter.value!=='all')selectCountry(countryFilter.value);} });
 languageSelect.addEventListener('change',()=>{currentLang=languageSelect.value; localStorage.setItem('thetreeLang',currentLang); refreshLanguage();});
 
