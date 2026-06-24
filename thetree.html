@@ -4,917 +4,116 @@
   <meta charset="UTF-8">
   <title>The Tree | Los Finkos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(0, 191, 255, 0.18), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(0, 255, 170, 0.10), transparent 35%),
-        #111;
-      color: #fff;
-      min-height: 100vh;
-    }
-
-    header {
-      padding: 35px 20px 25px;
-      text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .home-link {
-      display: inline-block;
-      color: #9be7ff;
-      text-decoration: none;
-      margin-bottom: 18px;
-      font-weight: bold;
-    }
-
-    .home-link:hover {
-      color: white;
-      text-decoration: underline;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(34px, 7vw, 70px);
-      letter-spacing: 2px;
-      color: #00bfff;
-      text-shadow: 0 0 20px rgba(0,191,255,0.45);
-    }
-
-    .subtitle {
-      color: #ccc;
-      font-size: 18px;
-      margin-top: 12px;
-    }
-
-    main {
-      max-width: 1450px;
-      margin: 0 auto;
-      padding: 25px 18px 60px;
-    }
-
-    .top-panel {
-      display: grid;
-      grid-template-columns: 1fr 220px;
-      gap: 14px;
-      margin-bottom: 25px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 15px 17px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.08);
-      color: white;
-      font-size: 16px;
-      outline: none;
-    }
-
-    select option {
-      background: #222;
-      color: white;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #00bfff;
-      box-shadow: 0 0 0 3px rgba(0,191,255,0.18);
-    }
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: 1fr 420px;
-      gap: 22px;
-      align-items: start;
-    }
-
-    .box {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 24px;
-      padding: 20px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-      backdrop-filter: blur(8px);
-    }
-
-    .box-title {
-      margin: 0 0 18px;
-      color: #00bfff;
-      font-size: 24px;
-    }
-
-    .people-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 15px;
-    }
-
-    .person-card {
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 22px;
-      padding: 18px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
-      color: white;
-      text-align: left;
-      cursor: pointer;
-      transition: 0.25s ease;
-      width: 100%;
-      font: inherit;
-    }
-
-    .person-card:hover {
-      transform: translateY(-4px);
-      border-color: #00bfff;
-      box-shadow: 0 0 22px rgba(0,191,255,0.28);
-    }
-
-    .person-card.active {
-      border-color: #00bfff;
-      background:
-        linear-gradient(145deg, rgba(0,191,255,0.24), rgba(255,255,255,0.06));
-      box-shadow: 0 0 24px rgba(0,191,255,0.38);
-    }
-
-    .person-card h3 {
-      margin: 0 0 10px;
-      font-size: 22px;
-    }
-
-    .person-card p {
-      margin: 6px 0;
-      color: #d5d5d5;
-      font-size: 14px;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 12px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(0,191,255,0.14);
-      border: 1px solid rgba(0,191,255,0.35);
-      color: #9be7ff;
-      font-size: 13px;
-    }
-
-    .detail-header {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .avatar {
-      width: 78px;
-      height: 78px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,191,255,0.17);
-      border: 2px solid #00bfff;
-      font-size: 34px;
-      flex-shrink: 0;
-    }
-
-    .detail-header h2 {
-      margin: 0;
-      font-size: 30px;
-    }
-
-    .detail-header p {
-      margin: 6px 0 0;
-      color: #ccc;
-    }
-
-    .info {
-      display: grid;
-      gap: 10px;
-    }
-
-    .info-item {
-      background: rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 15px;
-      padding: 12px 14px;
-      line-height: 1.5;
-    }
-
-    .info-item strong {
-      color: #00bfff;
-    }
-
-    .relation-section {
-      margin-top: 18px;
-    }
-
-    .relation-section h3 {
-      color: #00bfff;
-      margin: 18px 0 8px;
-    }
-
-    .relation-button {
-      display: inline-block;
-      margin: 5px 5px 5px 0;
-      padding: 9px 13px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.08);
-      color: white;
-      cursor: pointer;
-      transition: 0.2s;
-      font-size: 14px;
-    }
-
-    .relation-button:hover {
-      background: #00bfff;
-      color: #111;
-      border-color: #00bfff;
-    }
-
-    .empty {
-      color: #aaa;
-      line-height: 1.6;
-    }
-
-    /* Echter Stammbaum-Look */
-
-    .tree-box {
-      margin-top: 22px;
-      overflow-x: auto;
-    }
-
-    .visual-tree {
-      min-width: 700px;
-      padding: 25px 10px 10px;
-      text-align: center;
-    }
-
-    .tree-level {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      position: relative;
-      margin: 0 auto;
-      flex-wrap: wrap;
-    }
-
-    .tree-level.parents {
-      margin-bottom: 45px;
-    }
-
-    .tree-level.main-level {
-      margin-bottom: 45px;
-    }
-
-    .tree-level.children {
-      margin-top: 0;
-    }
-
-    .tree-node {
-      min-width: 180px;
-      max-width: 230px;
-      padding: 14px 16px;
-      border-radius: 20px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,0.13), rgba(255,255,255,0.04));
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.28);
-      cursor: pointer;
-      position: relative;
-      transition: 0.2s;
-    }
-
-    .tree-node:hover {
-      transform: translateY(-3px);
-      border-color: #00bfff;
-      box-shadow: 0 0 22px rgba(0,191,255,0.30);
-    }
-
-    .tree-node.main {
-      background:
-        linear-gradient(145deg, rgba(0,191,255,0.32), rgba(0,191,255,0.10));
-      border-color: #00bfff;
-      box-shadow: 0 0 28px rgba(0,191,255,0.35);
-      transform: scale(1.04);
-    }
-
-    .tree-node.partner {
-      border-color: rgba(0,255,170,0.45);
-      background:
-        linear-gradient(145deg, rgba(0,255,170,0.17), rgba(255,255,255,0.04));
-    }
-
-    .tree-node.empty-node {
-      cursor: default;
-      color: #aaa;
-      opacity: 0.7;
-    }
-
-    .tree-node.empty-node:hover {
-      transform: none;
-      box-shadow: 0 12px 25px rgba(0,0,0,0.28);
-      border-color: rgba(255,255,255,0.15);
-    }
-
-    .tree-node .node-icon {
-      font-size: 28px;
-      margin-bottom: 6px;
-    }
-
-    .tree-node .node-name {
-      font-weight: bold;
-      font-size: 17px;
-      margin-bottom: 5px;
-    }
-
-    .tree-node .node-date {
-      color: #ccc;
-      font-size: 13px;
-    }
-
-    .tree-label {
-      text-align: center;
-      color: #9be7ff;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 12px;
-    }
-
-    .tree-connector-down {
-      width: 2px;
-      height: 35px;
-      background: rgba(0,191,255,0.7);
-      margin: 10px auto 0;
-      box-shadow: 0 0 10px rgba(0,191,255,0.6);
-    }
-
-    .tree-connector-horizontal {
-      width: 60%;
-      max-width: 620px;
-      min-width: 260px;
-      height: 2px;
-      background: rgba(0,191,255,0.7);
-      margin: 0 auto;
-      box-shadow: 0 0 10px rgba(0,191,255,0.6);
-    }
-
-    .tree-connector-up {
-      width: 2px;
-      height: 35px;
-      background: rgba(0,191,255,0.7);
-      margin: 0 auto 10px;
-      box-shadow: 0 0 10px rgba(0,191,255,0.6);
-    }
-
-    .tree-middle-line {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: -28px 0 10px;
-    }
-
-    .tree-legend {
-      margin-top: 18px;
-      color: #aaa;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    .map-box {
-      margin-top: 22px;
-    }
-
-    .country-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 14px;
-      margin-top: 15px;
-    }
-
-    .country-card {
-      border-radius: 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      padding: 18px;
-      text-align: center;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .country-card:hover {
-      transform: translateY(-3px);
-      border-color: #00bfff;
-      background: rgba(0,191,255,0.14);
-    }
-
-    .country-card .flag {
-      font-size: 32px;
-      margin-bottom: 8px;
-    }
-
-    .country-card h3 {
-      margin: 0 0 6px;
-    }
-
-    .country-card p {
-      margin: 0;
-      color: #ccc;
-    }
-
-    .note {
-      color: #aaa;
-      margin-top: 15px;
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    @media (max-width: 950px) {
-      .dashboard {
-        grid-template-columns: 1fr;
-      }
-
-      .top-panel {
-        grid-template-columns: 1fr;
-      }
-
-      .visual-tree {
-        min-width: 620px;
-      }
-    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; background: radial-gradient(circle at top left, rgba(0,191,255,.18), transparent 35%), radial-gradient(circle at bottom right, rgba(0,255,170,.1), transparent 35%), #111; color:#fff; min-height:100vh; }
+    header { padding:35px 20px 25px; text-align:center; border-bottom:1px solid rgba(255,255,255,.08); }
+    .home-link { display:inline-block; color:#9be7ff; text-decoration:none; margin-bottom:18px; font-weight:bold; }
+    .home-link:hover { color:white; text-decoration:underline; }
+    h1 { margin:0; font-size:clamp(34px,7vw,70px); letter-spacing:2px; color:#00bfff; text-shadow:0 0 20px rgba(0,191,255,.45); }
+    .subtitle { color:#ccc; font-size:18px; margin-top:12px; }
+    main { max-width:1450px; margin:0 auto; padding:25px 18px 60px; }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:20px; }
+    .stat-card { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:15px; text-align:center; }
+    .stat-card strong { display:block; color:#00bfff; font-size:26px; margin-bottom:4px; }
+    .stat-card span { color:#ccc; font-size:14px; }
+    .top-panel { display:grid; grid-template-columns:1fr 220px; gap:14px; margin-bottom:25px; }
+    input, select { width:100%; padding:15px 17px; border-radius:14px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.08); color:white; font-size:16px; outline:none; }
+    select option { background:#222; color:white; }
+    input:focus, select:focus { border-color:#00bfff; box-shadow:0 0 0 3px rgba(0,191,255,.18); }
+    .dashboard { display:grid; grid-template-columns:1fr 420px; gap:22px; align-items:start; }
+    .box { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.10); border-radius:24px; padding:20px; box-shadow:0 20px 50px rgba(0,0,0,.35); backdrop-filter:blur(8px); }
+    .box-title { margin:0 0 18px; color:#00bfff; font-size:24px; }
+    .people-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:15px; }
+    .person-card { border:1px solid rgba(255,255,255,.12); border-radius:22px; padding:18px; background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.04)); color:white; text-align:left; cursor:pointer; transition:.25s ease; width:100%; font:inherit; }
+    .person-card:hover { transform:translateY(-4px); border-color:#00bfff; box-shadow:0 0 22px rgba(0,191,255,.28); }
+    .person-card.active { border-color:#00bfff; background:linear-gradient(145deg,rgba(0,191,255,.24),rgba(255,255,255,.06)); box-shadow:0 0 24px rgba(0,191,255,.38); }
+    .person-card h3 { margin:0 0 10px; font-size:22px; }
+    .person-card p { margin:6px 0; color:#d5d5d5; font-size:14px; }
+    .badge-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+    .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(0,191,255,.14); border:1px solid rgba(0,191,255,.35); color:#9be7ff; font-size:13px; }
+    .detail-header { display:flex; gap:16px; align-items:center; margin-bottom:18px; }
+    .avatar { width:78px; height:78px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(0,191,255,.17); border:2px solid #00bfff; font-size:34px; flex-shrink:0; overflow:hidden; }
+    .avatar img { width:100%; height:100%; object-fit:cover; }
+    .detail-header h2 { margin:0; font-size:30px; }
+    .detail-header p { margin:6px 0 0; color:#ccc; }
+    .info { display:grid; gap:10px; }
+    .info-item { background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.10); border-radius:15px; padding:12px 14px; line-height:1.5; }
+    .info-item strong { color:#00bfff; }
+    .relation-section { margin-top:18px; }
+    .relation-section h3 { color:#00bfff; margin:18px 0 8px; }
+    .relation-button { display:inline-block; margin:5px 5px 5px 0; padding:9px 13px; border-radius:999px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.08); color:white; cursor:pointer; transition:.2s; font-size:14px; }
+    .relation-button:hover { background:#00bfff; color:#111; border-color:#00bfff; }
+    .empty { color:#aaa; line-height:1.6; }
+    .tree-box { margin-top:22px; overflow-x:auto; }
+    .visual-tree { min-width:700px; padding:25px 10px 10px; text-align:center; }
+    .tree-level { display:flex; justify-content:center; gap:20px; position:relative; margin:0 auto; flex-wrap:wrap; }
+    .tree-level.parents, .tree-level.main-level { margin-bottom:45px; }
+    .tree-node { min-width:180px; max-width:250px; padding:14px 16px; border-radius:20px; background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.15); box-shadow:0 12px 25px rgba(0,0,0,.28); cursor:pointer; position:relative; transition:.2s; }
+    .tree-node:hover { transform:translateY(-3px); border-color:#00bfff; box-shadow:0 0 22px rgba(0,191,255,.30); }
+    .tree-node.main { background:linear-gradient(145deg,rgba(0,191,255,.32),rgba(0,191,255,.10)); border-color:#00bfff; box-shadow:0 0 28px rgba(0,191,255,.35); transform:scale(1.04); }
+    .tree-node.partner { border-color:rgba(0,255,170,.45); background:linear-gradient(145deg,rgba(0,255,170,.17),rgba(255,255,255,.04)); }
+    .tree-node.empty-node { cursor:default; color:#aaa; opacity:.7; }
+    .node-icon { font-size:28px; margin-bottom:6px; }
+    .node-name { font-weight:bold; font-size:17px; margin-bottom:5px; }
+    .node-date { color:#ccc; font-size:13px; }
+    .tree-label { text-align:center; color:#9be7ff; font-size:13px; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; }
+    .tree-connector-down, .tree-connector-up { width:2px; height:35px; background:rgba(0,191,255,.7); margin:0 auto; box-shadow:0 0 10px rgba(0,191,255,.6); }
+    .tree-connector-down { margin-top:10px; }
+    .tree-connector-up { margin-bottom:10px; }
+    .tree-connector-horizontal { width:60%; max-width:620px; min-width:260px; height:2px; background:rgba(0,191,255,.7); margin:0 auto; box-shadow:0 0 10px rgba(0,191,255,.6); }
+    .tree-middle-line { display:flex; flex-direction:column; align-items:center; margin:-28px 0 10px; }
+    .tree-legend { margin-top:18px; color:#aaa; font-size:14px; text-align:center; }
+    .map-box { margin-top:22px; }
+    .country-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin-top:15px; }
+    .country-card { border-radius:18px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); padding:18px; text-align:center; cursor:pointer; transition:.2s; }
+    .country-card:hover { transform:translateY(-3px); border-color:#00bfff; background:rgba(0,191,255,.14); }
+    .country-card .flag { font-size:32px; margin-bottom:8px; }
+    .country-card h3 { margin:0 0 6px; }
+    .country-card p { margin:0; color:#ccc; }
+    .note { color:#aaa; margin-top:15px; line-height:1.6; font-size:14px; }
+    @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:620px;} }
   </style>
 </head>
-
 <body>
-
-  <header>
-    <a class="home-link" href="https://losfinkos77.github.io/homepage/">
-      ← Zurück zur Homepage
-    </a>
-
-    <h1>The Tree</h1>
-    <p class="subtitle">Interaktiver Stammbaum mit Personen, Beziehungen und Ländern</p>
-  </header>
-
-  <main>
-
-    <div class="top-panel">
-      <input id="searchInput" type="text" placeholder="Person suchen: Name, Ort, Land, Beruf...">
-
-      <select id="countryFilter">
-        <option value="all">Alle Länder</option>
-      </select>
-    </div>
-
-    <div class="dashboard">
-
-      <section class="box">
-        <h2 class="box-title">🔍 Suche & Ergebnisse</h2>
-        <div id="peopleGrid" class="people-grid"></div>
-      </section>
-
-      <aside class="box">
-        <h2 class="box-title">🔎 Details</h2>
-        <div id="personDetail" class="empty">
-          Klicke auf eine Person. Dann erscheinen hier Details, Eltern, Partner und Kinder.
-        </div>
-      </aside>
-
-    </div>
-
-    <section class="box tree-box">
-      <h2 class="box-title">🌳 Stammbaum-Ansicht</h2>
-
-      <div id="familyTree" class="visual-tree">
-        <div class="empty">Wähle eine Person aus. Dann wird hier die direkte Familie als Stammbaum angezeigt.</div>
-      </div>
-
-      <div class="tree-legend">
-        Tipp: Du kannst auch im Stammbaum auf Personen klicken.
-      </div>
-    </section>
-
-    <section class="box map-box">
-      <h2 class="box-title">🌍 Länderübersicht</h2>
-      <div id="countryOverview" class="country-grid"></div>
-      <p class="note">
-        Das ist zuerst eine einfache Länderübersicht. Später können wir daraus eine echte interaktive Weltkarte machen.
-      </p>
-    </section>
-
-  </main>
-
-  <script>
-    const people = [
-      {
-        id: "p001",
-        firstName: "Johann",
-        lastName: "Fink",
-        birth: "1730",
-        death: "",
-        birthPlace: "Riefensberg",
-        country: "Austria",
-        flag: "🇦🇹",
-        profession: "",
-        parents: [],
-        partners: ["p002"],
-        children: ["p003"],
-        notes: "Beispielperson der ersten Generation."
-      },
-      {
-        id: "p002",
-        firstName: "Kunigunde",
-        lastName: "Weiß",
-        birth: "1730",
-        death: "",
-        birthPlace: "Riefensberg",
-        country: "Austria",
-        flag: "🇦🇹",
-        profession: "",
-        parents: [],
-        partners: ["p001"],
-        children: ["p003"],
-        notes: "Ehefrau von Johann Muster."
-      },
-      {
-        id: "p003",
-        firstName: "Franz",
-        lastName: "Muster",
-        birth: "1910",
-        death: "1988",
-        birthPlace: "Wien",
-        country: "Austria",
-        flag: "🇦🇹",
-        profession: "Tischler",
-        parents: ["p001", "p002"],
-        partners: ["p004"],
-        children: ["p005", "p006"],
-        notes: "Zweite Generation."
-      },
-      {
-        id: "p004",
-        firstName: "Anna",
-        lastName: "Muster",
-        birth: "1915",
-        death: "1992",
-        birthPlace: "Budapest",
-        country: "Hungary",
-        flag: "🇭🇺",
-        profession: "Schneiderin",
-        parents: [],
-        partners: ["p003"],
-        children: ["p005", "p006"],
-        notes: "Geboren in Ungarn, später nach Österreich gezogen."
-      },
-      {
-        id: "p005",
-        firstName: "Karl",
-        lastName: "Muster",
-        birth: "1940",
-        death: "2010",
-        birthPlace: "Graz",
-        country: "Austria",
-        flag: "🇦🇹",
-        profession: "Mechaniker",
-        parents: ["p003", "p004"],
-        partners: [],
-        children: [],
-        notes: "Dritte Generation."
-      },
-      {
-        id: "p006",
-        firstName: "Elisabeth",
-        lastName: "Muster",
-        birth: "1945",
-        death: "",
-        birthPlace: "München",
-        country: "Germany",
-        flag: "🇩🇪",
-        profession: "Lehrerin",
-        parents: ["p003", "p004"],
-        partners: [],
-        children: [],
-        notes: "Lebt laut Beispieldaten in Deutschland."
-      }
-    ];
-
-    const peopleGrid = document.getElementById("peopleGrid");
-    const personDetail = document.getElementById("personDetail");
-    const familyTree = document.getElementById("familyTree");
-    const searchInput = document.getElementById("searchInput");
-    const countryFilter = document.getElementById("countryFilter");
-    const countryOverview = document.getElementById("countryOverview");
-
-    let selectedPersonId = null;
-
-    function getFullName(person) {
-      return person.firstName + " " + person.lastName;
-    }
-
-    function findPersonById(id) {
-      return people.find(person => person.id === id);
-    }
-
-    function getPeopleByIds(ids) {
-      if (!ids || ids.length === 0) return [];
-      return ids.map(id => findPersonById(id)).filter(Boolean);
-    }
-
-    function renderPeople() {
-      const searchTerm = searchInput.value.toLowerCase();
-      const selectedCountry = countryFilter.value;
-
-      const filteredPeople = people.filter(person => {
-        const text = `
-          ${person.firstName}
-          ${person.lastName}
-          ${person.birth}
-          ${person.death}
-          ${person.birthPlace}
-          ${person.country}
-          ${person.profession}
-          ${person.notes}
-        `.toLowerCase();
-
-        const searchOk = text.includes(searchTerm);
-        const countryOk = selectedCountry === "all" || person.country === selectedCountry;
-
-        return searchOk && countryOk;
-      });
-
-      peopleGrid.innerHTML = "";
-
-      if (filteredPeople.length === 0) {
-        peopleGrid.innerHTML = `<p class="empty">Keine Person gefunden.</p>`;
-        return;
-      }
-
-      filteredPeople.forEach(person => {
-        const button = document.createElement("button");
-        button.className = "person-card";
-
-        if (person.id === selectedPersonId) {
-          button.classList.add("active");
-        }
-
-        button.innerHTML = `
-          <h3>${person.flag || "👤"} ${getFullName(person)}</h3>
-          <p>🎂 ${person.birth || "?"} ${person.death ? "– " + person.death : ""}</p>
-          <p>📍 ${person.birthPlace || "Unbekannt"}</p>
-          <p>💼 ${person.profession || "Unbekannt"}</p>
-          <div class="badge-row">
-            <span class="badge">${person.country || "Unknown"}</span>
-          </div>
-        `;
-
-        button.addEventListener("click", () => {
-          selectPerson(person.id);
-        });
-
-        peopleGrid.appendChild(button);
-      });
-    }
-
-    function selectPerson(personId) {
-      selectedPersonId = personId;
-      renderPeople();
-      renderPersonDetail(personId);
-      renderFamilyTree(personId);
-    }
-
-    function renderPersonDetail(personId) {
-      const person = findPersonById(personId);
-
-      if (!person) {
-        personDetail.innerHTML = `<p class="empty">Person nicht gefunden.</p>`;
-        return;
-      }
-
-      personDetail.className = "";
-
-      personDetail.innerHTML = `
-        <div class="detail-header">
-          <div class="avatar">${person.flag || "👤"}</div>
-          <div>
-            <h2>${getFullName(person)}</h2>
-            <p>${person.birth || "?"} ${person.death ? "– " + person.death : ""}</p>
-          </div>
-        </div>
-
-        <div class="info">
-          <div class="info-item">
-            <strong>Geburtsort:</strong><br>
-            ${person.birthPlace || "Unbekannt"}
-          </div>
-
-          <div class="info-item">
-            <strong>Land:</strong><br>
-            ${person.flag || ""} ${person.country || "Unbekannt"}
-          </div>
-
-          <div class="info-item">
-            <strong>Beruf:</strong><br>
-            ${person.profession || "Unbekannt"}
-          </div>
-
-          <div class="info-item">
-            <strong>Notizen:</strong><br>
-            ${person.notes || "Keine Notizen vorhanden."}
-          </div>
-        </div>
-
-        <div class="relation-section">
-          <h3>Eltern</h3>
-          ${renderRelationButtons(person.parents)}
-
-          <h3>Partner</h3>
-          ${renderRelationButtons(person.partners)}
-
-          <h3>Kinder</h3>
-          ${renderRelationButtons(person.children)}
-        </div>
-      `;
-
-      addRelationEvents();
-    }
-
-    function renderRelationButtons(ids) {
-      const relatedPeople = getPeopleByIds(ids);
-
-      if (relatedPeople.length === 0) {
-        return `<p class="empty">Keine Einträge vorhanden.</p>`;
-      }
-
-      return relatedPeople.map(person => `
-        <button class="relation-button" data-id="${person.id}">
-          ${person.flag || "👤"} ${getFullName(person)}
-        </button>
-      `).join("");
-    }
-
-    function addRelationEvents() {
-      const buttons = document.querySelectorAll(".relation-button");
-
-      buttons.forEach(button => {
-        button.addEventListener("click", () => {
-          const id = button.getAttribute("data-id");
-          selectPerson(id);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-      });
-    }
-
-    function renderFamilyTree(personId) {
-      const person = findPersonById(personId);
-      if (!person) return;
-
-      const parents = getPeopleByIds(person.parents);
-      const partners = getPeopleByIds(person.partners);
-      const children = getPeopleByIds(person.children);
-
-      familyTree.innerHTML = `
-        <div class="tree-label">Eltern</div>
-        <div class="tree-level parents">
-          ${parents.length ? parents.map(treeNode).join("") : emptyNode("Keine Eltern eingetragen")}
-        </div>
-
-        <div class="tree-middle-line">
-          <div class="tree-connector-horizontal"></div>
-          <div class="tree-connector-down"></div>
-        </div>
-
-        <div class="tree-label">Person und Partner</div>
-        <div class="tree-level main-level">
-          <div class="tree-node main" data-id="${person.id}">
-            <div class="node-icon">${person.flag || "👤"}</div>
-            <div class="node-name">${getFullName(person)}</div>
-            <div class="node-date">${person.birth || "?"} ${person.death ? "– " + person.death : ""}</div>
-          </div>
-
-          ${partners.length ? partners.map(partnerNode).join("") : ""}
-        </div>
-
-        <div class="tree-middle-line">
-          <div class="tree-connector-up"></div>
-          <div class="tree-connector-horizontal"></div>
-          <div class="tree-connector-down"></div>
-        </div>
-
-        <div class="tree-label">Kinder</div>
-        <div class="tree-level children">
-          ${children.length ? children.map(treeNode).join("") : emptyNode("Keine Kinder eingetragen")}
-        </div>
-      `;
-
-      document.querySelectorAll(".tree-node[data-id]").forEach(item => {
-        item.addEventListener("click", () => {
-          selectPerson(item.getAttribute("data-id"));
-        });
-      });
-    }
-
-    function treeNode(person) {
-      return `
-        <div class="tree-node" data-id="${person.id}">
-          <div class="node-icon">${person.flag || "👤"}</div>
-          <div class="node-name">${getFullName(person)}</div>
-          <div class="node-date">${person.birth || "?"} ${person.death ? "– " + person.death : ""}</div>
-        </div>
-      `;
-    }
-
-    function partnerNode(person) {
-      return `
-        <div class="tree-node partner" data-id="${person.id}">
-          <div class="node-icon">${person.flag || "👤"}</div>
-          <div class="node-name">${getFullName(person)}</div>
-          <div class="node-date">${person.birth || "?"} ${person.death ? "– " + person.death : ""}</div>
-        </div>
-      `;
-    }
-
-    function emptyNode(text) {
-      return `
-        <div class="tree-node empty-node">
-          <div class="node-icon">—</div>
-          <div class="node-name">${text}</div>
-        </div>
-      `;
-    }
-
-    function renderCountryFilter() {
-      const countries = [...new Set(people.map(person => person.country).filter(Boolean))].sort();
-
-      countries.forEach(country => {
-        const option = document.createElement("option");
-        option.value = country;
-        option.textContent = country;
-        countryFilter.appendChild(option);
-      });
-    }
-
-    function renderCountries() {
-      const result = {};
-
-      people.forEach(person => {
-        if (!person.country) return;
-
-        if (!result[person.country]) {
-          result[person.country] = {
-            count: 0,
-            flag: person.flag || "🌍"
-          };
-        }
-
-        result[person.country].count++;
-      });
-
-      countryOverview.innerHTML = "";
-
-      Object.keys(result).sort().forEach(country => {
-        const card = document.createElement("div");
-        card.className = "country-card";
-
-        card.innerHTML = `
-          <div class="flag">${result[country].flag}</div>
-          <h3>${country}</h3>
-          <p>${result[country].count} Person(en)</p>
-        `;
-
-        card.addEventListener("click", () => {
-          countryFilter.value = country;
-          renderPeople();
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-
-        countryOverview.appendChild(card);
-      });
-    }
-
-    searchInput.addEventListener("input", renderPeople);
-    countryFilter.addEventListener("change", renderPeople);
-
-    renderCountryFilter();
-    renderCountries();
-    renderPeople();
-  </script>
-
+<header>
+  <a class="home-link" href="https://losfinkos77.github.io/homepage/">← Zurück zur Homepage</a>
+  <h1>The Tree</h1>
+  <p class="subtitle">Interaktiver Stammbaum aus deiner Excel-Datei</p>
+</header>
+<main>
+  <section class="stats"><div class="stat-card"><strong id="statPeople">0</strong><span>Personen</span></div><div class="stat-card"><strong id="statCountries">0</strong><span>Länder</span></div><div class="stat-card"><strong id="statFamilies">0</strong><span>Nachnamen</span></div></section>
+  <div class="top-panel"><input id="searchInput" type="text" placeholder="Person suchen: Name, Ort, Datum, Land..."><select id="countryFilter"><option value="all">Alle Länder</option></select></div>
+  <div class="dashboard"><section class="box"><h2 class="box-title">🔍 Suche & Ergebnisse</h2><div id="peopleGrid" class="people-grid"></div></section><aside class="box"><h2 class="box-title">🔎 Details</h2><div id="personDetail" class="empty">Klicke auf eine Person. Dann erscheinen hier Details, Eltern, Partner und Kinder.</div></aside></div>
+  <section class="box tree-box"><h2 class="box-title">🌳 Stammbaum-Ansicht</h2><div id="familyTree" class="visual-tree"><div class="empty">Wähle eine Person aus. Dann wird hier die direkte Familie als Stammbaum angezeigt.</div></div><div class="tree-legend">Tipp: Du kannst auch im Stammbaum auf Personen klicken.</div></section>
+  <section class="box map-box"><h2 class="box-title">🌍 Länderübersicht</h2><div id="countryOverview" class="country-grid"></div><p class="note">Klicke auf ein Land, um die Personen aus diesem Land anzuzeigen.</p></section>
+</main>
+<script>
+const people = [{"id": "p001", "firstName": "Johann", "lastName": "Fink", "birth": "1730", "death": "", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p002"], "children": ["p003"]}, {"id": "p002", "firstName": "Kunigunde", "lastName": "Weiß", "birth": "1730", "death": "", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p001"], "children": ["p003"]}, {"id": "p003", "firstName": "Ferdinand", "lastName": "Fink", "birth": "31.10.1754", "death": "03.05.1818", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p001", "p002"], "partners": ["p004"], "children": ["p005"]}, {"id": "p004", "firstName": "Katharina", "lastName": "Hagspiel", "birth": "04.09.1754", "death": "", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p003"], "children": ["p005"]}, {"id": "p005", "firstName": "Joh. Peter", "lastName": "Fink", "birth": "28.03.1791", "death": "30.06.1864", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p003", "p004"], "partners": ["p006"], "children": ["p007"]}, {"id": "p006", "firstName": "Anna Maria", "lastName": "Weber", "birth": "02.11.1798", "death": "06.06.1883", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p003", "p004"], "partners": ["p005"], "children": []}, {"id": "p007", "firstName": "Joh. Peter", "lastName": "Fink", "birth": "14.08.1820", "death": "05.04.1886", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p005", "p006"], "partners": ["p008"], "children": ["p009", "p0024", "p0025", "p0026", "p0027", "p0028", "p0029", "p0030"]}, {"id": "p008", "firstName": "Katharina", "lastName": "Näning", "birth": "07.09.1835", "death": "27.10.1895", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p007"], "children": []}, {"id": "p009", "firstName": "Josef", "lastName": "Fink", "birth": "24.04.1873", "death": "13.12.1947", "wedding": "", "birthPlace": "Krumbach", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": ["p0010"], "children": ["p0011"]}, {"id": "p0010", "firstName": "Anna", "lastName": "Nußbaumer", "birth": "13.11.1877", "death": "23.03.1954", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p009"], "children": ["p0011"]}, {"id": "p0011", "firstName": "Josef", "lastName": "Fink", "birth": "20.07.1906", "death": "11.05.1983", "wedding": "14.05.1938", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p009", "p0010"], "partners": ["p0012"], "children": ["p0013", "p0014", "p0015", "p0016", "p0017", "p0018", "p0019", "p0020", "p0021", "p0022", "p0023"]}, {"id": "p0012", "firstName": "Bertahilda", "lastName": "Jüngling", "birth": "20.09.1917", "death": "", "wedding": "14.05.1938", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0011"], "children": []}, {"id": "p0013", "firstName": "Erika", "lastName": "Fink", "birth": "24.06.1942", "death": "00.12.1942", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0014", "firstName": "Hildegard", "lastName": "Fink", "birth": "24.06.1942", "death": "10.02.1944 ?", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0015", "firstName": "Arthur", "lastName": "Fink", "birth": "14.05.1938", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0016", "firstName": "Josef", "lastName": "Fink", "birth": "26.03.1939", "death": "?.?.2000", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0017", "firstName": "Hildegard", "lastName": "Fink", "birth": "24.06.1942", "death": "10.02.1944 ?", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0018", "firstName": "Erika", "lastName": "Fink", "birth": "24.06.1942", "death": "?.12.1942", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0019", "firstName": "Erna", "lastName": "Seisl (geb. Fink)", "birth": "22.06.1947", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0020", "firstName": "Erika", "lastName": "Bugelnig (geb. Fink)", "birth": "21.11.1948", "death": "", "wedding": "", "birthPlace": "Krumbach", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0021", "firstName": "Emil", "lastName": "Fink", "birth": "26.06.1952", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0022", "firstName": "Werner", "lastName": "Fink", "birth": "17.04.1954", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0023", "firstName": "Heinrich", "lastName": "Fink", "birth": "26.02.1960", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0024", "firstName": "Maria", "lastName": "Fink", "birth": "28.09.1867", "death": "24.10.1960", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0025", "firstName": "Joh. Peter", "lastName": "Fink", "birth": "07.11.1868", "death": "18.02.1947", "wedding": "", "birthPlace": "Krumbach Glatz Nr. 57", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0026", "firstName": "Ferdinand", "lastName": "Fink", "birth": "16.04.1870", "death": "03.04.1955 ?", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0027", "firstName": "Innozenz", "lastName": "Fink", "birth": "25.03.1871", "death": "06.12.1939", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0028", "firstName": "Ludwig", "lastName": "Fink", "birth": "06.09.1876", "death": "24.02.1944", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0029", "firstName": "Elisabeth", "lastName": "Fink", "birth": "13.03.1880", "death": "13.04.1960", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0030", "firstName": "Xaver", "lastName": "Fink", "birth": "03.05.1881", "death": "05.01.1969", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}];
+const peopleGrid=document.getElementById('peopleGrid'), personDetail=document.getElementById('personDetail'), familyTree=document.getElementById('familyTree'), searchInput=document.getElementById('searchInput'), countryFilter=document.getElementById('countryFilter'), countryOverview=document.getElementById('countryOverview');
+let selectedPersonId=null;
+function clean(s){return (s||'').toString().trim();}
+function getFullName(p){return clean((p.firstName||'')+' '+(p.lastName||''));}
+function findPersonById(id){return people.find(p=>p.id===id);}
+function getPeopleByIds(ids){return (ids||[]).map(id=>findPersonById(id)).filter(Boolean);}
+function life(p){return `${p.birth||'?'}${p.death?' – '+p.death:''}`;}
+function avatarContent(p){return p.photo?`<img src="images/${p.photo}" alt="${getFullName(p)}">`:(p.flag||'👤');}
+function showStartMessage(){peopleGrid.innerHTML=`<div class="empty">Suche eine Person oder wähle ein Land aus der Länderübersicht.<br><br>Bei einem großen Stammbaum werden hier nicht sofort alle Personen angezeigt.</div>`;}
+function renderPeople(){const searchTerm=searchInput.value.toLowerCase().trim(), selectedCountry=countryFilter.value; const filtered=people.filter(p=>{const text=`${p.firstName} ${p.lastName} ${p.birth} ${p.death} ${p.birthPlace} ${p.deathPlace} ${p.country} ${p.profession} ${p.notes}`.toLowerCase(); return text.includes(searchTerm)&&(selectedCountry==='all'||p.country===selectedCountry);}); peopleGrid.innerHTML=''; if(filtered.length===0){peopleGrid.innerHTML='<p class="empty">Keine Person gefunden.</p>'; return;} filtered.forEach(p=>{const button=document.createElement('button'); button.className='person-card'; if(p.id===selectedPersonId)button.classList.add('active'); button.innerHTML=`<h3>${p.flag||'👤'} ${getFullName(p)}</h3><p>🎂 ${life(p)}</p><p>📍 ${p.birthPlace||'Unbekannt'}</p><div class="badge-row"><span class="badge">${p.country||'Unknown'}</span></div>`; button.addEventListener('click',()=>selectPerson(p.id)); peopleGrid.appendChild(button);});}
+function selectPerson(id){selectedPersonId=id; renderPeople(); renderPersonDetail(id); renderFamilyTree(id);}
+function renderPersonDetail(id){const p=findPersonById(id); if(!p){personDetail.innerHTML='<p class="empty">Person nicht gefunden.</p>'; return;} personDetail.className=''; personDetail.innerHTML=`<div class="detail-header"><div class="avatar">${avatarContent(p)}</div><div><h2>${getFullName(p)}</h2><p>${life(p)}</p></div></div><div class="info"><div class="info-item"><strong>Geburtsort:</strong><br>${p.birthPlace||'Unbekannt'}</div><div class="info-item"><strong>Sterbeort:</strong><br>${p.deathPlace||'Unbekannt'}</div><div class="info-item"><strong>Land:</strong><br>${p.flag||''} ${p.country||'Unbekannt'}</div><div class="info-item"><strong>Hochzeit:</strong><br>${p.wedding||'Unbekannt'}</div><div class="info-item"><strong>Beruf:</strong><br>${p.profession||'Unbekannt'}</div><div class="info-item"><strong>Notizen:</strong><br>${p.notes||'Keine Notizen vorhanden.'}</div></div><div class="relation-section"><h3>Eltern</h3>${renderRelationButtons(p.parents)}<h3>Partner</h3>${renderRelationButtons(p.partners)}<h3>Kinder</h3>${renderRelationButtons(p.children)}</div>`; addRelationEvents();}
+function renderRelationButtons(ids){const related=getPeopleByIds(ids); if(related.length===0)return '<p class="empty">Keine Einträge vorhanden.</p>'; return related.map(p=>`<button class="relation-button" data-id="${p.id}">${p.flag||'👤'} ${getFullName(p)}</button>`).join('');}
+function addRelationEvents(){document.querySelectorAll('.relation-button').forEach(b=>b.addEventListener('click',()=>{selectPerson(b.getAttribute('data-id')); window.scrollTo({top:0,behavior:'smooth'});}));}
+function renderFamilyTree(id){const p=findPersonById(id); if(!p)return; const parents=getPeopleByIds(p.parents), partners=getPeopleByIds(p.partners), children=getPeopleByIds(p.children); familyTree.innerHTML=`<div class="tree-label">Eltern</div><div class="tree-level parents">${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}</div><div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div><div class="tree-label">Person und Partner</div><div class="tree-level main-level"><div class="tree-node main" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>${partners.length?partners.map(partnerNode).join(''):''}</div><div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div><div class="tree-label">Kinder</div><div class="tree-level children">${children.length?children.map(treeNode).join(''):emptyNode('Keine Kinder eingetragen')}</div>`; document.querySelectorAll('.tree-node[data-id]').forEach(item=>item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id'))));}
+function treeNode(p){return `<div class="tree-node" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
+function partnerNode(p){return `<div class="tree-node partner" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
+function emptyNode(text){return `<div class="tree-node empty-node"><div class="node-icon">—</div><div class="node-name">${text}</div></div>`;}
+function renderCountryFilter(){[...new Set(people.map(p=>p.country).filter(Boolean))].sort().forEach(c=>{const o=document.createElement('option'); o.value=c; o.textContent=c; countryFilter.appendChild(o);});}
+function renderCountries(){const result={}; people.forEach(p=>{if(!p.country)return; if(!result[p.country])result[p.country]={count:0,flag:p.flag||'🌍'}; result[p.country].count++;}); countryOverview.innerHTML=''; Object.keys(result).sort().forEach(country=>{const card=document.createElement('div'); card.className='country-card'; card.innerHTML=`<div class="flag">${result[country].flag}</div><h3>${country}</h3><p>${result[country].count} Person(en)</p>`; card.addEventListener('click',()=>{countryFilter.value=country; renderPeople(); window.scrollTo({top:0,behavior:'smooth'});}); countryOverview.appendChild(card);});}
+function updateStats(){document.getElementById('statPeople').textContent=people.length; document.getElementById('statCountries').textContent=new Set(people.map(p=>p.country).filter(Boolean)).size; document.getElementById('statFamilies').textContent=new Set(people.map(p=>p.lastName).filter(Boolean)).size;}
+searchInput.addEventListener('input',()=>{if(searchInput.value.trim()===''&&countryFilter.value==='all')showStartMessage(); else renderPeople();});
+countryFilter.addEventListener('change',()=>{if(searchInput.value.trim()===''&&countryFilter.value==='all')showStartMessage(); else renderPeople();});
+renderCountryFilter(); renderCountries(); updateStats(); selectPerson('p001'); showStartMessage();
+</script>
 </body>
 </html>
