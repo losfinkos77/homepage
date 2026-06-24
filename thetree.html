@@ -179,6 +179,30 @@
       box-shadow: 0 0 24px rgba(0,255,170,.13);
     }
 
+
+    /* Logische Stammbaum-Reihenfolge: Vorfahren oben, Nachkommen unten */
+    .tree-summary-bar {
+      display:inline-block;
+      margin:0 auto 32px;
+      padding:12px 18px;
+      border-radius:999px;
+      background:rgba(0,191,255,.12);
+      border:1px solid rgba(0,191,255,.30);
+      color:#dff7ff;
+      font-size:15px;
+    }
+    .tree-center-panel {
+      max-width:900px;
+      margin-top:0;
+      margin-bottom:36px;
+    }
+    .ancestor-generation .tree-node {
+      border-color:rgba(255,255,255,.18);
+    }
+    .descendant-generation .tree-node {
+      border-color:rgba(0,191,255,.32);
+    }
+
     @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:950px;} .tree-node{min-width:190px;} }
   </style>
 </head>
@@ -245,6 +269,7 @@ function getParentsForPeople(personList){
 }
 function renderFamilyTree(id){
   const p=findPersonById(id); if(!p)return;
+
   const parents=getPeopleByIds(p.parents);
   const grandparents=getParentsForPeople(parents);
   const greatGrandparents=getParentsForPeople(grandparents);
@@ -256,10 +281,35 @@ function renderFamilyTree(id){
   const totalShown = greatGrandparents.length + grandparents.length + parents.length + 1 + partners.length + children.length + grandchildren.length + greatGrandchildren.length;
 
   familyTree.innerHTML=`
-    <div class="core-family-panel">
-      <div class="core-family-title">Direkte Familie von ${getFullName(p)}</div>
+    <div class="tree-summary-bar">
+      <strong>${getFullName(p)}</strong> · ${totalShown} Person(en) in dieser Ansicht · ${partners.length} Partner · ${children.length} Kind(er)
+    </div>
 
-      <div class="tree-label">Person und Partner</div>
+    <div class="tree-label">Urgroßeltern / ältere Generation</div>
+    <div class="tree-level wide-generation ancestor-generation">
+      ${greatGrandparents.length?greatGrandparents.map(person=>treeNode(person,'small-generation ancestor')).join(''):emptyNode('Keine Urgroßeltern eingetragen')}
+    </div>
+    <div class="generation-note">${greatGrandparents.length?greatGrandparents.length+' Person(en) in dieser Generation':'Älteste bekannte Generation oben'}</div>
+
+    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
+    <div class="tree-label">Großeltern</div>
+    <div class="tree-level wide-generation ancestor-generation">
+      ${grandparents.length?grandparents.map(person=>treeNode(person,'small-generation ancestor')).join(''):emptyNode('Keine Großeltern eingetragen')}
+    </div>
+    <div class="generation-note">${grandparents.length?grandparents.length+' Person(en) in dieser Generation':''}</div>
+
+    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
+    <div class="tree-label">Eltern</div>
+    <div class="tree-level parents wide-generation ancestor-generation">
+      ${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}
+    </div>
+
+    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
+    <div class="core-family-panel tree-center-panel">
+      <div class="core-family-title">Ausgewählte Person und Partner</div>
       <div class="core-couple">
         <div class="tree-node main" data-id="${p.id}">
           <div class="node-icon">${p.flag||'👤'}</div>
@@ -270,52 +320,29 @@ function renderFamilyTree(id){
         ${partners.length?'<div class="couple-plus">+</div>':''}
         ${partners.length?partners.map(partnerNode).join(''):emptyNode('Kein Partner eingetragen')}
       </div>
-
-      <div class="tree-middle-line"><div class="tree-connector-down"></div></div>
-
-      <div class="children-immediate">
-        <div class="tree-label">Kinder sofort sichtbar</div>
-        <div class="children-count">${children.length?children.length+' Kind(er) gefunden':'Keine Kinder gefunden'} · Insgesamt sichtbar: ${totalShown} Person(en)</div>
-        <div class="tree-level children wide-generation">
-          ${children.length?children.map(childNode).join(''):emptyNode('Keine Kinder eingetragen')}
-        </div>
-      </div>
     </div>
-
-    <div class="tree-label">Eltern</div>
-    <div class="tree-level parents wide-generation">
-      ${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}
-    </div>
-
-    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="tree-label">Großeltern</div>
-    <div class="tree-level wide-generation">
-      ${grandparents.length?grandparents.map(person=>treeNode(person,'small-generation')).join(''):emptyNode('Keine Großeltern eingetragen')}
-    </div>
-    <div class="generation-note">${grandparents.length?grandparents.length+' Person(en) in dieser Generation':''}</div>
-
-    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="tree-label">Urgroßeltern / ältere Generation</div>
-    <div class="tree-level wide-generation">
-      ${greatGrandparents.length?greatGrandparents.map(person=>treeNode(person,'small-generation')).join(''):emptyNode('Keine Urgroßeltern eingetragen')}
-    </div>
-    <div class="generation-note">${greatGrandparents.length?greatGrandparents.length+' Person(en) in dieser Generation':''}</div>
 
     <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
 
-    <div class="tree-label">Enkel</div>
-    <div class="children-count">${grandchildren.length?grandchildren.length+' Enkel / Person(en) gefunden':'Keine Enkel eingetragen'}</div>
-    <div class="tree-level wide-generation">
-      ${grandchildren.length?grandchildren.map(person=>treeNode(person,'descendant')).join(''):emptyNode('Keine Enkel eingetragen')}
+    <div class="tree-label">Kinder</div>
+    <div class="children-count">${children.length?children.length+' Kind(er) gefunden':'Keine Kinder eingetragen'}</div>
+    <div class="tree-level children wide-generation descendant-generation">
+      ${children.length?children.map(childNode).join(''):emptyNode('Keine Kinder eingetragen')}
+    </div>
+
+    <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
+    <div class="tree-label">Enkelkinder</div>
+    <div class="children-count">${grandchildren.length?grandchildren.length+' Enkelkind(er) gefunden':'Keine Enkelkinder eingetragen'}</div>
+    <div class="tree-level wide-generation descendant-generation">
+      ${grandchildren.length?grandchildren.map(person=>treeNode(person,'descendant')).join(''):emptyNode('Keine Enkelkinder eingetragen')}
     </div>
 
     <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
 
     <div class="tree-label">Urenkel / weitere Generation</div>
     <div class="children-count">${greatGrandchildren.length?greatGrandchildren.length+' weitere Person(en) gefunden':'Keine weitere Generation eingetragen'}</div>
-    <div class="tree-level wide-generation">
+    <div class="tree-level wide-generation descendant-generation">
       ${greatGrandchildren.length?greatGrandchildren.map(person=>treeNode(person,'great-descendant')).join(''):emptyNode('Keine Urenkel eingetragen')}
     </div>
   `;
