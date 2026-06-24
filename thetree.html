@@ -552,8 +552,13 @@ function refreshLanguage(){
 }
 
 function showStartMessage(){peopleGrid.innerHTML=`<div class="empty">${t('startMessage')}</div>`;}
+function searchTitleText(term,count){
+  const labels={de:'Suche',en:'Search',pl:'Szukaj',fr:'Recherche',es:'Búsqueda',it:'Ricerca',pt:'Pesquisa',nl:'Zoeken',cs:'Hledat',hu:'Keresés',tr:'Arama',zh:'搜索'};
+  return `${labels[currentLang]||labels.de}: "${term}" — ${t('personCount',{count})}`;
+}
 function renderPeople(options={}){
-  const searchTerm=searchInput.value.toLowerCase();
+  const rawSearch=searchInput.value.trim();
+  const searchTerm=rawSearch.toLowerCase();
   const selectedCountry=countryFilter.value;
   const surname=options.surname || activeSurnameFilter;
   const filtered=people.filter(p=>{
@@ -562,7 +567,11 @@ function renderPeople(options={}){
     return text.includes(searchTerm) && (selectedCountry==='all'||p.country===selectedCountry);
   });
   peopleGrid.innerHTML='';
-  if(surname)peopleGrid.innerHTML=`<p class="filter-title">${t('surnameResult',{surname,count:filtered.length})}</p>`;
+  if(surname){
+    peopleGrid.innerHTML=`<p class="filter-title">${t('surnameResult',{surname,count:filtered.length})}</p>`;
+  } else if(rawSearch){
+    peopleGrid.innerHTML=`<p class="filter-title">${searchTitleText(rawSearch,filtered.length)}</p>`;
+  }
   if(filtered.length===0){peopleGrid.innerHTML+=`<p class="empty">${t('noPersonFound')}</p>`; return;}
   filtered.forEach(p=>{
     const btn=document.createElement('button'); btn.className='person-card'; if(p.id===selectedPersonId)btn.classList.add('active');
@@ -662,7 +671,23 @@ backToSearchButton.addEventListener('click',()=>setView('search'));
 peopleQuickButton.addEventListener('click',showAllPeople);
 countriesQuickButton.addEventListener('click',showCountries);
 surnamesQuickButton.addEventListener('click',showSurnames);
-searchInput.addEventListener('input',()=>{activeSurnameFilter=null; activeCountryTree=null; setView('search'); if(searchInput.value.trim()===''&&countryFilter.value==='all')showStartMessage(); else renderPeople();});
+searchInput.addEventListener('input',()=>{
+  activeSurnameFilter=null;
+  activeCountryTree=null;
+  document.querySelectorAll('.surname-card').forEach(card=>card.classList.remove('active'));
+  setView('search');
+
+  // Beim Tippen soll immer wirklich die komplette Personenliste durchsucht werden.
+  // Ein zuvor gewähltes Land oder ein Nachname darf die Suche nicht blockieren.
+  if(searchInput.value.trim()!==''){
+    countryFilter.value='all';
+    renderPeople();
+    return;
+  }
+
+  if(countryFilter.value==='all')showStartMessage();
+  else renderPeople();
+});
 countryFilter.addEventListener('change',()=>{activeSurnameFilter=null; if(searchInput.value.trim()===''&&countryFilter.value==='all'){activeCountryTree=null; showStartMessage(); renderFamilyTree(selectedPersonId||'p001');} else {renderPeople(); if(countryFilter.value!=='all')selectCountry(countryFilter.value);} });
 languageSelect.addEventListener('change',()=>{currentLang=languageSelect.value; localStorage.setItem('thetreeLang',currentLang); refreshLanguage();});
 
