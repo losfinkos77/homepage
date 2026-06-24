@@ -553,21 +553,50 @@ function avatarContent(p){return p.photo?`<img src="images/${p.photo}" alt="${ge
 function normalizeGenderValue(value){
   return clean(value).toLowerCase();
 }
+
+function normalizeNameForGender(value){
+  return clean(value)
+    .toLowerCase()
+    .replace(/ł/g, 'l')
+    .replace(/Ł/g, 'l')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[.,]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function inferGenderFromName(person){
-  const explicitGender = normalizeGenderValue(person.gender || person.geschlecht || person.sex || person.Geschlecht);
-  if(['m','mann','männlich','maennlich','male','man','herr'].includes(explicitGender)) return 'male';
-  if(['w','f','frau','weiblich','female','woman','dame'].includes(explicitGender)) return 'female';
+  // Beste Lösung: In Excel eine Spalte "Geschlecht" verwenden: m oder w.
+  const explicitGender = normalizeGenderValue(person.gender || person.geschlecht || person.sex || person.Geschlecht || person.geschl || person.Geschl);
+  if(['m','mann','männlich','maennlich','male','man','herr','masculin','masculino','maschio'].includes(explicitGender)) return 'male';
+  if(['w','f','frau','weiblich','female','woman','dame','féminin','feminin','femenino','femmina'].includes(explicitGender)) return 'female';
 
-  const first = clean(person.firstName).toLowerCase();
+  const first = normalizeNameForGender(person.firstName);
+  const last = normalizeNameForGender(person.lastName);
+  const tokens = first.split(/[\s-]+/).filter(Boolean);
+
   const femaleNames = [
-    'anna','maria','kunigunde','katharina','catharina','elisabeth','elizabeth','erika','hildegard','erna','bertahilda','berta','bertha','barbara','magdalena','theresia','johanna','margaretha','margarete','susanna','veronika','franziska','helena','rosa','rosemarie','monika','christina','petra','sabine','claudia','karin','brigitte'
-  ];
-  const maleNames = [
-    'johann','joh.','josef','joseph','ferdinand','peter','arthur','emil','werner','heinrich','xaver','ludwig','innozenz','franz','karl','carl','anton','georg','andreas','martin','michael','christian','sebastian','matthias','thomas','hubert','alois','hermann','alfred','rudolf','max','maximilian'
-  ];
+    // Deutsch / allgemein
+    'anna','maria','kunigunde','katharina','catharina','elisabeth','elizabeth','erika','hildegard','erna','bertahilda','berta','bertha','barbara','magdalena','theresia','johanna','margaretha','margarete','susanna','veronika','franziska','helena','rosa','rosemarie','monika','christina','petra','sabine','claudia','karin','brigitte','eva','sofia','sophia','victoria','wiktoria',
+    // Polnisch
+    'katarzyna','malgorzata','agnieszka','ewa','zofia','jadwiga','elzbieta','marianna','stanislawa','krystyna','halina','danuta','bozena','bożena','dorota','joanna','iwona','renata','urszula','alicja','beata','grażyna','grazyna','teresa','aniela','franciszka','josefa','jozefa','józefa','bronislawa','bronisława','wladyslawa','władysława','genowefa','cecilia','lucja','łucja','lucyna','stefania','leokadia','julia','natalia','karolina','weronika','aleksandra','martyna','paulina'
+  ].map(normalizeNameForGender);
 
-  if(femaleNames.some(name => first === name || first.startsWith(name + ' ') || first.includes(' ' + name))) return 'female';
-  if(maleNames.some(name => first === name || first.startsWith(name + ' ') || first.includes(' ' + name))) return 'male';
+  const maleNames = [
+    // Deutsch / allgemein
+    'johann','joh','josef','joseph','ferdinand','peter','arthur','emil','werner','heinrich','xaver','ludwig','innozenz','franz','karl','carl','anton','georg','andreas','martin','michael','christian','sebastian','matthias','thomas','hubert','alois','hermann','alfred','rudolf','max','maximilian',
+    // Polnisch
+    'jan','piotr','pawel','paweł','stanislaw','stanisław','krzysztof','andrzej','tomasz','marek','michal','michał','wojciech','wladyslaw','władysław','kazimierz','tadeusz','zbigniew','mariusz','grzegorz','lukasz','łukasz','adam','robert','jacek','mieczyslaw','mieczysław','bogdan','roman','dariusz','jerzy','marcin','rafal','rafał','radoslaw','radosław','henryk','czeslaw','czesław','bronislaw','bronisław','jozef','józef','franciszek','stefan','wiktor','leon','ignacy','karol','aleksander','jakub','filip','kamil','bartosz'
+  ].map(normalizeNameForGender);
+
+  if(tokens.some(token => femaleNames.includes(token)) || femaleNames.some(name => first === name || first.startsWith(name + ' '))) return 'female';
+  if(tokens.some(token => maleNames.includes(token)) || maleNames.some(name => first === name || first.startsWith(name + ' '))) return 'male';
+
+  // Polnische Nachnamen helfen manchmal zusätzlich:
+  // Kowalski = meist männlich, Kowalska = meist weiblich.
+  if(last.endsWith('ska') || last.endsWith('cka') || last.endsWith('dzka')) return 'female';
+  if(last.endsWith('ski') || last.endsWith('cki') || last.endsWith('dzki')) return 'male';
 
   return 'unknown';
 }
