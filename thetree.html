@@ -526,10 +526,23 @@ function filterBySurname(surname){
   searchInput.value='';
   countryFilter.value='all';
   renderPeople({surname});
+
+  const matchingPeople = people
+    .filter(person => cleanSurname(person.lastName) === surname)
+    .sort((a,b) => getBirthYearNumber(a) - getBirthYearNumber(b) || getFullName(a).localeCompare(getFullName(b),'de'));
+
+  if (matchingPeople.length > 0) {
+    selectedPersonId = matchingPeople[0].id;
+    renderPeople({surname});
+    renderPersonDetail(selectedPersonId);
+    renderFamilyTree(selectedPersonId);
+  }
+
   setView('search');
   document.querySelectorAll('.surname-card').forEach(card=>card.classList.remove('active'));
   const activeCard=[...document.querySelectorAll('.surname-card')].find(card=>card.dataset.surname===surname);
   if(activeCard)activeCard.classList.add('active');
+
   const resultsBox=document.querySelector('.results-box');
   if(resultsBox)resultsBox.scrollIntoView({behavior:'smooth',block:'start'});
 }
