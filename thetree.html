@@ -343,6 +343,11 @@
       pointer-events: none;
     }
 
+
+    .language-switcher { margin-top:18px; display:flex; justify-content:center; align-items:center; gap:10px; color:#ccc; flex-wrap:wrap; }
+    .language-switcher label { font-size:14px; color:#ccc; }
+    .language-switcher select { width:auto; min-width:230px; padding:10px 14px; }
+
     @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:950px;} .tree-node{min-width:190px;} }
   </style>
 </head>
@@ -351,6 +356,23 @@
   <a class="home-link" href="https://losfinkos77.github.io/homepage/">← Zurück zur Homepage</a>
   <h1>The Tree</h1>
   <p class="subtitle">Interaktiver Stammbaum aus deiner Excel-Datei</p>
+  <div class="language-switcher">
+    <label id="languageLabel" for="languageSelect">Sprache:</label>
+    <select id="languageSelect" aria-label="Sprache auswählen">
+      <option value="de">Deutsch</option>
+      <option value="en">English</option>
+      <option value="pl">Polski</option>
+      <option value="fr">Français</option>
+      <option value="es">Español</option>
+      <option value="it">Italiano</option>
+      <option value="pt">Português</option>
+      <option value="nl">Nederlands</option>
+      <option value="cs">Čeština</option>
+      <option value="hu">Magyar</option>
+      <option value="tr">Türkçe</option>
+      <option value="zh">中文</option>
+    </select>
+  </div>
 </header>
 <main>
   <section class="stats">
@@ -405,328 +427,234 @@
     </section>
   </section>
 </main>
+
 <script>
 const people = [{"id": "p001", "firstName": "Johann", "lastName": "Fink", "birth": "1730", "death": "", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p002"], "children": ["p003"]}, {"id": "p002", "firstName": "Kunigunde", "lastName": "Weiß", "birth": "1730", "death": "", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p001"], "children": ["p003"]}, {"id": "p003", "firstName": "Ferdinand", "lastName": "Fink", "birth": "31.10.1754", "death": "03.05.1818", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p001", "p002"], "partners": ["p004"], "children": ["p005", "p006"]}, {"id": "p004", "firstName": "Katharina", "lastName": "Hagspiel", "birth": "04.09.1754", "death": "", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p003"], "children": ["p005", "p006"]}, {"id": "p005", "firstName": "Joh. Peter", "lastName": "Fink", "birth": "28.03.1791", "death": "30.06.1864", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p003", "p004"], "partners": ["p006"], "children": ["p007"]}, {"id": "p006", "firstName": "Anna Maria", "lastName": "Weber", "birth": "02.11.1798", "death": "06.06.1883", "wedding": "", "birthPlace": "Riefensberg", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p003", "p004"], "partners": ["p005"], "children": ["p007"]}, {"id": "p007", "firstName": "Joh. Peter", "lastName": "Fink", "birth": "14.08.1820", "death": "05.04.1886", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p005", "p006"], "partners": ["p008"], "children": ["p009", "p0024", "p0025", "p0026", "p0027", "p0028", "p0029", "p0030", "p0031", "p0032"]}, {"id": "p008", "firstName": "Katharina", "lastName": "Näning", "birth": "07.09.1835", "death": "27.10.1895", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p007"], "children": ["p009", "p0024", "p0025", "p0026", "p0027", "p0028", "p0029", "p0030", "p0031", "p0032"]}, {"id": "p009", "firstName": "Josef", "lastName": "Fink", "birth": "24.04.1873", "death": "13.12.1947", "wedding": "", "birthPlace": "Krumbach", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": ["p0010"], "children": ["p0011"]}, {"id": "p0010", "firstName": "Anna", "lastName": "Nußbaumer", "birth": "13.11.1877", "death": "23.03.1954", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p009"], "children": ["p0011"]}, {"id": "p0011", "firstName": "Josef", "lastName": "Fink", "birth": "20.07.1906", "death": "11.05.1983", "wedding": "14.05.1938", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p009", "p0010"], "partners": ["p0012"], "children": ["p0013", "p0014", "p0015", "p0016", "p0017", "p0018", "p0019", "p0020", "p0021", "p0022", "p0023"]}, {"id": "p0012", "firstName": "Bertahilda", "lastName": "Jüngling", "birth": "20.09.1917", "death": "", "wedding": "14.05.1938", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0011"], "children": ["p0013", "p0014", "p0015", "p0016", "p0017", "p0018", "p0019", "p0020", "p0021", "p0022", "p0023"]}, {"id": "p0013", "firstName": "Erika", "lastName": "Fink", "birth": "24.06.1942", "death": "00.12.1942", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0014", "firstName": "Hildegard", "lastName": "Fink", "birth": "24.06.1942", "death": "10.02.1944 ?", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0015", "firstName": "Arthur", "lastName": "Fink", "birth": "14.05.1938", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0016", "firstName": "Josef", "lastName": "Fink", "birth": "26.03.1939", "death": "?.?.2000", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0017", "firstName": "Hildegard", "lastName": "Fink", "birth": "24.06.1942", "death": "10.02.1944 ?", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0018", "firstName": "Erika", "lastName": "Fink", "birth": "24.06.1942", "death": "?.12.1942", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0019", "firstName": "Erna", "lastName": "Seisl (geb. Fink)", "birth": "22.06.1947", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0020", "firstName": "Erika", "lastName": "Bugelnig (geb. Fink)", "birth": "21.11.1948", "death": "", "wedding": "", "birthPlace": "Krumbach", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0021", "firstName": "Emil", "lastName": "Fink", "birth": "26.06.1952", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0022", "firstName": "Werner", "lastName": "Fink", "birth": "17.04.1954", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0023", "firstName": "Heinrich", "lastName": "Fink", "birth": "26.02.1960", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p0011", "p0012"], "partners": [], "children": []}, {"id": "p0024", "firstName": "Maria", "lastName": "Fink", "birth": "28.09.1867", "death": "24.10.1960", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0025", "firstName": "Joh. Peter", "lastName": "Fink", "birth": "07.11.1868", "death": "18.02.1947", "wedding": "", "birthPlace": "Krumbach Glatz Nr. 57", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0026", "firstName": "Ferdinand", "lastName": "Fink", "birth": "16.04.1870", "death": "03.04.1955 ?", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0027", "firstName": "Innozenz", "lastName": "Fink", "birth": "25.03.1871", "death": "06.12.1939", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0028", "firstName": "Ludwig", "lastName": "Fink", "birth": "06.09.1876", "death": "24.02.1944", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0029", "firstName": "Elisabeth", "lastName": "Fink", "birth": "13.03.1880", "death": "13.04.1960", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0030", "firstName": "Xaver", "lastName": "Fink", "birth": "03.05.1881", "death": "05.01.1969", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0031", "firstName": "Elisabeth", "lastName": "Fink", "birth": "21.07.1874", "death": "03.08.1874", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0032", "firstName": "Elisabeth", "lastName": "Fink", "birth": "15.01.1877", "death": "29.09.1877", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Austria", "flag": "🇦🇹", "profession": "", "notes": "", "photo": "", "parents": ["p007", "p008"], "partners": [], "children": []}, {"id": "p0033", "firstName": "Thomas", "lastName": "Fink", "birth": "", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0034"], "children": ["p0035"]}, {"id": "p0034", "firstName": "Katharina", "lastName": "Baderin", "birth": "", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0033"], "children": ["p0035"]}, {"id": "p0035", "firstName": "Johannes", "lastName": "Fink", "birth": "20.10.1737", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": ["p0033", "p0034"], "partners": ["p0036"], "children": ["p0037"]}, {"id": "p0036", "firstName": "Christine", "lastName": "Bechterin", "birth": "", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0035"], "children": ["p0037"]}, {"id": "p0037", "firstName": "Johann", "lastName": "Fink", "birth": "05.03.1741", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": ["p0035", "p0036"], "partners": ["p0040"], "children": []}, {"id": "p0038", "firstName": "Maria", "lastName": "Weber (geb. Finkin)", "birth": "07.10.1767", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0041"], "children": []}, {"id": "p0039", "firstName": "Anna Maria", "lastName": "Fink (geb. Weber)", "birth": "02.10.1798", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": [], "children": []}, {"id": "p0040", "firstName": "Annemarie", "lastName": "Steyrerin", "birth": "03.12.1743", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0037"], "children": ["p0038"]}, {"id": "p0041", "firstName": "Michael", "lastName": "Weber", "birth": "17.08.1769", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0038"], "children": ["p0039"]}, {"id": "p0042", "firstName": "Jan", "lastName": "Balut", "birth": "1805", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": [], "partners": [], "children": ["p0043"]}, {"id": "p0043", "firstName": "Jan", "lastName": "Balut", "birth": "1835", "death": "", "wedding": "", "birthPlace": "Wola Rzedzinska", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": ["p0042"], "partners": ["p0044"], "children": ["p0047"]}, {"id": "p0044", "firstName": "Maria", "lastName": "Balut (geb. Ciochon)", "birth": "1845", "death": "1912", "wedding": "", "birthPlace": "Wola Rzedzinska", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": ["p0045", "p0046"], "partners": ["p0043"], "children": ["p0047"]}, {"id": "p0045", "firstName": "Wojciech", "lastName": "Ciochon", "birth": "1820", "death": "04.03.1905", "wedding": "", "birthPlace": "Wola Rzedzinska", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0046"], "children": ["p0044"]}, {"id": "p0046", "firstName": "Maria", "lastName": "Ciochon (geb. Zima)", "birth": "1827", "death": "1900", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0045"], "children": ["p0044"]}, {"id": "p0047", "firstName": "Tomasz", "lastName": "Ciochon", "birth": "1865", "death": "15.06.1936", "wedding": "", "birthPlace": "Wola Rzedzinska", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": ["p0043", "p0044"], "partners": ["p0048"], "children": ["p0051"]}, {"id": "p0048", "firstName": "Franciszka", "lastName": "Zajdel (geb. Ciochon)", "birth": "1878", "death": "10.10.1934", "wedding": "", "birthPlace": "Krosno", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0047"], "children": ["p0051"]}, {"id": "p0049", "firstName": "Kazimierz", "lastName": "Zajdel", "birth": "", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0050"], "children": ["p0048"]}, {"id": "p0050", "firstName": "Maria", "lastName": "Zajdel (geb. Wilk)", "birth": "", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0049"], "children": ["p0048"]}, {"id": "p0051", "firstName": "Andrzej", "lastName": "Ciochon", "birth": "10.10.1903", "death": "?.11.1967", "wedding": "", "birthPlace": "Tarnow", "deathPlace": "Tarnow", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": ["p0047", "p0048"], "partners": ["p0052"], "children": ["p0055"]}, {"id": "p0052", "firstName": "Janina", "lastName": "Ciochon (geb. Jaworska)", "birth": "23.06.1909", "death": "1982", "wedding": "", "birthPlace": "Tarnow", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0051"], "children": ["p0055"]}, {"id": "p0053", "firstName": "Ignacy", "lastName": "Wilczynski", "birth": "24.10.1890", "death": "21.04.1950", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0054"], "children": ["p0052"]}, {"id": "p0054", "firstName": "Antonina", "lastName": "Wilczynski (Jaworska)  (geb. Szponder)", "birth": "02.11.1887", "death": "09.02.1966", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0053"], "children": ["p0052"]}, {"id": "p0055", "firstName": "Zygmund", "lastName": "Ciochon", "birth": "1936", "death": "18.06.1905", "wedding": "", "birthPlace": "Tarnow", "deathPlace": "Roznow", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": ["p0051", "p0052"], "partners": ["p0056"], "children": []}, {"id": "p0056", "firstName": "Zofia Michalina", "lastName": "Ciochon (geb. Bacik)", "birth": "05.11.1935", "death": "", "wedding": "", "birthPlace": "Tarnow", "deathPlace": "", "country": "Poland", "flag": "🇵🇱", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0055"], "children": []}, {"id": "p0057", "firstName": "Franciszek", "lastName": "Bacik", "birth": "", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0058"], "children": ["p0056"]}, {"id": "p0058", "firstName": "Maria", "lastName": "Bacik (geb. Gruszka)", "birth": "", "death": "", "wedding": "", "birthPlace": "", "deathPlace": "", "country": "", "flag": "", "profession": "", "notes": "", "photo": "", "parents": [], "partners": ["p0057"], "children": ["p0057"]}];
-const peopleGrid=document.getElementById('peopleGrid'), personDetail=document.getElementById('personDetail'), familyTree=document.getElementById('familyTree'), searchInput=document.getElementById('searchInput'), countryFilter=document.getElementById('countryFilter'), countryOverview=document.getElementById('countryOverview'), surnameOverview=document.getElementById('surnameOverview'), countryBox=document.getElementById('countryBox'), surnameBox=document.getElementById('surnameBox'), searchView=document.getElementById('searchView'), treeView=document.getElementById('treeView'), searchTab=document.getElementById('searchTab'), treeTab=document.getElementById('treeTab'), backToSearchButton=document.getElementById('backToSearchButton'), peopleQuickButton=document.getElementById('peopleQuickButton'), countriesQuickButton=document.getElementById('countriesQuickButton'), surnamesQuickButton=document.getElementById('surnamesQuickButton');
-let selectedPersonId=null;
-let activeSurnameFilter=null;
+
+const translations = {
+  de: {
+    langName:'Deutsch', htmlLang:'de', pageTitle:'The Tree | Los Finkos', language:'Sprache:', backHome:'← Zurück zur Homepage', subtitle:'Interaktiver Stammbaum aus deiner Excel-Datei',
+    people:'Personen', countries:'Länder', surnames:'Nachnamen', quickHint:'Links suchen oder filtern. Beim Klick auf eine Person öffnet sich der Stammbaum sofort rechts daneben.',
+    treeTab:'🌳 Stammbaum Ansicht', searchTab:'🔍 Suche & Ergebnisse', searchPlaceholder:'Person suchen: Name, Ort, Datum, Land...', allCountries:'Alle Länder', countriesOverview:'🌍 Länderübersicht', countriesNote:'Klicke auf ein Land, um rechts den passenden Landes-Stammbaum anzuzeigen.', surnamesTitle:'🔤 Nachnamen', surnamesNote:'Klicke auf einen Nachnamen, um passende Personen anzuzeigen.',
+    searchResults:'🔍 Suche & Ergebnisse', details:'🔎 Details', detailsPlaceholder:'Klicke auf eine Person. Dann erscheinen hier Details, Eltern, Partner und Kinder.', treeTitle:'🌳 Stammbaum-Ansicht', treePlaceholder:'Wähle links eine Person aus. Der Stammbaum öffnet sich hier direkt daneben.', backToSearch:'← Zur Suche', treeLegend:'Tipp: Du kannst auch im Stammbaum auf Personen klicken.',
+    startMessage:'Klicke oben auf <strong>Personen</strong>, wähle ein <strong>Land</strong> oder klicke auf einen <strong>Nachnamen</strong>.<br><br>Du kannst auch direkt im Suchfeld suchen.', noPersonFound:'Keine Person gefunden.', allPeopleShown:'Alle Personen werden angezeigt.', surnameResult:'Nachname: {surname} — {count} Person(en) gefunden', personCount:'{count} Person(en)',
+    birthPlace:'Geburtsort', deathPlace:'Sterbeort', country:'Land', wedding:'Hochzeit', profession:'Beruf', notes:'Notizen', parents:'Eltern', partner:'Partner', children:'Kinder', unknown:'Unbekannt', noNotes:'Keine Notizen vorhanden.', noEntries:'Keine Einträge vorhanden.',
+    greatGrandparents:'Urgroßeltern / ältere Generation', grandparents:'Großeltern', selectedParents:'Eltern', selectedAndPartner:'Ausgewählte Person + Partner', grandchildren:'Enkelkinder', greatGrandchildren:'Urenkel / weitere Generation',
+    noGreatGrandparents:'Keine Urgroßeltern eingetragen', noGrandparents:'Keine Großeltern eingetragen', noParents:'Keine Eltern eingetragen', noPartners:'Kein Partner eingetragen', noChildren:'Keine Kinder eingetragen', noGrandchildren:'Keine Enkelkinder eingetragen', noGreatGrandchildren:'Keine Urenkel eingetragen',
+    noCountryPeople:'Für dieses Land sind noch keine Personen eingetragen.', countryTreeDesc:'{count} Person(en) aus diesem Land · nach Generationen sortiert', countryView:'Landesansicht', countryViewDesc:'Rechts wird der Stammbaum / die Generationenübersicht für dieses Land angezeigt.', tip:'Tipp', countryTip:'Klicke rechts auf eine Person, um wieder ihren persönlichen Stammbaum zu öffnen.',
+    gen0:'Älteste bekannte Generation', gen1:'Nächste Generation', gen2:'Weitere Generation', gen3:'Kinder-Generation', gen4:'Enkel-Generation', gen5:'Urenkel / spätere Generation', genN:'Generation {n}', partnerLine:'Partner: {names}'
+  },
+  en: {
+    langName:'English', htmlLang:'en', pageTitle:'The Tree | Los Finkos', language:'Language:', backHome:'← Back to homepage', subtitle:'Interactive family tree from your Excel file',
+    people:'People', countries:'Countries', surnames:'Surnames', quickHint:'Search or filter on the left. Click a person and the family tree opens immediately on the right.',
+    treeTab:'🌳 Family tree view', searchTab:'🔍 Search & results', searchPlaceholder:'Search person: name, place, date, country...', allCountries:'All countries', countriesOverview:'🌍 Country overview', countriesNote:'Click a country to show the matching country family tree on the right.', surnamesTitle:'🔤 Surnames', surnamesNote:'Click a surname to show matching people.',
+    searchResults:'🔍 Search & results', details:'🔎 Details', detailsPlaceholder:'Click a person to see details, parents, partners and children.', treeTitle:'🌳 Family tree view', treePlaceholder:'Choose a person on the left. The family tree opens here beside it.', backToSearch:'← Back to search', treeLegend:'Tip: You can also click people inside the tree.',
+    startMessage:'Click <strong>People</strong> above, choose a <strong>country</strong> or click a <strong>surname</strong>.<br><br>You can also search directly in the search field.', noPersonFound:'No person found.', allPeopleShown:'All people are shown.', surnameResult:'Surname: {surname} — {count} person(s) found', personCount:'{count} person(s)',
+    birthPlace:'Birthplace', deathPlace:'Place of death', country:'Country', wedding:'Wedding', profession:'Profession', notes:'Notes', parents:'Parents', partner:'Partner', children:'Children', unknown:'Unknown', noNotes:'No notes available.', noEntries:'No entries available.',
+    greatGrandparents:'Great-grandparents / older generation', grandparents:'Grandparents', selectedParents:'Parents', selectedAndPartner:'Selected person + partner', grandchildren:'Grandchildren', greatGrandchildren:'Great-grandchildren / later generation',
+    noGreatGrandparents:'No great-grandparents entered', noGrandparents:'No grandparents entered', noParents:'No parents entered', noPartners:'No partner entered', noChildren:'No children entered', noGrandchildren:'No grandchildren entered', noGreatGrandchildren:'No great-grandchildren entered',
+    noCountryPeople:'No people have been entered for this country yet.', countryTreeDesc:'{count} person(s) from this country · sorted by generation', countryView:'Country view', countryViewDesc:'The family tree / generation overview for this country is shown on the right.', tip:'Tip', countryTip:'Click a person on the right to open their personal family tree again.',
+    gen0:'Oldest known generation', gen1:'Next generation', gen2:'Further generation', gen3:'Children generation', gen4:'Grandchildren generation', gen5:'Great-grandchildren / later generation', genN:'Generation {n}', partnerLine:'Partner: {names}'
+  },
+  pl: {
+    langName:'Polski', htmlLang:'pl', pageTitle:'The Tree | Los Finkos', language:'Język:', backHome:'← Powrót do strony głównej', subtitle:'Interaktywne drzewo genealogiczne z pliku Excel',
+    people:'Osoby', countries:'Kraje', surnames:'Nazwiska', quickHint:'Szukaj lub filtruj po lewej. Po kliknięciu osoby drzewo otworzy się od razu po prawej.',
+    treeTab:'🌳 Widok drzewa', searchTab:'🔍 Szukaj i wyniki', searchPlaceholder:'Szukaj osoby: imię, miejsce, data, kraj...', allCountries:'Wszystkie kraje', countriesOverview:'🌍 Przegląd krajów', countriesNote:'Kliknij kraj, aby po prawej pokazać odpowiednie drzewo.', surnamesTitle:'🔤 Nazwiska', surnamesNote:'Kliknij nazwisko, aby wyświetlić pasujące osoby.',
+    searchResults:'🔍 Szukaj i wyniki', details:'🔎 Szczegóły', detailsPlaceholder:'Kliknij osobę, aby zobaczyć szczegóły, rodziców, partnerów i dzieci.', treeTitle:'🌳 Widok drzewa genealogicznego', treePlaceholder:'Wybierz osobę po lewej. Drzewo otworzy się tutaj obok.', backToSearch:'← Do wyszukiwania', treeLegend:'Wskazówka: możesz też klikać osoby w drzewie.',
+    startMessage:'Kliknij u góry <strong>Osoby</strong>, wybierz <strong>kraj</strong> albo kliknij <strong>nazwisko</strong>.<br><br>Możesz też szukać bezpośrednio w polu wyszukiwania.', noPersonFound:'Nie znaleziono osoby.', allPeopleShown:'Wyświetlane są wszystkie osoby.', surnameResult:'Nazwisko: {surname} — znaleziono {count} os.', personCount:'{count} os.',
+    birthPlace:'Miejsce urodzenia', deathPlace:'Miejsce śmierci', country:'Kraj', wedding:'Ślub', profession:'Zawód', notes:'Notatki', parents:'Rodzice', partner:'Partner', children:'Dzieci', unknown:'Nieznane', noNotes:'Brak notatek.', noEntries:'Brak wpisów.',
+    greatGrandparents:'Pradziadkowie / starsze pokolenie', grandparents:'Dziadkowie', selectedParents:'Rodzice', selectedAndPartner:'Wybrana osoba + partner', grandchildren:'Wnuki', greatGrandchildren:'Prawnuki / późniejsze pokolenie',
+    noGreatGrandparents:'Brak pradziadków', noGrandparents:'Brak dziadków', noParents:'Brak rodziców', noPartners:'Brak partnera', noChildren:'Brak dzieci', noGrandchildren:'Brak wnuków', noGreatGrandchildren:'Brak prawnuków',
+    noCountryPeople:'Dla tego kraju nie wpisano jeszcze osób.', countryTreeDesc:'{count} os. z tego kraju · posortowane według pokoleń', countryView:'Widok kraju', countryViewDesc:'Po prawej pokazane jest drzewo / zestawienie pokoleń dla tego kraju.', tip:'Wskazówka', countryTip:'Kliknij osobę po prawej, aby ponownie otworzyć jej osobiste drzewo.',
+    gen0:'Najstarsze znane pokolenie', gen1:'Następne pokolenie', gen2:'Kolejne pokolenie', gen3:'Pokolenie dzieci', gen4:'Pokolenie wnuków', gen5:'Prawnuki / późniejsze pokolenie', genN:'Pokolenie {n}', partnerLine:'Partner: {names}'
+  },
+  fr: {
+    langName:'Français', htmlLang:'fr', pageTitle:'The Tree | Los Finkos', language:'Langue :', backHome:'← Retour à l’accueil', subtitle:'Arbre généalogique interactif depuis votre fichier Excel', people:'Personnes', countries:'Pays', surnames:'Noms de famille', quickHint:'Recherchez ou filtrez à gauche. Cliquez sur une personne et l’arbre s’ouvre à droite.', treeTab:'🌳 Vue arbre', searchTab:'🔍 Recherche & résultats', searchPlaceholder:'Rechercher : nom, lieu, date, pays...', allCountries:'Tous les pays', countriesOverview:'🌍 Aperçu des pays', countriesNote:'Cliquez sur un pays pour afficher l’arbre correspondant à droite.', surnamesTitle:'🔤 Noms de famille', surnamesNote:'Cliquez sur un nom pour afficher les personnes correspondantes.', searchResults:'🔍 Recherche & résultats', details:'🔎 Détails', detailsPlaceholder:'Cliquez sur une personne pour voir les détails, parents, partenaires et enfants.', treeTitle:'🌳 Vue de l’arbre généalogique', treePlaceholder:'Choisissez une personne à gauche. L’arbre s’ouvre ici.', backToSearch:'← Retour à la recherche', treeLegend:'Astuce : vous pouvez aussi cliquer sur les personnes dans l’arbre.', startMessage:'Cliquez sur <strong>Personnes</strong>, choisissez un <strong>pays</strong> ou cliquez sur un <strong>nom de famille</strong>.<br><br>Vous pouvez aussi chercher directement.', noPersonFound:'Aucune personne trouvée.', allPeopleShown:'Toutes les personnes sont affichées.', surnameResult:'Nom : {surname} — {count} personne(s) trouvée(s)', personCount:'{count} personne(s)', birthPlace:'Lieu de naissance', deathPlace:'Lieu de décès', country:'Pays', wedding:'Mariage', profession:'Profession', notes:'Notes', parents:'Parents', partner:'Partenaire', children:'Enfants', unknown:'Inconnu', noNotes:'Aucune note disponible.', noEntries:'Aucune entrée.', greatGrandparents:'Arrière-grands-parents / génération plus ancienne', grandparents:'Grands-parents', selectedParents:'Parents', selectedAndPartner:'Personne sélectionnée + partenaire', grandchildren:'Petits-enfants', greatGrandchildren:'Arrière-petits-enfants / génération suivante', noGreatGrandparents:'Aucun arrière-grand-parent renseigné', noGrandparents:'Aucun grand-parent renseigné', noParents:'Aucun parent renseigné', noPartners:'Aucun partenaire renseigné', noChildren:'Aucun enfant renseigné', noGrandchildren:'Aucun petit-enfant renseigné', noGreatGrandchildren:'Aucun arrière-petit-enfant renseigné', noCountryPeople:'Aucune personne n’est encore renseignée pour ce pays.', countryTreeDesc:'{count} personne(s) de ce pays · triées par génération', countryView:'Vue pays', countryViewDesc:'L’arbre / l’aperçu des générations de ce pays s’affiche à droite.', tip:'Astuce', countryTip:'Cliquez à droite sur une personne pour ouvrir son arbre personnel.', gen0:'Génération connue la plus ancienne', gen1:'Génération suivante', gen2:'Autre génération', gen3:'Génération des enfants', gen4:'Génération des petits-enfants', gen5:'Arrière-petits-enfants / génération suivante', genN:'Génération {n}', partnerLine:'Partenaire : {names}'
+  },
+  es: {
+    langName:'Español', htmlLang:'es', pageTitle:'The Tree | Los Finkos', language:'Idioma:', backHome:'← Volver a la página principal', subtitle:'Árbol genealógico interactivo desde tu archivo Excel', people:'Personas', countries:'Países', surnames:'Apellidos', quickHint:'Busca o filtra a la izquierda. Al hacer clic en una persona, el árbol se abre a la derecha.', treeTab:'🌳 Vista del árbol', searchTab:'🔍 Búsqueda y resultados', searchPlaceholder:'Buscar persona: nombre, lugar, fecha, país...', allCountries:'Todos los países', countriesOverview:'🌍 Resumen de países', countriesNote:'Haz clic en un país para mostrar su árbol a la derecha.', surnamesTitle:'🔤 Apellidos', surnamesNote:'Haz clic en un apellido para mostrar personas coincidentes.', searchResults:'🔍 Búsqueda y resultados', details:'🔎 Detalles', detailsPlaceholder:'Haz clic en una persona para ver detalles, padres, parejas e hijos.', treeTitle:'🌳 Vista del árbol genealógico', treePlaceholder:'Elige una persona a la izquierda. El árbol se abre aquí al lado.', backToSearch:'← Volver a búsqueda', treeLegend:'Consejo: también puedes hacer clic en personas dentro del árbol.', startMessage:'Haz clic en <strong>Personas</strong>, elige un <strong>país</strong> o haz clic en un <strong>apellido</strong>.<br><br>También puedes buscar directamente.', noPersonFound:'No se encontró ninguna persona.', allPeopleShown:'Se muestran todas las personas.', surnameResult:'Apellido: {surname} — {count} persona(s) encontrada(s)', personCount:'{count} persona(s)', birthPlace:'Lugar de nacimiento', deathPlace:'Lugar de fallecimiento', country:'País', wedding:'Boda', profession:'Profesión', notes:'Notas', parents:'Padres', partner:'Pareja', children:'Hijos', unknown:'Desconocido', noNotes:'No hay notas.', noEntries:'No hay entradas.', greatGrandparents:'Bisabuelos / generación anterior', grandparents:'Abuelos', selectedParents:'Padres', selectedAndPartner:'Persona seleccionada + pareja', grandchildren:'Nietos', greatGrandchildren:'Bisnietos / generación posterior', noGreatGrandparents:'Sin bisabuelos registrados', noGrandparents:'Sin abuelos registrados', noParents:'Sin padres registrados', noPartners:'Sin pareja registrada', noChildren:'Sin hijos registrados', noGrandchildren:'Sin nietos registrados', noGreatGrandchildren:'Sin bisnietos registrados', noCountryPeople:'Todavía no hay personas para este país.', countryTreeDesc:'{count} persona(s) de este país · ordenadas por generación', countryView:'Vista del país', countryViewDesc:'A la derecha se muestra el árbol / resumen generacional de este país.', tip:'Consejo', countryTip:'Haz clic en una persona a la derecha para abrir su árbol personal.', gen0:'Generación conocida más antigua', gen1:'Siguiente generación', gen2:'Otra generación', gen3:'Generación de hijos', gen4:'Generación de nietos', gen5:'Bisnietos / generación posterior', genN:'Generación {n}', partnerLine:'Pareja: {names}'
+  },
+  it: {
+    langName:'Italiano', htmlLang:'it', pageTitle:'The Tree | Los Finkos', language:'Lingua:', backHome:'← Torna alla homepage', subtitle:'Albero genealogico interattivo dal tuo file Excel', people:'Persone', countries:'Paesi', surnames:'Cognomi', quickHint:'Cerca o filtra a sinistra. Cliccando una persona, l’albero si apre subito a destra.', treeTab:'🌳 Vista albero', searchTab:'🔍 Ricerca e risultati', searchPlaceholder:'Cerca persona: nome, luogo, data, paese...', allCountries:'Tutti i paesi', countriesOverview:'🌍 Panoramica paesi', countriesNote:'Clicca un paese per mostrare l’albero corrispondente a destra.', surnamesTitle:'🔤 Cognomi', surnamesNote:'Clicca un cognome per mostrare le persone corrispondenti.', searchResults:'🔍 Ricerca e risultati', details:'🔎 Dettagli', detailsPlaceholder:'Clicca una persona per vedere dettagli, genitori, partner e figli.', treeTitle:'🌳 Vista albero genealogico', treePlaceholder:'Scegli una persona a sinistra. L’albero si apre qui accanto.', backToSearch:'← Torna alla ricerca', treeLegend:'Suggerimento: puoi cliccare anche sulle persone nell’albero.', startMessage:'Clicca su <strong>Persone</strong>, scegli un <strong>paese</strong> o clicca un <strong>cognome</strong>.<br><br>Puoi anche cercare direttamente.', noPersonFound:'Nessuna persona trovata.', allPeopleShown:'Sono mostrate tutte le persone.', surnameResult:'Cognome: {surname} — {count} persona/e trovata/e', personCount:'{count} persona/e', birthPlace:'Luogo di nascita', deathPlace:'Luogo di morte', country:'Paese', wedding:'Matrimonio', profession:'Professione', notes:'Note', parents:'Genitori', partner:'Partner', children:'Figli', unknown:'Sconosciuto', noNotes:'Nessuna nota disponibile.', noEntries:'Nessuna voce.', greatGrandparents:'Bisnonni / generazione più antica', grandparents:'Nonni', selectedParents:'Genitori', selectedAndPartner:'Persona selezionata + partner', grandchildren:'Nipoti', greatGrandchildren:'Pronipoti / generazione successiva', noGreatGrandparents:'Nessun bisnonno inserito', noGrandparents:'Nessun nonno inserito', noParents:'Nessun genitore inserito', noPartners:'Nessun partner inserito', noChildren:'Nessun figlio inserito', noGrandchildren:'Nessun nipote inserito', noGreatGrandchildren:'Nessun pronipote inserito', noCountryPeople:'Non ci sono ancora persone per questo paese.', countryTreeDesc:'{count} persona/e di questo paese · ordinate per generazione', countryView:'Vista paese', countryViewDesc:'A destra viene mostrato l’albero / riepilogo generazionale di questo paese.', tip:'Suggerimento', countryTip:'Clicca una persona a destra per aprire il suo albero personale.', gen0:'Generazione conosciuta più antica', gen1:'Generazione successiva', gen2:'Altra generazione', gen3:'Generazione dei figli', gen4:'Generazione dei nipoti', gen5:'Pronipoti / generazione successiva', genN:'Generazione {n}', partnerLine:'Partner: {names}'
+  },
+  pt: {
+    langName:'Português', htmlLang:'pt', pageTitle:'The Tree | Los Finkos', language:'Idioma:', backHome:'← Voltar à página inicial', subtitle:'Árvore genealógica interativa do teu ficheiro Excel', people:'Pessoas', countries:'Países', surnames:'Apelidos', quickHint:'Pesquisa ou filtra à esquerda. Ao clicar numa pessoa, a árvore abre à direita.', treeTab:'🌳 Vista da árvore', searchTab:'🔍 Pesquisa e resultados', searchPlaceholder:'Pesquisar pessoa: nome, local, data, país...', allCountries:'Todos os países', countriesOverview:'🌍 Visão geral dos países', countriesNote:'Clica num país para mostrar a árvore correspondente à direita.', surnamesTitle:'🔤 Apelidos', surnamesNote:'Clica num apelido para mostrar pessoas correspondentes.', searchResults:'🔍 Pesquisa e resultados', details:'🔎 Detalhes', detailsPlaceholder:'Clica numa pessoa para ver detalhes, pais, parceiros e filhos.', treeTitle:'🌳 Vista da árvore genealógica', treePlaceholder:'Escolhe uma pessoa à esquerda. A árvore abre aqui ao lado.', backToSearch:'← Voltar à pesquisa', treeLegend:'Dica: também podes clicar em pessoas dentro da árvore.', startMessage:'Clica em <strong>Pessoas</strong>, escolhe um <strong>país</strong> ou clica num <strong>apelido</strong>.<br><br>Também podes pesquisar diretamente.', noPersonFound:'Nenhuma pessoa encontrada.', allPeopleShown:'Todas as pessoas são mostradas.', surnameResult:'Apelido: {surname} — {count} pessoa(s) encontrada(s)', personCount:'{count} pessoa(s)', birthPlace:'Local de nascimento', deathPlace:'Local de morte', country:'País', wedding:'Casamento', profession:'Profissão', notes:'Notas', parents:'Pais', partner:'Parceiro/a', children:'Filhos', unknown:'Desconhecido', noNotes:'Sem notas disponíveis.', noEntries:'Sem entradas.', greatGrandparents:'Bisavós / geração anterior', grandparents:'Avós', selectedParents:'Pais', selectedAndPartner:'Pessoa selecionada + parceiro/a', grandchildren:'Netos', greatGrandchildren:'Bisnetos / geração posterior', noGreatGrandparents:'Sem bisavós registados', noGrandparents:'Sem avós registados', noParents:'Sem pais registados', noPartners:'Sem parceiro registado', noChildren:'Sem filhos registados', noGrandchildren:'Sem netos registados', noGreatGrandchildren:'Sem bisnetos registados', noCountryPeople:'Ainda não há pessoas para este país.', countryTreeDesc:'{count} pessoa(s) deste país · ordenadas por geração', countryView:'Vista do país', countryViewDesc:'À direita é mostrada a árvore / visão por gerações deste país.', tip:'Dica', countryTip:'Clica numa pessoa à direita para abrir a sua árvore pessoal.', gen0:'Geração conhecida mais antiga', gen1:'Próxima geração', gen2:'Outra geração', gen3:'Geração dos filhos', gen4:'Geração dos netos', gen5:'Bisnetos / geração posterior', genN:'Geração {n}', partnerLine:'Parceiro/a: {names}'
+  },
+  nl: {
+    langName:'Nederlands', htmlLang:'nl', pageTitle:'The Tree | Los Finkos', language:'Taal:', backHome:'← Terug naar homepage', subtitle:'Interactieve stamboom uit je Excel-bestand', people:'Personen', countries:'Landen', surnames:'Achternamen', quickHint:'Zoek of filter links. Klik op een persoon en de stamboom opent direct rechts.', treeTab:'🌳 Stamboomweergave', searchTab:'🔍 Zoeken & resultaten', searchPlaceholder:'Persoon zoeken: naam, plaats, datum, land...', allCountries:'Alle landen', countriesOverview:'🌍 Landenoverzicht', countriesNote:'Klik op een land om rechts de bijbehorende stamboom te tonen.', surnamesTitle:'🔤 Achternamen', surnamesNote:'Klik op een achternaam om passende personen te tonen.', searchResults:'🔍 Zoeken & resultaten', details:'🔎 Details', detailsPlaceholder:'Klik op een persoon om details, ouders, partners en kinderen te zien.', treeTitle:'🌳 Stamboomweergave', treePlaceholder:'Kies links een persoon. De stamboom opent hiernaast.', backToSearch:'← Terug naar zoeken', treeLegend:'Tip: je kunt ook personen in de stamboom aanklikken.', startMessage:'Klik boven op <strong>Personen</strong>, kies een <strong>land</strong> of klik op een <strong>achternaam</strong>.<br><br>Je kunt ook direct zoeken.', noPersonFound:'Geen persoon gevonden.', allPeopleShown:'Alle personen worden weergegeven.', surnameResult:'Achternaam: {surname} — {count} persoon/personen gevonden', personCount:'{count} persoon/personen', birthPlace:'Geboorteplaats', deathPlace:'Plaats van overlijden', country:'Land', wedding:'Huwelijk', profession:'Beroep', notes:'Notities', parents:'Ouders', partner:'Partner', children:'Kinderen', unknown:'Onbekend', noNotes:'Geen notities beschikbaar.', noEntries:'Geen vermeldingen.', greatGrandparents:'Overgrootouders / oudere generatie', grandparents:'Grootouders', selectedParents:'Ouders', selectedAndPartner:'Geselecteerde persoon + partner', grandchildren:'Kleinkinderen', greatGrandchildren:'Achterkleinkinderen / latere generatie', noGreatGrandparents:'Geen overgrootouders ingevoerd', noGrandparents:'Geen grootouders ingevoerd', noParents:'Geen ouders ingevoerd', noPartners:'Geen partner ingevoerd', noChildren:'Geen kinderen ingevoerd', noGrandchildren:'Geen kleinkinderen ingevoerd', noGreatGrandchildren:'Geen achterkleinkinderen ingevoerd', noCountryPeople:'Voor dit land zijn nog geen personen ingevoerd.', countryTreeDesc:'{count} persoon/personen uit dit land · gesorteerd per generatie', countryView:'Landweergave', countryViewDesc:'Rechts wordt de stamboom / generatieoverzicht voor dit land getoond.', tip:'Tip', countryTip:'Klik rechts op een persoon om weer zijn/haar persoonlijke stamboom te openen.', gen0:'Oudste bekende generatie', gen1:'Volgende generatie', gen2:'Verdere generatie', gen3:'Kindergeneratie', gen4:'Kleinkindgeneratie', gen5:'Achterkleinkinderen / latere generatie', genN:'Generatie {n}', partnerLine:'Partner: {names}'
+  },
+  cs: {
+    langName:'Čeština', htmlLang:'cs', pageTitle:'The Tree | Los Finkos', language:'Jazyk:', backHome:'← Zpět na domovskou stránku', subtitle:'Interaktivní rodokmen z vašeho souboru Excel', people:'Osoby', countries:'Země', surnames:'Příjmení', quickHint:'Hledejte nebo filtrujte vlevo. Po kliknutí na osobu se rodokmen otevře vpravo.', treeTab:'🌳 Zobrazení rodokmenu', searchTab:'🔍 Hledání a výsledky', searchPlaceholder:'Hledat osobu: jméno, místo, datum, země...', allCountries:'Všechny země', countriesOverview:'🌍 Přehled zemí', countriesNote:'Kliknutím na zemi zobrazíte odpovídající rodokmen vpravo.', surnamesTitle:'🔤 Příjmení', surnamesNote:'Kliknutím na příjmení zobrazíte odpovídající osoby.', searchResults:'🔍 Hledání a výsledky', details:'🔎 Detaily', detailsPlaceholder:'Klikněte na osobu pro zobrazení detailů, rodičů, partnerů a dětí.', treeTitle:'🌳 Zobrazení rodokmenu', treePlaceholder:'Vyberte osobu vlevo. Rodokmen se otevře zde vedle.', backToSearch:'← Zpět k hledání', treeLegend:'Tip: osoby můžete klikat také přímo v rodokmenu.', startMessage:'Klikněte nahoře na <strong>Osoby</strong>, vyberte <strong>zemi</strong> nebo klikněte na <strong>příjmení</strong>.<br><br>Můžete také hledat přímo v poli.', noPersonFound:'Nenalezena žádná osoba.', allPeopleShown:'Zobrazují se všechny osoby.', surnameResult:'Příjmení: {surname} — nalezeno {count} os.', personCount:'{count} os.', birthPlace:'Místo narození', deathPlace:'Místo úmrtí', country:'Země', wedding:'Svatba', profession:'Povolání', notes:'Poznámky', parents:'Rodiče', partner:'Partner', children:'Děti', unknown:'Neznámé', noNotes:'Žádné poznámky.', noEntries:'Žádné záznamy.', greatGrandparents:'Prarodiče rodičů / starší generace', grandparents:'Prarodiče', selectedParents:'Rodiče', selectedAndPartner:'Vybraná osoba + partner', grandchildren:'Vnoučata', greatGrandchildren:'Pravnoučata / další generace', noGreatGrandparents:'Nejsou zadáni žádní praprarodiče', noGrandparents:'Nejsou zadáni žádní prarodiče', noParents:'Nejsou zadáni žádní rodiče', noPartners:'Není zadán žádný partner', noChildren:'Nejsou zadány žádné děti', noGrandchildren:'Nejsou zadána žádná vnoučata', noGreatGrandchildren:'Nejsou zadána žádná pravnoučata', noCountryPeople:'Pro tuto zemi zatím nejsou zadány žádné osoby.', countryTreeDesc:'{count} os. z této země · seřazeno podle generací', countryView:'Zobrazení země', countryViewDesc:'Vpravo se zobrazuje rodokmen / přehled generací pro tuto zemi.', tip:'Tip', countryTip:'Klikněte vpravo na osobu pro otevření jejího osobního rodokmenu.', gen0:'Nejstarší známá generace', gen1:'Další generace', gen2:'Následující generace', gen3:'Generace dětí', gen4:'Generace vnoučat', gen5:'Pravnoučata / pozdější generace', genN:'Generace {n}', partnerLine:'Partner: {names}'
+  },
+  hu: {
+    langName:'Magyar', htmlLang:'hu', pageTitle:'The Tree | Los Finkos', language:'Nyelv:', backHome:'← Vissza a főoldalra', subtitle:'Interaktív családfa az Excel-fájlból', people:'Személyek', countries:'Országok', surnames:'Vezetéknevek', quickHint:'Keress vagy szűrj bal oldalon. Egy személyre kattintva a családfa jobb oldalon nyílik meg.', treeTab:'🌳 Családfa nézet', searchTab:'🔍 Keresés és találatok', searchPlaceholder:'Személy keresése: név, hely, dátum, ország...', allCountries:'Minden ország', countriesOverview:'🌍 Országok áttekintése', countriesNote:'Kattints egy országra, hogy jobb oldalon megjelenjen a megfelelő családfa.', surnamesTitle:'🔤 Vezetéknevek', surnamesNote:'Kattints egy vezetéknévre a megfelelő személyek megjelenítéséhez.', searchResults:'🔍 Keresés és találatok', details:'🔎 Részletek', detailsPlaceholder:'Kattints egy személyre a részletek, szülők, partnerek és gyermekek megtekintéséhez.', treeTitle:'🌳 Családfa nézet', treePlaceholder:'Válassz bal oldalon egy személyt. A családfa itt nyílik meg mellette.', backToSearch:'← Vissza a kereséshez', treeLegend:'Tipp: a családfában lévő személyekre is kattinthatsz.', startMessage:'Kattints fent a <strong>Személyek</strong> gombra, válassz <strong>országot</strong>, vagy kattints egy <strong>vezetéknévre</strong>.<br><br>Közvetlenül is kereshetsz.', noPersonFound:'Nem található személy.', allPeopleShown:'Minden személy megjelenik.', surnameResult:'Vezetéknév: {surname} — {count} személy található', personCount:'{count} személy', birthPlace:'Születési hely', deathPlace:'Halálozási hely', country:'Ország', wedding:'Esküvő', profession:'Foglalkozás', notes:'Jegyzetek', parents:'Szülők', partner:'Partner', children:'Gyermekek', unknown:'Ismeretlen', noNotes:'Nincs jegyzet.', noEntries:'Nincs bejegyzés.', greatGrandparents:'Dédszülők / régebbi generáció', grandparents:'Nagyszülők', selectedParents:'Szülők', selectedAndPartner:'Kiválasztott személy + partner', grandchildren:'Unokák', greatGrandchildren:'Dédunokák / későbbi generáció', noGreatGrandparents:'Nincs megadva dédszülő', noGrandparents:'Nincs megadva nagyszülő', noParents:'Nincs megadva szülő', noPartners:'Nincs megadva partner', noChildren:'Nincs megadva gyermek', noGrandchildren:'Nincs megadva unoka', noGreatGrandchildren:'Nincs megadva dédunoka', noCountryPeople:'Ehhez az országhoz még nincs személy megadva.', countryTreeDesc:'{count} személy ebből az országból · generációk szerint rendezve', countryView:'Országnézet', countryViewDesc:'Jobb oldalon az ország családfája / generációs áttekintése látható.', tip:'Tipp', countryTip:'Kattints jobb oldalon egy személyre a személyes családfájának megnyitásához.', gen0:'Legrégebbi ismert generáció', gen1:'Következő generáció', gen2:'További generáció', gen3:'Gyermekek generációja', gen4:'Unokák generációja', gen5:'Dédunokák / későbbi generáció', genN:'{n}. generáció', partnerLine:'Partner: {names}'
+  },
+  tr: {
+    langName:'Türkçe', htmlLang:'tr', pageTitle:'The Tree | Los Finkos', language:'Dil:', backHome:'← Ana sayfaya dön', subtitle:'Excel dosyanızdan interaktif soy ağacı', people:'Kişiler', countries:'Ülkeler', surnames:'Soyadları', quickHint:'Solda arama veya filtreleme yapın. Bir kişiye tıklayınca soy ağacı sağda açılır.', treeTab:'🌳 Soy ağacı görünümü', searchTab:'🔍 Arama ve sonuçlar', searchPlaceholder:'Kişi ara: ad, yer, tarih, ülke...', allCountries:'Tüm ülkeler', countriesOverview:'🌍 Ülke görünümü', countriesNote:'Sağda ilgili ülke soy ağacını göstermek için bir ülkeye tıklayın.', surnamesTitle:'🔤 Soyadları', surnamesNote:'Eşleşen kişileri göstermek için bir soyadına tıklayın.', searchResults:'🔍 Arama ve sonuçlar', details:'🔎 Ayrıntılar', detailsPlaceholder:'Ayrıntıları, ebeveynleri, partnerleri ve çocukları görmek için bir kişiye tıklayın.', treeTitle:'🌳 Soy ağacı görünümü', treePlaceholder:'Soldan bir kişi seçin. Soy ağacı burada yanında açılır.', backToSearch:'← Aramaya dön', treeLegend:'İpucu: Soy ağacındaki kişilere de tıklayabilirsiniz.', startMessage:'Yukarıda <strong>Kişiler</strong>e tıklayın, bir <strong>ülke</strong> seçin veya bir <strong>soyadına</strong> tıklayın.<br><br>Arama alanında doğrudan da arayabilirsiniz.', noPersonFound:'Kişi bulunamadı.', allPeopleShown:'Tüm kişiler gösteriliyor.', surnameResult:'Soyadı: {surname} — {count} kişi bulundu', personCount:'{count} kişi', birthPlace:'Doğum yeri', deathPlace:'Ölüm yeri', country:'Ülke', wedding:'Evlilik', profession:'Meslek', notes:'Notlar', parents:'Ebeveynler', partner:'Partner', children:'Çocuklar', unknown:'Bilinmiyor', noNotes:'Not yok.', noEntries:'Kayıt yok.', greatGrandparents:'Büyük büyük ebeveynler / eski nesil', grandparents:'Büyük ebeveynler', selectedParents:'Ebeveynler', selectedAndPartner:'Seçilen kişi + partner', grandchildren:'Torunlar', greatGrandchildren:'Torun çocukları / sonraki nesil', noGreatGrandparents:'Büyük büyük ebeveyn girilmedi', noGrandparents:'Büyük ebeveyn girilmedi', noParents:'Ebeveyn girilmedi', noPartners:'Partner girilmedi', noChildren:'Çocuk girilmedi', noGrandchildren:'Torun girilmedi', noGreatGrandchildren:'Torun çocuğu girilmedi', noCountryPeople:'Bu ülke için henüz kişi girilmedi.', countryTreeDesc:'Bu ülkeden {count} kişi · nesillere göre sıralı', countryView:'Ülke görünümü', countryViewDesc:'Sağda bu ülkenin soy ağacı / nesil görünümü gösterilir.', tip:'İpucu', countryTip:'Kişisel soy ağacını açmak için sağdaki kişiye tıklayın.', gen0:'Bilinen en eski nesil', gen1:'Sonraki nesil', gen2:'Diğer nesil', gen3:'Çocuk nesli', gen4:'Torun nesli', gen5:'Torun çocukları / sonraki nesil', genN:'Nesil {n}', partnerLine:'Partner: {names}'
+  },
+  zh: {
+    langName:'中文', htmlLang:'zh', pageTitle:'The Tree | Los Finkos', language:'语言：', backHome:'← 返回主页', subtitle:'来自 Excel 文件的互动家谱', people:'人物', countries:'国家', surnames:'姓氏', quickHint:'在左侧搜索或筛选。点击人物后，家谱会立即在右侧打开。', treeTab:'🌳 家谱视图', searchTab:'🔍 搜索与结果', searchPlaceholder:'搜索人物：姓名、地点、日期、国家...', allCountries:'所有国家', countriesOverview:'🌍 国家概览', countriesNote:'点击国家，在右侧显示对应的国家家谱。', surnamesTitle:'🔤 姓氏', surnamesNote:'点击姓氏以显示匹配的人物。', searchResults:'🔍 搜索与结果', details:'🔎 详情', detailsPlaceholder:'点击人物即可查看详情、父母、伴侣和子女。', treeTitle:'🌳 家谱视图', treePlaceholder:'请在左侧选择一个人物，家谱会在这里打开。', backToSearch:'← 返回搜索', treeLegend:'提示：你也可以点击家谱中的人物。', startMessage:'点击上方的 <strong>人物</strong>，选择一个 <strong>国家</strong>，或点击一个 <strong>姓氏</strong>。<br><br>你也可以直接在搜索框中搜索。', noPersonFound:'未找到人物。', allPeopleShown:'正在显示所有人物。', surnameResult:'姓氏：{surname} — 找到 {count} 人', personCount:'{count} 人', birthPlace:'出生地', deathPlace:'死亡地', country:'国家', wedding:'婚礼/结婚', profession:'职业', notes:'备注', parents:'父母', partner:'伴侣', children:'子女', unknown:'未知', noNotes:'暂无备注。', noEntries:'暂无条目。', greatGrandparents:'曾祖辈 / 更早一代', grandparents:'祖父母', selectedParents:'父母', selectedAndPartner:'选中人物 + 伴侣', grandchildren:'孙辈', greatGrandchildren:'曾孙辈 / 后代', noGreatGrandparents:'未填写曾祖辈', noGrandparents:'未填写祖父母', noParents:'未填写父母', noPartners:'未填写伴侣', noChildren:'未填写子女', noGrandchildren:'未填写孙辈', noGreatGrandchildren:'未填写曾孙辈', noCountryPeople:'此国家尚未录入人物。', countryTreeDesc:'来自此国家的 {count} 人 · 按世代排序', countryView:'国家视图', countryViewDesc:'右侧显示此国家的家谱/世代概览。', tip:'提示', countryTip:'点击右侧人物可重新打开其个人家谱。', gen0:'最早已知世代', gen1:'下一代', gen2:'后续世代', gen3:'子女一代', gen4:'孙辈一代', gen5:'曾孙辈 / 后续世代', genN:'第 {n} 代', partnerLine:'伴侣：{names}'
+  }
+};
+
+const peopleGrid=document.getElementById('peopleGrid'), personDetail=document.getElementById('personDetail'), familyTree=document.getElementById('familyTree'), searchInput=document.getElementById('searchInput'), countryFilter=document.getElementById('countryFilter'), countryOverview=document.getElementById('countryOverview'), surnameOverview=document.getElementById('surnameOverview'), countryBox=document.getElementById('countryBox'), surnameBox=document.getElementById('surnameBox'), searchView=document.getElementById('searchView'), treeView=document.getElementById('treeView'), searchTab=document.getElementById('searchTab'), treeTab=document.getElementById('treeTab'), backToSearchButton=document.getElementById('backToSearchButton'), peopleQuickButton=document.getElementById('peopleQuickButton'), countriesQuickButton=document.getElementById('countriesQuickButton'), surnamesQuickButton=document.getElementById('surnamesQuickButton'), languageSelect=document.getElementById('languageSelect');
+let selectedPersonId=null, activeSurnameFilter=null, activeCountryTree=null;
+let currentLang=localStorage.getItem('thetreeLang') || 'de';
+if(!translations[currentLang]) currentLang='de';
+
+function t(key, vars={}){const text=(translations[currentLang]&&translations[currentLang][key]) || translations.de[key] || key; return text.replace(/\{(\w+)\}/g,(_,name)=>vars[name] ?? '');}
 function clean(s){return (s||'').toString().trim();}
-function cleanSurname(name){return clean(name).replace(/\s*\(.*?\)\s*/g,'').trim()||'Unbekannt';}
+function cleanSurname(name){return clean(name).replace(/\s*\(.*?\)\s*/g,'').trim()||t('unknown');}
 function getFullName(p){return clean((p.firstName||'')+' '+(p.lastName||''));}
 function findPersonById(id){return people.find(p=>p.id===id);}
 function getPeopleByIds(ids){return (ids||[]).map(id=>findPersonById(id)).filter(Boolean);}
 function life(p){return `${p.birth||'?'}${p.death?' – '+p.death:''}`;}
 function avatarContent(p){return p.photo?`<img src="images/${p.photo}" alt="${getFullName(p)}">`:(p.flag||'👤');}
 function setView(view){searchView.classList.add('active'); treeView.classList.add('active'); if(searchTab)searchTab.classList.add('active'); if(treeTab)treeTab.classList.add('active');}
-function showStartMessage(){
-  activeSurnameFilter=null;
-  peopleGrid.innerHTML=`<div class="empty">Klicke oben auf <strong>Personen</strong>, wähle ein <strong>Land</strong> oder klicke auf einen <strong>Nachnamen</strong>.<br><br>Du kannst auch direkt im Suchfeld suchen.</div>`;
+
+function applyStaticTranslations(){
+  const tr=translations[currentLang];
+  document.documentElement.lang=tr.htmlLang || currentLang;
+  document.title=t('pageTitle');
+  languageSelect.value=currentLang;
+  document.getElementById('languageLabel').textContent=t('language');
+  document.querySelector('.home-link').textContent=t('backHome');
+  document.querySelector('.subtitle').textContent=t('subtitle');
+  document.querySelector('#peopleQuickButton span').textContent=t('people');
+  document.querySelector('#countriesQuickButton span').textContent=t('countries');
+  document.querySelector('#surnamesQuickButton span').textContent=t('surnames');
+  document.querySelector('.quick-hint').textContent=t('quickHint');
+  searchTab.textContent=t('searchTab');
+  treeTab.textContent=t('treeTab');
+  searchInput.placeholder=t('searchPlaceholder');
+  document.querySelector('#countryBox .box-title').textContent=t('countriesOverview');
+  document.querySelector('#countryBox .note').textContent=t('countriesNote');
+  document.querySelector('#surnameBox .box-title').textContent=t('surnamesTitle');
+  document.querySelector('#surnameBox .note').textContent=t('surnamesNote');
+  document.querySelector('#searchView .box-title').textContent=t('searchResults');
+  document.querySelector('.details-under-results .box-title').textContent=t('details');
+  document.querySelector('#treeView .box-title').textContent=t('treeTitle');
+  backToSearchButton.textContent=t('backToSearch');
+  document.querySelector('.tree-legend').textContent=t('treeLegend');
 }
+function refreshLanguage(){
+  const oldCountry=countryFilter.value;
+  applyStaticTranslations();
+  renderCountryFilter(oldCountry);
+  renderCountries();
+  renderSurnames();
+  updateStats();
+  if(selectedPersonId){renderPersonDetail(selectedPersonId);}
+  if(activeCountryTree){renderCountryTree(activeCountryTree);} else if(selectedPersonId){renderFamilyTree(selectedPersonId);} else {familyTree.innerHTML=`<div class="empty">${t('treePlaceholder')}</div>`;}
+  if(activeSurnameFilter){renderPeople({surname:activeSurnameFilter});}
+  else if(searchInput.value.trim()!=='' || countryFilter.value!=='all'){renderPeople();}
+  else {showStartMessage();}
+}
+
+function showStartMessage(){peopleGrid.innerHTML=`<div class="empty">${t('startMessage')}</div>`;}
 function renderPeople(options={}){
-  const searchTerm=searchInput.value.toLowerCase().trim();
+  const searchTerm=searchInput.value.toLowerCase();
   const selectedCountry=countryFilter.value;
-  const surnameFilter=options.surname || activeSurnameFilter;
+  const surname=options.surname || activeSurnameFilter;
   const filtered=people.filter(p=>{
-    const text=`${p.firstName} ${p.lastName} ${cleanSurname(p.lastName)} ${p.birth} ${p.death} ${p.birthPlace} ${p.deathPlace} ${p.country} ${p.profession} ${p.notes}`.toLowerCase();
-    const searchOk=searchTerm==='' || text.includes(searchTerm);
-    const countryOk=selectedCountry==='all' || p.country===selectedCountry;
-    const surnameOk=!surnameFilter || cleanSurname(p.lastName)===surnameFilter;
-    return searchOk && countryOk && surnameOk;
+    if(surname && cleanSurname(p.lastName)!==surname)return false;
+    const text=`${p.firstName} ${p.lastName} ${p.birth} ${p.death} ${p.wedding} ${p.birthPlace} ${p.deathPlace} ${p.country} ${p.profession} ${p.notes}`.toLowerCase();
+    return text.includes(searchTerm) && (selectedCountry==='all'||p.country===selectedCountry);
   });
   peopleGrid.innerHTML='';
-  if(surnameFilter){
-    const headline=document.createElement('p');
-    headline.className='filter-title';
-    headline.innerHTML=`Nachname: <strong>${surnameFilter}</strong> — ${filtered.length} Person(en) gefunden.`;
-    peopleGrid.appendChild(headline);
-  }
-  if(filtered.length===0){peopleGrid.innerHTML+='<p class="empty">Keine Person gefunden.</p>'; return;}
+  if(surname)peopleGrid.innerHTML=`<p class="filter-title">${t('surnameResult',{surname,count:filtered.length})}</p>`;
+  if(filtered.length===0){peopleGrid.innerHTML+=`<p class="empty">${t('noPersonFound')}</p>`; return;}
   filtered.forEach(p=>{
-    const button=document.createElement('button');
-    button.className='person-card';
-    if(p.id===selectedPersonId)button.classList.add('active');
-    button.innerHTML=`<h3>${p.flag||'👤'} ${getFullName(p)}</h3><p>🎂 ${life(p)}</p><p>📍 ${p.birthPlace||'Unbekannt'}</p><div class="badge-row"><span class="badge">${p.country||'Unknown'}</span><span class="badge">${cleanSurname(p.lastName)}</span></div>`;
-    button.addEventListener('click',()=>selectPerson(p.id));
-    peopleGrid.appendChild(button);
+    const btn=document.createElement('button'); btn.className='person-card'; if(p.id===selectedPersonId)btn.classList.add('active');
+    btn.innerHTML=`<h3>${p.flag||'👤'} ${getFullName(p)}</h3><p>🎂 ${life(p)}</p><p>📍 ${p.birthPlace||t('unknown')}</p><p>💼 ${p.profession||t('unknown')}</p><div class="badge-row"><span class="badge">${p.country||t('unknown')}</span></div>`;
+    btn.addEventListener('click',()=>selectPerson(p.id)); peopleGrid.appendChild(btn);
   });
 }
-function selectPerson(id){selectedPersonId=id; renderPeople(); renderPersonDetail(id); renderFamilyTree(id); if(window.innerWidth<1200){treeView.scrollIntoView({behavior:'smooth',block:'start'});} }
-function renderPersonDetail(id){const p=findPersonById(id); if(!p){personDetail.innerHTML='<p class="empty">Person nicht gefunden.</p>'; return;} personDetail.className=''; personDetail.innerHTML=`<div class="detail-header"><div class="avatar">${avatarContent(p)}</div><div><h2>${getFullName(p)}</h2><p>${life(p)}</p></div></div><div class="info"><div class="info-item"><strong>Geburtsort:</strong><br>${p.birthPlace||'Unbekannt'}</div><div class="info-item"><strong>Sterbeort:</strong><br>${p.deathPlace||'Unbekannt'}</div><div class="info-item"><strong>Land:</strong><br>${p.flag||''} ${p.country||'Unbekannt'}</div><div class="info-item"><strong>Hochzeit:</strong><br>${p.wedding||'Unbekannt'}</div><div class="info-item"><strong>Beruf:</strong><br>${p.profession||'Unbekannt'}</div><div class="info-item"><strong>Notizen:</strong><br>${p.notes||'Keine Notizen vorhanden.'}</div></div><div class="relation-section"><h3>Eltern</h3>${renderRelationButtons(p.parents)}<h3>Partner</h3>${renderRelationButtons(p.partners)}<h3>Kinder</h3>${renderRelationButtons(p.children)}</div>`; addRelationEvents();}
-function renderRelationButtons(ids){const related=getPeopleByIds(ids); if(related.length===0)return '<p class="empty">Keine Einträge vorhanden.</p>'; return related.map(p=>`<button class="relation-button" data-id="${p.id}">${p.flag||'👤'} ${getFullName(p)}</button>`).join('');}
+function selectPerson(id){selectedPersonId=id; activeCountryTree=null; renderPeople(activeSurnameFilter?{surname:activeSurnameFilter}:{}); renderPersonDetail(id); renderFamilyTree(id); if(window.innerWidth<1200){treeView.scrollIntoView({behavior:'smooth',block:'start'});} }
+function renderPersonDetail(id){
+  const p=findPersonById(id); if(!p){personDetail.innerHTML=`<p class="empty">${t('noPersonFound')}</p>`; return;}
+  personDetail.className='';
+  personDetail.innerHTML=`<div class="detail-header"><div class="avatar">${avatarContent(p)}</div><div><h2>${getFullName(p)}</h2><p>${life(p)}</p></div></div><div class="info"><div class="info-item"><strong>${t('birthPlace')}:</strong><br>${p.birthPlace||t('unknown')}</div><div class="info-item"><strong>${t('deathPlace')}:</strong><br>${p.deathPlace||t('unknown')}</div><div class="info-item"><strong>${t('country')}:</strong><br>${p.flag||''} ${p.country||t('unknown')}</div><div class="info-item"><strong>${t('wedding')}:</strong><br>${p.wedding||t('unknown')}</div><div class="info-item"><strong>${t('profession')}:</strong><br>${p.profession||t('unknown')}</div><div class="info-item"><strong>${t('notes')}:</strong><br>${p.notes||t('noNotes')}</div></div><div class="relation-section"><h3>${t('parents')}</h3>${renderRelationButtons(p.parents)}<h3>${t('partner')}</h3>${renderRelationButtons(p.partners)}<h3>${t('children')}</h3>${renderRelationButtons(p.children)}</div>`;
+  addRelationEvents();
+}
+function renderRelationButtons(ids){const related=getPeopleByIds(ids); if(related.length===0)return `<p class="empty">${t('noEntries')}</p>`; return related.map(p=>`<button class="relation-button" data-id="${p.id}">${p.flag||'👤'} ${getFullName(p)}</button>`).join('');}
 function addRelationEvents(){document.querySelectorAll('.relation-button').forEach(b=>b.addEventListener('click',()=>{selectPerson(b.getAttribute('data-id')); window.scrollTo({top:0,behavior:'smooth'});}));}
 function uniquePeople(list){const seen=new Set(); return list.filter(p=>{if(!p||seen.has(p.id))return false; seen.add(p.id); return true;});}
 function getChildrenForFamily(person){
   const partnerIds=person.partners||[];
-  const familyIds=[person.id,...partnerIds];
-  const explicit=getPeopleByIds(person.children||[]);
-  const partnerChildren=partnerIds.flatMap(pid=>getPeopleByIds((findPersonById(pid)||{}).children||[]));
-  const byParents=people.filter(candidate=>(candidate.parents||[]).some(parentId=>familyIds.includes(parentId)));
-  return uniquePeople([...explicit,...partnerChildren,...byParents]);
+  const fromPerson=getPeopleByIds(person.children||[]);
+  const fromPartners=partnerIds.flatMap(pid=>getPeopleByIds((findPersonById(pid)||{}).children||[]));
+  const fromParentLinks=people.filter(p=>(p.parents||[]).includes(person.id)||partnerIds.some(pid=>(p.parents||[]).includes(pid)));
+  return uniquePeople([...fromPerson,...fromPartners,...fromParentLinks]).sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),currentLang));
 }
-function getDescendantsForPeople(personList){
-  return uniquePeople(personList.flatMap(person=>getChildrenForFamily(person)));
-}
-function getParentsForPeople(personList){
-  return uniquePeople(personList.flatMap(person=>getPeopleByIds(person.parents||[])));
-}
+function getDescendantsForPeople(personList){return uniquePeople(personList.flatMap(p=>getChildrenForFamily(p))).sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),currentLang));}
+function getParentsForPeople(personList){return uniquePeople(personList.flatMap(p=>getPeopleByIds(p.parents||[]))).sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),currentLang));}
 function renderFamilyTree(id){
   const p=findPersonById(id); if(!p)return;
-
-  const parents=getPeopleByIds(p.parents);
-  const grandparents=getParentsForPeople(parents);
-  const greatGrandparents=getParentsForPeople(grandparents);
-  const partners=getPeopleByIds(p.partners);
-  const children=getChildrenForFamily(p);
-  const grandchildren=getDescendantsForPeople(children);
-  const greatGrandchildren=getDescendantsForPeople(grandchildren);
-
-  const totalShown = greatGrandparents.length + grandparents.length + parents.length + 1 + partners.length + children.length + grandchildren.length + greatGrandchildren.length;
-
+  const parents=getParentsForPeople([p]), grandparents=getParentsForPeople(parents), greatGrandparents=getParentsForPeople(grandparents);
+  const partners=getPeopleByIds(p.partners||[]), children=getChildrenForFamily(p), grandchildren=getDescendantsForPeople(children), greatGrandchildren=getDescendantsForPeople(grandchildren);
   familyTree.innerHTML=`
-    <div class="tree-summary-bar">
-      <strong>${getFullName(p)}</strong> · ${totalShown} Person(en) in dieser Ansicht · ${partners.length} Partner · ${children.length} Kind(er)
-    </div>
-
-    <div class="tree-label">Urgroßeltern / ältere Generation</div>
-    <div class="tree-level wide-generation ancestor-generation">
-      ${greatGrandparents.length?greatGrandparents.map(person=>treeNode(person,'small-generation ancestor')).join(''):emptyNode('Keine Urgroßeltern eingetragen')}
-    </div>
-    <div class="generation-note">${greatGrandparents.length?greatGrandparents.length+' Person(en) in dieser Generation':'Älteste bekannte Generation oben'}</div>
-
+    <div class="tree-label">${t('greatGrandparents')}</div><div class="tree-level wide-generation ancestor-generation">${greatGrandparents.length?greatGrandparents.map(person=>treeNode(person,'ancestor')).join(''):emptyNode(t('noGreatGrandparents'))}</div>
     <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="tree-label">Großeltern</div>
-    <div class="tree-level wide-generation ancestor-generation">
-      ${grandparents.length?grandparents.map(person=>treeNode(person,'small-generation ancestor')).join(''):emptyNode('Keine Großeltern eingetragen')}
-    </div>
-    <div class="generation-note">${grandparents.length?grandparents.length+' Person(en) in dieser Generation':''}</div>
-
+    <div class="tree-label">${t('grandparents')}</div><div class="tree-level wide-generation ancestor-generation">${grandparents.length?grandparents.map(person=>treeNode(person,'ancestor')).join(''):emptyNode(t('noGrandparents'))}</div>
     <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="tree-label">Eltern</div>
-    <div class="tree-level parents wide-generation ancestor-generation">
-      ${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}
-    </div>
-
+    <div class="tree-label">${t('selectedParents')}</div><div class="tree-level parents wide-generation">${parents.length?parents.map(person=>treeNode(person,'ancestor')).join(''):emptyNode(t('noParents'))}</div>
     <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="core-family-panel tree-center-panel">
-      <div class="core-family-title">Ausgewählte Person und Partner</div>
-      <div class="core-couple">
-        <div class="tree-node main" data-id="${p.id}">
-          <div class="node-icon">${p.flag||'👤'}</div>
-          <div class="node-name">${getFullName(p)}</div>
-          <div class="node-date">${life(p)}</div>
-        </div>
-
-        ${partners.length?'<div class="couple-plus">+</div>':''}
-        ${partners.length?partners.map(partnerNode).join(''):emptyNode('Kein Partner eingetragen')}
-      </div>
-    </div>
-
+    <div class="tree-label">${t('selectedAndPartner')}</div><div class="tree-level main-level"><div class="tree-node main" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>${partners.length?partners.map(partnerNode).join(''):emptyNode(t('noPartners'))}</div>
     <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="tree-label">Kinder</div>
-    <div class="children-count">${children.length?children.length+' Kind(er) gefunden':'Keine Kinder eingetragen'}</div>
-    <div class="tree-level children wide-generation descendant-generation">
-      ${children.length?children.map(childNode).join(''):emptyNode('Keine Kinder eingetragen')}
-    </div>
-
-    <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="tree-label">Enkelkinder</div>
-    <div class="children-count">${grandchildren.length?grandchildren.length+' Enkelkind(er) gefunden':'Keine Enkelkinder eingetragen'}</div>
-    <div class="tree-level wide-generation descendant-generation">
-      ${grandchildren.length?grandchildren.map(person=>treeNode(person,'descendant')).join(''):emptyNode('Keine Enkelkinder eingetragen')}
-    </div>
-
-    <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="tree-label">Urenkel / weitere Generation</div>
-    <div class="children-count">${greatGrandchildren.length?greatGrandchildren.length+' weitere Person(en) gefunden':'Keine weitere Generation eingetragen'}</div>
-    <div class="tree-level wide-generation descendant-generation">
-      ${greatGrandchildren.length?greatGrandchildren.map(person=>treeNode(person,'great-descendant')).join(''):emptyNode('Keine Urenkel eingetragen')}
-    </div>
-  `;
+    <div class="tree-label">${t('children')}</div><div class="tree-level children wide-generation">${children.length?children.map(childNode).join(''):emptyNode(t('noChildren'))}</div>
+    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+    <div class="tree-label">${t('grandchildren')}</div><div class="tree-level wide-generation descendant-generation">${grandchildren.length?grandchildren.map(grandchildNode).join(''):emptyNode(t('noGrandchildren'))}</div>
+    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+    <div class="tree-label">${t('greatGrandchildren')}</div><div class="tree-level wide-generation descendant-generation">${greatGrandchildren.length?greatGrandchildren.map(person=>treeNode(person,'great-descendant')).join(''):emptyNode(t('noGreatGrandchildren'))}</div>`;
   document.querySelectorAll('.tree-node[data-id]').forEach(item=>item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id'))));
 }
 function treeNode(p,extraClass=''){return `<div class="tree-node ${extraClass}" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
-function childNode(p){const partners=getPeopleByIds(p.partners||[]); const partnerText=partners.length?`<div class="child-partner-line">Partner: ${partners.map(getFullName).join(', ')}</div>`:''; return `<div class="tree-node child" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div>${partnerText}</div>`;}
+function childNode(p){const partners=getPeopleByIds(p.partners||[]); const partnerText=partners.length?`<div class="child-partner-line">${t('partnerLine',{names:partners.map(getFullName).join(', ')})}</div>`:''; return `<div class="tree-node child" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div>${partnerText}</div>`;}
 function grandchildNode(p){return treeNode(p,'descendant');}
 function partnerNode(p){return `<div class="tree-node partner" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
 function emptyNode(text){return `<div class="tree-node empty-node"><div class="node-icon">—</div><div class="node-name">${text}</div></div>`;}
 
-function showAllPeople(){
-  activeSurnameFilter=null;
-  searchInput.value='';
-  countryFilter.value='all';
-  peopleGrid.innerHTML='<p class="filter-title">Alle Personen werden angezeigt.</p>';
-  renderPeople();
-  setView('search');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function showCountries(){
-  setView('search');
-  countryBox.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function showSurnames(){
-  setView('search');
-  surnameBox.scrollIntoView({behavior:'smooth',block:'start'});
-}
+function showAllPeople(){activeSurnameFilter=null; searchInput.value=''; countryFilter.value='all'; peopleGrid.innerHTML=`<p class="filter-title">${t('allPeopleShown')}</p>`; renderPeople(); setView('search'); window.scrollTo({top:0,behavior:'smooth'});}
+function showCountries(){setView('search'); countryBox.scrollIntoView({behavior:'smooth',block:'start'});}
+function showSurnames(){setView('search'); surnameBox.scrollIntoView({behavior:'smooth',block:'start'});}
 function filterBySurname(surname){
-  activeSurnameFilter=surname;
-  searchInput.value='';
-  countryFilter.value='all';
-  renderPeople({surname});
-
-  const matchingPeople = people
-    .filter(person => cleanSurname(person.lastName) === surname)
-    .sort((a,b) => getBirthYearNumber(a) - getBirthYearNumber(b) || getFullName(a).localeCompare(getFullName(b),'de'));
-
-  if (matchingPeople.length > 0) {
-    selectedPersonId = matchingPeople[0].id;
-    renderPeople({surname});
-    renderPersonDetail(selectedPersonId);
-    renderFamilyTree(selectedPersonId);
-  }
-
-  setView('search');
-  document.querySelectorAll('.surname-card').forEach(card=>card.classList.remove('active'));
-  const activeCard=[...document.querySelectorAll('.surname-card')].find(card=>card.dataset.surname===surname);
-  if(activeCard)activeCard.classList.add('active');
-
-  const resultsBox=document.querySelector('.results-box');
-  if(resultsBox)resultsBox.scrollIntoView({behavior:'smooth',block:'start'});
+  activeSurnameFilter=surname; activeCountryTree=null; searchInput.value=''; countryFilter.value='all'; renderPeople({surname});
+  const matchingPeople=people.filter(person=>cleanSurname(person.lastName)===surname).sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),currentLang));
+  if(matchingPeople.length>0){selectedPersonId=matchingPeople[0].id; renderPeople({surname}); renderPersonDetail(selectedPersonId); renderFamilyTree(selectedPersonId);}
+  setView('search'); document.querySelectorAll('.surname-card').forEach(card=>card.classList.remove('active'));
+  const activeCard=[...document.querySelectorAll('.surname-card')].find(card=>card.dataset.surname===surname); if(activeCard)activeCard.classList.add('active');
+  const resultsBox=document.querySelector('.results-box'); if(resultsBox)resultsBox.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function renderSurnames(){
-  const result={};
-  people.forEach(p=>{
-    const surname=cleanSurname(p.lastName);
-    if(!result[surname])result[surname]=0;
-    result[surname]++;
-  });
-  surnameOverview.innerHTML='';
-  Object.keys(result).sort((a,b)=>a.localeCompare(b,'de')).forEach(surname=>{
-    const card=document.createElement('button');
-    card.type='button';
-    card.className='surname-card';
-    card.dataset.surname=surname;
-    card.innerHTML=`<strong>${surname}</strong><span>${result[surname]} Person(en)</span>`;
-    card.addEventListener('click',()=>filterBySurname(surname));
-    surnameOverview.appendChild(card);
-  });
+  const result={}; people.forEach(p=>{const surname=cleanSurname(p.lastName); if(!result[surname])result[surname]=0; result[surname]++;});
+  surnameOverview.innerHTML=''; Object.keys(result).sort((a,b)=>a.localeCompare(b,currentLang)).forEach(surname=>{const card=document.createElement('button'); card.type='button'; card.className='surname-card'; card.dataset.surname=surname; if(activeSurnameFilter===surname)card.classList.add('active'); card.innerHTML=`<strong>${surname}</strong><span>${t('personCount',{count:result[surname]})}</span>`; card.addEventListener('click',()=>filterBySurname(surname)); surnameOverview.appendChild(card);});
 }
-
-function getBirthYearNumber(p){
-  const text=(p.birth||'').toString();
-  const match=text.match(/(\d{4})/);
-  return match?parseInt(match[1],10):9999;
-}
-function getCountryPeople(country){
-  return people.filter(p=>p.country===country);
-}
-function getSameCountryParents(person,country){
-  return getPeopleByIds(person.parents||[]).filter(parent=>parent.country===country);
-}
-function getSameCountryPartners(person,country){
-  return getPeopleByIds(person.partners||[]).filter(partner=>partner.country===country);
-}
-function calculateCountryGeneration(person,country,memo={},visiting=new Set()){
-  if(memo[person.id]!==undefined)return memo[person.id];
-  if(visiting.has(person.id))return 0;
-  visiting.add(person.id);
-  const parents=getSameCountryParents(person,country);
-  if(parents.length===0){
-    memo[person.id]=0;
-  } else {
-    memo[person.id]=Math.max(...parents.map(parent=>calculateCountryGeneration(parent,country,memo,visiting)+1));
-  }
-  visiting.delete(person.id);
-  return memo[person.id];
-}
+function getBirthYearNumber(p){const text=(p.birth||'').toString(); const match=text.match(/(\d{4})/); return match?parseInt(match[1],10):9999;}
+function getCountryPeople(country){return people.filter(p=>p.country===country);}
+function getSameCountryParents(person,country){return getPeopleByIds(person.parents||[]).filter(parent=>parent.country===country);}
+function getSameCountryPartners(person,country){return getPeopleByIds(person.partners||[]).filter(partner=>partner.country===country);}
+function calculateCountryGeneration(person,country,memo={},visiting=new Set()){if(memo[person.id]!==undefined)return memo[person.id]; if(visiting.has(person.id))return 0; visiting.add(person.id); const parents=getSameCountryParents(person,country); if(parents.length===0){memo[person.id]=0;} else {memo[person.id]=Math.max(...parents.map(parent=>calculateCountryGeneration(parent,country,memo,visiting)+1));} visiting.delete(person.id); return memo[person.id];}
 function renderCountryTree(country){
-  const countryPeople=getCountryPeople(country).sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),'de'));
-  if(countryPeople.length===0){
-    familyTree.innerHTML='<div class="empty">Für dieses Land sind noch keine Personen eingetragen.</div>';
-    return;
-  }
-
-  const flag=countryPeople.find(p=>p.flag)?.flag||'🌍';
-  const memo={};
-  const groups={};
-  countryPeople.forEach(person=>{
-    const generation=calculateCountryGeneration(person,country,memo);
-    if(!groups[generation])groups[generation]=[];
-    groups[generation].push(person);
-  });
-
-  const generationNames=[
-    'Älteste bekannte Generation',
-    'Nächste Generation',
-    'Weitere Generation',
-    'Kinder-Generation',
-    'Enkel-Generation',
-    'Urenkel / spätere Generation'
-  ];
-
-  const rows=Object.keys(groups).map(Number).sort((a,b)=>a-b).map(generation=>{
-    const persons=groups[generation].sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),'de'));
-    const label=generationNames[generation]||`Generation ${generation+1}`;
-    return `
-      <div class="country-generation-label">${label} · ${persons.length} Person(en)</div>
-      <div class="country-generation-row">
-        ${persons.map(countryNode).join('')}
-      </div>
-      ${generation < Object.keys(groups).length-1 ? '<div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>' : ''}
-    `;
-  }).join('');
-
-  familyTree.innerHTML=`
-    <div class="country-tree-header">
-      <strong>${flag} ${country}</strong><br>
-      ${countryPeople.length} Person(en) aus diesem Land · nach Generationen sortiert
-    </div>
-    ${rows}
-  `;
-
-  document.querySelectorAll('.country-tree-node[data-id]').forEach(item=>{
-    item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id')));
-  });
+  activeCountryTree=country;
+  const countryPeople=getCountryPeople(country).sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),currentLang));
+  if(countryPeople.length===0){familyTree.innerHTML=`<div class="empty">${t('noCountryPeople')}</div>`; return;}
+  const flag=countryPeople.find(p=>p.flag)?.flag||'🌍'; const memo={}, groups={}; countryPeople.forEach(person=>{const generation=calculateCountryGeneration(person,country,memo); if(!groups[generation])groups[generation]=[]; groups[generation].push(person);});
+  const generationNames=[t('gen0'),t('gen1'),t('gen2'),t('gen3'),t('gen4'),t('gen5')];
+  const sortedKeys=Object.keys(groups).map(Number).sort((a,b)=>a-b);
+  const rows=sortedKeys.map((generation,index)=>{const persons=groups[generation].sort((a,b)=>getBirthYearNumber(a)-getBirthYearNumber(b)||getFullName(a).localeCompare(getFullName(b),currentLang)); const label=generationNames[generation]||t('genN',{n:generation+1}); return `<div class="country-generation-label">${label} · ${t('personCount',{count:persons.length})}</div><div class="country-generation-row">${persons.map(countryNode).join('')}</div>${index<sortedKeys.length-1?'<div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>':''}`;}).join('');
+  familyTree.innerHTML=`<div class="country-tree-header"><strong>${flag} ${country}</strong><br>${t('countryTreeDesc',{count:countryPeople.length})}</div>${rows}`;
+  document.querySelectorAll('.country-tree-node[data-id]').forEach(item=>item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id'))));
 }
-function countryNode(p){
-  const partners=getSameCountryPartners(p,p.country);
-  const partnerLine=partners.length?`<div class="country-spouse-line">Partner: ${partners.map(getFullName).join(', ')}</div>`:'';
-  return `
-    <div class="country-tree-node" data-id="${p.id}">
-      <div class="node-icon">${p.flag||'👤'}</div>
-      <div class="node-name">${getFullName(p)}</div>
-      <div class="node-date">${life(p)}</div>
-      ${partnerLine}
-    </div>
-  `;
-}
+function countryNode(p){const partners=getSameCountryPartners(p,p.country); const partnerLine=partners.length?`<div class="country-spouse-line">${t('partnerLine',{names:partners.map(getFullName).join(', ')})}</div>`:''; return `<div class="country-tree-node" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div>${partnerLine}</div>`;}
 function selectCountry(country){
-  countryFilter.value=country;
-  renderPeople();
-  renderCountryTree(country);
-  personDetail.className='';
-  const count=getCountryPeople(country).length;
-  const flag=(getCountryPeople(country).find(p=>p.flag)||{}).flag||'🌍';
-  personDetail.innerHTML=`
-    <div class="detail-header">
-      <div class="avatar">${flag}</div>
-      <div><h2>${country}</h2><p>${count} Person(en)</p></div>
-    </div>
-    <div class="info">
-      <div class="info-item"><strong>Landesansicht:</strong><br>Rechts wird der Stammbaum / die Generationenübersicht für dieses Land angezeigt.</div>
-      <div class="info-item"><strong>Tipp:</strong><br>Klicke rechts auf eine Person, um wieder ihren persönlichen Stammbaum zu öffnen.</div>
-    </div>
-  `;
+  countryFilter.value=country; activeSurnameFilter=null; renderPeople(); renderCountryTree(country); personDetail.className='';
+  const count=getCountryPeople(country).length; const flag=(getCountryPeople(country).find(p=>p.flag)||{}).flag||'🌍';
+  personDetail.innerHTML=`<div class="detail-header"><div class="avatar">${flag}</div><div><h2>${country}</h2><p>${t('personCount',{count})}</p></div></div><div class="info"><div class="info-item"><strong>${t('countryView')}:</strong><br>${t('countryViewDesc')}</div><div class="info-item"><strong>${t('tip')}:</strong><br>${t('countryTip')}</div></div>`;
   if(window.innerWidth<1200){treeView.scrollIntoView({behavior:'smooth',block:'start'});}
 }
-
-function renderCountryFilter(){[...new Set(people.map(p=>p.country).filter(Boolean))].sort().forEach(c=>{const o=document.createElement('option'); o.value=c; o.textContent=c; countryFilter.appendChild(o);});}
-function renderCountries(){const result={}; people.forEach(p=>{if(!p.country)return; if(!result[p.country])result[p.country]={count:0,flag:p.flag||'🌍'}; result[p.country].count++;}); countryOverview.innerHTML=''; Object.keys(result).sort().forEach(country=>{const card=document.createElement('div'); card.className='country-card'; card.innerHTML=`<div class="flag">${result[country].flag}</div><h3>${country}</h3><p>${result[country].count} Person(en)</p>`; card.addEventListener('click',()=>{selectCountry(country);}); countryOverview.appendChild(card);});}
+function renderCountryFilter(preserveValue){const value=preserveValue||countryFilter.value||'all'; countryFilter.innerHTML=''; const all=document.createElement('option'); all.value='all'; all.textContent=t('allCountries'); countryFilter.appendChild(all); [...new Set(people.map(p=>p.country).filter(Boolean))].sort((a,b)=>a.localeCompare(b,currentLang)).forEach(c=>{const o=document.createElement('option'); o.value=c; o.textContent=c; countryFilter.appendChild(o);}); countryFilter.value=[...countryFilter.options].some(o=>o.value===value)?value:'all';}
+function renderCountries(){const result={}; people.forEach(p=>{if(!p.country)return; if(!result[p.country])result[p.country]={count:0,flag:p.flag||'🌍'}; result[p.country].count++;}); countryOverview.innerHTML=''; Object.keys(result).sort((a,b)=>a.localeCompare(b,currentLang)).forEach(country=>{const card=document.createElement('div'); card.className='country-card'; card.innerHTML=`<div class="flag">${result[country].flag}</div><h3>${country}</h3><p>${t('personCount',{count:result[country].count})}</p>`; card.addEventListener('click',()=>selectCountry(country)); countryOverview.appendChild(card);});}
 function updateStats(){document.getElementById('statPeople').textContent=people.length; document.getElementById('statCountries').textContent=new Set(people.map(p=>p.country).filter(Boolean)).size; document.getElementById('statFamilies').textContent=new Set(people.map(p=>cleanSurname(p.lastName)).filter(Boolean)).size;}
 searchTab.addEventListener('click',()=>setView('search'));
 treeTab.addEventListener('click',()=>setView('tree'));
@@ -734,9 +662,11 @@ backToSearchButton.addEventListener('click',()=>setView('search'));
 peopleQuickButton.addEventListener('click',showAllPeople);
 countriesQuickButton.addEventListener('click',showCountries);
 surnamesQuickButton.addEventListener('click',showSurnames);
-searchInput.addEventListener('input',()=>{activeSurnameFilter=null; setView('search'); if(searchInput.value.trim()===''&&countryFilter.value==='all')showStartMessage(); else renderPeople();});
-countryFilter.addEventListener('change',()=>{activeSurnameFilter=null; if(searchInput.value.trim()===''&&countryFilter.value==='all'){showStartMessage(); renderFamilyTree(selectedPersonId||'p001');} else {renderPeople(); if(countryFilter.value!=='all'){renderCountryTree(countryFilter.value);} }});
-renderCountryFilter(); renderCountries(); renderSurnames(); updateStats(); selectedPersonId='p001'; renderPersonDetail('p001'); renderFamilyTree('p001'); showStartMessage(); setView('tree');
+searchInput.addEventListener('input',()=>{activeSurnameFilter=null; activeCountryTree=null; setView('search'); if(searchInput.value.trim()===''&&countryFilter.value==='all')showStartMessage(); else renderPeople();});
+countryFilter.addEventListener('change',()=>{activeSurnameFilter=null; if(searchInput.value.trim()===''&&countryFilter.value==='all'){activeCountryTree=null; showStartMessage(); renderFamilyTree(selectedPersonId||'p001');} else {renderPeople(); if(countryFilter.value!=='all')selectCountry(countryFilter.value);} });
+languageSelect.addEventListener('change',()=>{currentLang=languageSelect.value; localStorage.setItem('thetreeLang',currentLang); refreshLanguage();});
+
+applyStaticTranslations(); renderCountryFilter('all'); renderCountries(); renderSurnames(); updateStats(); selectedPersonId='p001'; renderPersonDetail('p001'); renderFamilyTree('p001'); showStartMessage(); setView('tree');
 </script>
 </body>
 </html>
