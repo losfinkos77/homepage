@@ -86,6 +86,25 @@
     .view-section { display:none; }
     .view-section.active { display:block; }
     .tree-action-row { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:16px; }
+
+
+    /* Größere Mehrgenerationen-Stammbaumansicht */
+    main { max-width: 1900px; }
+    .tree-box { overflow-x: auto; overflow-y: visible; }
+    .visual-tree { min-width: 1650px; padding: 55px 35px 35px; }
+    .tree-level { gap: 18px; flex-wrap: nowrap; align-items: stretch; }
+    .tree-level.wide-generation { justify-content: center; margin-bottom: 58px; }
+    .tree-node { min-width: 175px; max-width: 235px; padding: 15px 15px; }
+    .tree-node.small-generation { min-width: 155px; max-width: 210px; padding: 13px 12px; border-radius: 18px; }
+    .tree-node.descendant { border-color: rgba(0,191,255,.35); }
+    .tree-node.great-descendant { min-width: 145px; max-width: 195px; padding: 12px 10px; border-radius: 17px; font-size: 13px; opacity: .94; }
+    .tree-level-wrap { display:flex; justify-content:center; gap:18px; flex-wrap:wrap; }
+    .generation-note { color:#aaa; font-size:13px; text-align:center; margin:-35px 0 28px; }
+    .node-name { font-size: 16px; }
+    .tree-node.small-generation .node-name,
+    .tree-node.great-descendant .node-name { font-size: 14px; }
+    .tree-connector-horizontal { width: 88%; max-width: 1250px; }
+
     @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:950px;} .tree-node{min-width:190px;} }
   </style>
 </head>
@@ -140,18 +159,50 @@ function getChildrenForFamily(person){
   const byParents=people.filter(candidate=>(candidate.parents||[]).some(parentId=>familyIds.includes(parentId)));
   return uniquePeople([...explicit,...partnerChildren,...byParents]);
 }
-function getGrandchildren(children){return uniquePeople(children.flatMap(child=>getChildrenForFamily(child)));}
+function getDescendantsForPeople(personList){
+  return uniquePeople(personList.flatMap(person=>getChildrenForFamily(person)));
+}
+function getParentsForPeople(personList){
+  return uniquePeople(personList.flatMap(person=>getPeopleByIds(person.parents||[])));
+}
 function renderFamilyTree(id){
   const p=findPersonById(id); if(!p)return;
-  const parents=getPeopleByIds(p.parents), partners=getPeopleByIds(p.partners), children=getChildrenForFamily(p), grandchildren=getGrandchildren(children);
+  const parents=getPeopleByIds(p.parents);
+  const grandparents=getParentsForPeople(parents);
+  const greatGrandparents=getParentsForPeople(grandparents);
+  const partners=getPeopleByIds(p.partners);
+  const children=getChildrenForFamily(p);
+  const grandchildren=getDescendantsForPeople(children);
+  const greatGrandchildren=getDescendantsForPeople(grandchildren);
+
+  const totalShown = greatGrandparents.length + grandparents.length + parents.length + 1 + partners.length + children.length + grandchildren.length + greatGrandchildren.length;
+
   familyTree.innerHTML=`
+    <div class="tree-label">Urgroßeltern / ältere Generation</div>
+    <div class="tree-level wide-generation">
+      ${greatGrandparents.length?greatGrandparents.map(person=>treeNode(person,'small-generation')).join(''):emptyNode('Keine Urgroßeltern eingetragen')}
+    </div>
+    <div class="generation-note">${greatGrandparents.length?greatGrandparents.length+' Person(en) in dieser Generation':''}</div>
+
+    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
+    <div class="tree-label">Großeltern</div>
+    <div class="tree-level wide-generation">
+      ${grandparents.length?grandparents.map(person=>treeNode(person,'small-generation')).join(''):emptyNode('Keine Großeltern eingetragen')}
+    </div>
+    <div class="generation-note">${grandparents.length?grandparents.length+' Person(en) in dieser Generation':''}</div>
+
+    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
     <div class="tree-label">Eltern</div>
-    <div class="tree-level parents">${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}</div>
+    <div class="tree-level parents wide-generation">
+      ${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}
+    </div>
 
     <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
 
     <div class="tree-label">Person und Partner</div>
-    <div class="tree-level main-level">
+    <div class="tree-level main-level wide-generation">
       <div class="tree-node main" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>
       ${partners.length?partners.map(partnerNode).join(''):''}
     </div>
@@ -159,16 +210,32 @@ function renderFamilyTree(id){
     <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
 
     <div class="tree-label">Alle Kinder</div>
-    <div class="children-count">${children.length?children.length+' Kind(er) gefunden':'Keine Kinder gefunden'}</div>
-    <div class="tree-level children">${children.length?children.map(childNode).join(''):emptyNode('Keine Kinder eingetragen')}</div>
+    <div class="children-count">${children.length?children.length+' Kind(er) gefunden':'Keine Kinder gefunden'} · Insgesamt sichtbar: ${totalShown} Person(en)</div>
+    <div class="tree-level children wide-generation">
+      ${children.length?children.map(childNode).join(''):emptyNode('Keine Kinder eingetragen')}
+    </div>
 
-    ${grandchildren.length?`<div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div><div class="tree-label">Enkel / nächste Generation</div><div class="children-count">${grandchildren.length} Person(en) in der nächsten Generation</div><div class="tree-level grandchildren">${grandchildren.map(grandchildNode).join('')}</div>`:''}
+    <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
+    <div class="tree-label">Enkel</div>
+    <div class="children-count">${grandchildren.length?grandchildren.length+' Enkel / Person(en) gefunden':'Keine Enkel eingetragen'}</div>
+    <div class="tree-level wide-generation">
+      ${grandchildren.length?grandchildren.map(person=>treeNode(person,'descendant')).join(''):emptyNode('Keine Enkel eingetragen')}
+    </div>
+
+    <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
+
+    <div class="tree-label">Urenkel / weitere Generation</div>
+    <div class="children-count">${greatGrandchildren.length?greatGrandchildren.length+' weitere Person(en) gefunden':'Keine weitere Generation eingetragen'}</div>
+    <div class="tree-level wide-generation">
+      ${greatGrandchildren.length?greatGrandchildren.map(person=>treeNode(person,'great-descendant')).join(''):emptyNode('Keine Urenkel eingetragen')}
+    </div>
   `;
   document.querySelectorAll('.tree-node[data-id]').forEach(item=>item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id'))));
 }
-function treeNode(p){return `<div class="tree-node" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
+function treeNode(p,extraClass=''){return `<div class="tree-node ${extraClass}" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
 function childNode(p){return `<div class="tree-node child" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
-function grandchildNode(p){return `<div class="tree-node grandchild" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
+function grandchildNode(p){return treeNode(p,'descendant');}
 function partnerNode(p){return `<div class="tree-node partner" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
 function emptyNode(text){return `<div class="tree-node empty-node"><div class="node-icon">—</div><div class="node-name">${text}</div></div>`;}
 function renderCountryFilter(){[...new Set(people.map(p=>p.country).filter(Boolean))].sort().forEach(c=>{const o=document.createElement('option'); o.value=c; o.textContent=c; countryFilter.appendChild(o);});}
