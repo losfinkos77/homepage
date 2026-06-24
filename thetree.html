@@ -28,6 +28,43 @@
     .person-card { border:1px solid rgba(255,255,255,.12); border-radius:22px; padding:18px; background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.04)); color:white; text-align:left; cursor:pointer; transition:.25s ease; width:100%; font:inherit; }
     .person-card:hover { transform:translateY(-4px); border-color:#00bfff; box-shadow:0 0 22px rgba(0,191,255,.28); }
     .person-card.active { border-color:#00bfff; background:linear-gradient(145deg,rgba(0,191,255,.24),rgba(255,255,255,.06)); box-shadow:0 0 24px rgba(0,191,255,.38); }
+
+
+    /* Geschlecht-Farbkennung: Männer blau, Frauen rosa/rot */
+    .person-card.gender-male,
+    .tree-node.gender-male,
+    .country-tree-node.gender-male,
+    .relation-button.gender-male {
+      border-color: rgba(70, 165, 255, .75) !important;
+      box-shadow: 0 0 16px rgba(70, 165, 255, .18);
+    }
+
+    .person-card.gender-female,
+    .tree-node.gender-female,
+    .country-tree-node.gender-female,
+    .relation-button.gender-female {
+      border-color: rgba(255, 105, 170, .78) !important;
+      box-shadow: 0 0 16px rgba(255, 105, 170, .18);
+    }
+
+    .person-card.gender-male:hover,
+    .tree-node.gender-male:hover,
+    .country-tree-node.gender-male:hover,
+    .relation-button.gender-male:hover {
+      box-shadow: 0 0 24px rgba(70, 165, 255, .36);
+    }
+
+    .person-card.gender-female:hover,
+    .tree-node.gender-female:hover,
+    .country-tree-node.gender-female:hover,
+    .relation-button.gender-female:hover {
+      box-shadow: 0 0 24px rgba(255, 105, 170, .36);
+    }
+
+    .tree-node.main.gender-male,
+    .tree-node.main.gender-female {
+      border-width: 2px;
+    }
     .person-card h3 { margin:0 0 10px; font-size:22px; }
     .person-card p { margin:6px 0; color:#d5d5d5; font-size:14px; }
     .badge-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
@@ -512,6 +549,40 @@ function findPersonById(id){return people.find(p=>p.id===id);}
 function getPeopleByIds(ids){return (ids||[]).map(id=>findPersonById(id)).filter(Boolean);}
 function life(p){return `${p.birth||'?'}${p.death?' – '+p.death:''}`;}
 function avatarContent(p){return p.photo?`<img src="images/${p.photo}" alt="${getFullName(p)}">`:(p.flag||'👤');}
+
+function normalizeGenderValue(value){
+  return clean(value).toLowerCase();
+}
+function inferGenderFromName(person){
+  const explicitGender = normalizeGenderValue(person.gender || person.geschlecht || person.sex || person.Geschlecht);
+  if(['m','mann','männlich','maennlich','male','man','herr'].includes(explicitGender)) return 'male';
+  if(['w','f','frau','weiblich','female','woman','dame'].includes(explicitGender)) return 'female';
+
+  const first = clean(person.firstName).toLowerCase();
+  const femaleNames = [
+    'anna','maria','kunigunde','katharina','catharina','elisabeth','elizabeth','erika','hildegard','erna','bertahilda','berta','bertha','barbara','magdalena','theresia','johanna','margaretha','margarete','susanna','veronika','franziska','helena','rosa','rosemarie','monika','christina','petra','sabine','claudia','karin','brigitte'
+  ];
+  const maleNames = [
+    'johann','joh.','josef','joseph','ferdinand','peter','arthur','emil','werner','heinrich','xaver','ludwig','innozenz','franz','karl','carl','anton','georg','andreas','martin','michael','christian','sebastian','matthias','thomas','hubert','alois','hermann','alfred','rudolf','max','maximilian'
+  ];
+
+  if(femaleNames.some(name => first === name || first.startsWith(name + ' ') || first.includes(' ' + name))) return 'female';
+  if(maleNames.some(name => first === name || first.startsWith(name + ' ') || first.includes(' ' + name))) return 'male';
+
+  return 'unknown';
+}
+function genderClass(person){
+  const gender = inferGenderFromName(person || {});
+  if(gender === 'male') return 'gender-male';
+  if(gender === 'female') return 'gender-female';
+  return '';
+}
+function genderSymbol(person){
+  const gender = inferGenderFromName(person || {});
+  if(gender === 'male') return '♂';
+  if(gender === 'female') return '♀';
+  return '';
+}
 function setView(view){searchView.classList.add('active'); treeView.classList.add('active'); if(searchTab)searchTab.classList.add('active'); if(treeTab)treeTab.classList.add('active');}
 
 function applyStaticTranslations(){
@@ -576,8 +647,8 @@ function renderPeople(options={}){
   }
   if(filtered.length===0){peopleGrid.innerHTML+=`<p class="empty">${t('noPersonFound')}</p>`; return;}
   filtered.forEach(p=>{
-    const btn=document.createElement('button'); btn.className='person-card'; if(p.id===selectedPersonId)btn.classList.add('active');
-    btn.innerHTML=`<h3>${p.flag||'👤'} ${getFullName(p)}</h3><p>🎂 ${life(p)}</p><p>📍 ${p.birthPlace||t('unknown')}</p><p>💼 ${p.profession||t('unknown')}</p><div class="badge-row"><span class="badge">${p.country||t('unknown')}</span></div>`;
+    const btn=document.createElement('button'); btn.className='person-card '+genderClass(p); if(p.id===selectedPersonId)btn.classList.add('active');
+    btn.innerHTML=`<h3>${p.flag||'👤'} ${genderSymbol(p)} ${getFullName(p)}</h3><p>🎂 ${life(p)}</p><p>📍 ${p.birthPlace||t('unknown')}</p><p>💼 ${p.profession||t('unknown')}</p><div class="badge-row"><span class="badge">${p.country||t('unknown')}</span></div>`;
     btn.addEventListener('click',()=>selectPerson(p.id)); peopleGrid.appendChild(btn);
   });
 }
@@ -611,7 +682,7 @@ function renderFamilyTree(id){
     <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
     <div class="tree-label">${t('selectedParents')}</div><div class="tree-level parents wide-generation">${parents.length?parents.map(person=>treeNode(person,'ancestor')).join(''):emptyNode(t('noParents'))}</div>
     <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-    <div class="tree-label">${t('selectedAndPartner')}</div><div class="tree-level main-level"><div class="tree-node main" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>${partners.length?partners.map(partnerNode).join(''):emptyNode(t('noPartners'))}</div>
+    <div class="tree-label">${t('selectedAndPartner')}</div><div class="tree-level main-level"><div class="tree-node main ${genderClass(p)}" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'} ${genderSymbol(p)}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>${partners.length?partners.map(partnerNode).join(''):emptyNode(t('noPartners'))}</div>
     <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
     <div class="tree-label">${t('children')}</div><div class="tree-level children wide-generation">${children.length?children.map(childNode).join(''):emptyNode(t('noChildren'))}</div>
     <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
@@ -620,10 +691,10 @@ function renderFamilyTree(id){
     <div class="tree-label">${t('greatGrandchildren')}</div><div class="tree-level wide-generation descendant-generation">${greatGrandchildren.length?greatGrandchildren.map(person=>treeNode(person,'great-descendant')).join(''):emptyNode(t('noGreatGrandchildren'))}</div>`;
   document.querySelectorAll('.tree-node[data-id]').forEach(item=>item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id'))));
 }
-function treeNode(p,extraClass=''){return `<div class="tree-node ${extraClass}" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
-function childNode(p){const partners=getPeopleByIds(p.partners||[]); const partnerText=partners.length?`<div class="child-partner-line">${t('partnerLine',{names:partners.map(getFullName).join(', ')})}</div>`:''; return `<div class="tree-node child" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div>${partnerText}</div>`;}
+function treeNode(p,extraClass=''){return `<div class="tree-node ${extraClass} ${genderClass(p)}" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'} ${genderSymbol(p)}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
+function childNode(p){const partners=getPeopleByIds(p.partners||[]); const partnerText=partners.length?`<div class="child-partner-line">${t('partnerLine',{names:partners.map(getFullName).join(', ')})}</div>`:''; return `<div class="tree-node child ${genderClass(p)}" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'} ${genderSymbol(p)}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div>${partnerText}</div>`;}
 function grandchildNode(p){return treeNode(p,'descendant');}
-function partnerNode(p){return `<div class="tree-node partner" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
+function partnerNode(p){return `<div class="tree-node partner ${genderClass(p)}" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'} ${genderSymbol(p)}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
 function emptyNode(text){return `<div class="tree-node empty-node"><div class="node-icon">—</div><div class="node-name">${text}</div></div>`;}
 
 function showAllPeople(){activeSurnameFilter=null; searchInput.value=''; countryFilter.value='all'; peopleGrid.innerHTML=`<p class="filter-title">${t('allPeopleShown')}</p>`; renderPeople(); setView('search'); window.scrollTo({top:0,behavior:'smooth'});}
@@ -657,7 +728,7 @@ function renderCountryTree(country){
   familyTree.innerHTML=`<div class="country-tree-header"><strong>${flag} ${country}</strong><br>${t('countryTreeDesc',{count:countryPeople.length})}</div>${rows}`;
   document.querySelectorAll('.country-tree-node[data-id]').forEach(item=>item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id'))));
 }
-function countryNode(p){const partners=getSameCountryPartners(p,p.country); const partnerLine=partners.length?`<div class="country-spouse-line">${t('partnerLine',{names:partners.map(getFullName).join(', ')})}</div>`:''; return `<div class="country-tree-node" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div>${partnerLine}</div>`;}
+function countryNode(p){const partners=getSameCountryPartners(p,p.country); const partnerLine=partners.length?`<div class="country-spouse-line">${t('partnerLine',{names:partners.map(getFullName).join(', ')})}</div>`:''; return `<div class="country-tree-node ${genderClass(p)}" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'} ${genderSymbol(p)}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div>${partnerLine}</div>`;}
 function selectCountry(country){
   countryFilter.value=country; activeSurnameFilter=null; renderPeople(); renderCountryTree(country); personDetail.className='';
   const count=getCountryPeople(country).length; const flag=(getCountryPeople(country).find(p=>p.flag)||{}).flag||'🌍';
@@ -706,9 +777,9 @@ function handlePersonSearch(){
     matches.forEach(p => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'person-card';
+      btn.className = 'person-card ' + genderClass(p);
       if (p.id === selectedPersonId) btn.classList.add('active');
-      btn.innerHTML = `<h3>${p.flag || '👤'} ${getFullName(p)}</h3><p>🎂 ${life(p)}</p><p>📍 ${p.birthPlace || t('unknown')}</p><p>💼 ${p.profession || t('unknown')}</p><div class="badge-row"><span class="badge">${p.country || t('unknown')}</span></div>`;
+      btn.innerHTML = `<h3>${p.flag || '👤'} ${genderSymbol(p)} ${getFullName(p)}</h3><p>🎂 ${life(p)}</p><p>📍 ${p.birthPlace || t('unknown')}</p><p>💼 ${p.profession || t('unknown')}</p><div class="badge-row"><span class="badge">${p.country || t('unknown')}</span></div>`;
       btn.addEventListener('click', () => selectPerson(p.id));
       peopleGrid.appendChild(btn);
     });
