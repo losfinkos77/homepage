@@ -293,40 +293,35 @@
 
 
 
-    /* Sichtbarer Fokus: ausgewählte Person im Stammbaum */
-    @keyframes selectedRingSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes selectedGlowPulse {
-      0%, 100% { box-shadow: 0 0 28px rgba(0,191,255,.45), 0 0 55px rgba(0,191,255,.18); }
-      50% { box-shadow: 0 0 38px rgba(0,191,255,.75), 0 0 85px rgba(0,255,170,.25); }
-    }
-
+    /* Sichtbarer Fokus: ausgewählte Person im Stammbaum – ruhiger Lichtstreifen */
     .tree-node.main {
       position: relative;
       z-index: 2;
-      border: 2px solid transparent !important;
-      animation: selectedGlowPulse 2.4s ease-in-out infinite;
+      border: 2px solid rgba(0,191,255,.95) !important;
+      box-shadow:
+        0 0 26px rgba(0,191,255,.45),
+        inset 0 0 18px rgba(0,191,255,.10);
     }
 
     .tree-node.main::before {
       content: "";
       position: absolute;
-      inset: -5px;
-      border-radius: 27px;
-      background: conic-gradient(
-        from 0deg,
+      top: -3px;
+      left: 18px;
+      width: 58%;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
         rgba(0,191,255,0),
-        rgba(0,191,255,1),
-        rgba(0,255,170,1),
         rgba(255,255,255,.95),
         rgba(0,191,255,1),
+        rgba(0,255,170,.85),
         rgba(0,191,255,0)
       );
-      animation: selectedRingSpin 3s linear infinite;
-      z-index: -1;
+      box-shadow:
+        0 0 12px rgba(0,191,255,.95),
+        0 0 24px rgba(0,255,170,.45);
+      pointer-events: none;
     }
 
     .tree-node.main::after {
@@ -344,6 +339,7 @@
       letter-spacing: .4px;
       box-shadow: 0 0 15px rgba(0,191,255,.7);
       white-space: nowrap;
+      pointer-events: none;
     }
 
     @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:950px;} .tree-node{min-width:190px;} }
