@@ -118,17 +118,17 @@
   <section class="stats"><div class="stat-card"><strong id="statPeople">0</strong><span>Personen</span></div><div class="stat-card"><strong id="statCountries">0</strong><span>Länder</span></div><div class="stat-card"><strong id="statFamilies">0</strong><span>Nachnamen</span></div></section>
 
   <div class="view-tabs">
-    <button id="searchTab" class="view-tab active" type="button">🔍 Suche & Ergebnisse</button>
-    <button id="treeTab" class="view-tab" type="button">🌳 Stammbaum Ansicht</button>
+    <button id="treeTab" class="view-tab active" type="button">🌳 Stammbaum Ansicht</button>
+    <button id="searchTab" class="view-tab" type="button">🔍 Suche & Ergebnisse</button>
   </div>
 
-  <section id="searchView" class="view-section active">
-    <div class="top-panel"><input id="searchInput" type="text" placeholder="Person suchen: Name, Ort, Datum, Land..."><select id="countryFilter"><option value="all">Alle Länder</option></select></div>
-    <div class="dashboard"><section class="box"><h2 class="box-title">🔍 Suche & Ergebnisse</h2><div id="peopleGrid" class="people-grid"></div></section><aside class="box"><h2 class="box-title">🔎 Details</h2><div id="personDetail" class="empty">Klicke auf eine Person. Dann erscheinen hier Details, Eltern, Partner und Kinder.</div></aside></div>
+  <section id="treeView" class="view-section active">
+    <section class="box tree-box"><h2 class="box-title">🌳 Stammbaum-Ansicht</h2><div id="familyTree" class="visual-tree"><div class="empty">Wähle eine Person aus. Dann wird hier die direkte Familie als Stammbaum angezeigt.</div></div><div class="tree-action-row"><button id="backToSearchButton" class="view-tab" type="button">← Zur Suche</button></div><div class="tree-legend">Tipp: Du kannst auch im Stammbaum auf Personen klicken.</div></section>
   </section>
 
-  <section id="treeView" class="view-section">
-    <section class="box tree-box"><h2 class="box-title">🌳 Stammbaum-Ansicht</h2><div id="familyTree" class="visual-tree"><div class="empty">Wähle eine Person aus. Dann wird hier die direkte Familie als Stammbaum angezeigt.</div></div><div class="tree-action-row"><button id="backToSearchButton" class="view-tab" type="button">← Zur Suche</button></div><div class="tree-legend">Tipp: Du kannst auch im Stammbaum auf Personen klicken.</div></section>
+  <section id="searchView" class="view-section">
+    <div class="top-panel"><input id="searchInput" type="text" placeholder="Person suchen: Name, Ort, Datum, Land..."><select id="countryFilter"><option value="all">Alle Länder</option></select></div>
+    <div class="dashboard"><section class="box"><h2 class="box-title">🔍 Suche & Ergebnisse</h2><div id="peopleGrid" class="people-grid"></div></section><aside class="box"><h2 class="box-title">🔎 Details</h2><div id="personDetail" class="empty">Klicke auf eine Person. Dann erscheinen hier Details, Eltern, Partner und Kinder.</div></aside></div>
   </section>
 
   <section class="box map-box"><h2 class="box-title">🌍 Länderübersicht</h2><div id="countryOverview" class="country-grid"></div><p class="note">Klicke auf ein Land, um die Personen aus diesem Land anzuzeigen.</p></section>
@@ -246,7 +246,7 @@ treeTab.addEventListener('click',()=>setView('tree'));
 backToSearchButton.addEventListener('click',()=>setView('search'));
 searchInput.addEventListener('input',()=>{setView('search'); if(searchInput.value.trim()===''&&countryFilter.value==='all')showStartMessage(); else renderPeople();});
 countryFilter.addEventListener('change',()=>{setView('search'); if(searchInput.value.trim()===''&&countryFilter.value==='all')showStartMessage(); else renderPeople();});
-renderCountryFilter(); renderCountries(); updateStats(); selectedPersonId='p001'; renderPersonDetail('p001'); renderFamilyTree('p001'); showStartMessage(); setView('search');
+renderCountryFilter(); renderCountries(); updateStats(); selectedPersonId='p001'; renderPersonDetail('p001'); renderFamilyTree('p001'); showStartMessage(); setView('tree');
 </script>
 </body>
 </html>
