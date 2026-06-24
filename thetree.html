@@ -118,6 +118,67 @@
     .surname-card span { color:#ccc; font-size:14px; }
     .filter-title { color:#9be7ff; margin:0 0 15px; font-size:15px; }
 
+
+    /* Partner und Kinder sofort sichtbar in der Stammbaumansicht */
+    .core-family-panel {
+      margin: 0 auto 42px;
+      padding: 24px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(0,191,255,.12), rgba(255,255,255,.045));
+      border: 1px solid rgba(0,191,255,.24);
+      box-shadow: 0 0 34px rgba(0,191,255,.12);
+    }
+    .core-family-title {
+      text-align: center;
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      margin: 0 0 18px;
+    }
+    .core-couple {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .couple-plus {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00ffaa;
+      font-size: 34px;
+      font-weight: bold;
+      text-shadow: 0 0 18px rgba(0,255,170,.45);
+      min-width: 36px;
+    }
+    .children-immediate {
+      margin-top: 22px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(255,255,255,.11);
+    }
+    .children-immediate .tree-level {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 0;
+    }
+    .child-partner-line {
+      margin-top: 7px;
+      padding-top: 7px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      color: #9fffdc;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .tree-node.child {
+      background: linear-gradient(145deg, rgba(0,191,255,.18), rgba(255,255,255,.045));
+    }
+    .tree-node.partner {
+      box-shadow: 0 0 24px rgba(0,255,170,.13);
+    }
+
     @media(max-width:950px) { .dashboard{grid-template-columns:1fr;} .top-panel{grid-template-columns:1fr;} .visual-tree{min-width:950px;} .tree-node{min-width:190px;} }
   </style>
 </head>
@@ -195,11 +256,36 @@ function renderFamilyTree(id){
   const totalShown = greatGrandparents.length + grandparents.length + parents.length + 1 + partners.length + children.length + grandchildren.length + greatGrandchildren.length;
 
   familyTree.innerHTML=`
-    <div class="tree-label">Urgroßeltern / ältere Generation</div>
-    <div class="tree-level wide-generation">
-      ${greatGrandparents.length?greatGrandparents.map(person=>treeNode(person,'small-generation')).join(''):emptyNode('Keine Urgroßeltern eingetragen')}
+    <div class="core-family-panel">
+      <div class="core-family-title">Direkte Familie von ${getFullName(p)}</div>
+
+      <div class="tree-label">Person und Partner</div>
+      <div class="core-couple">
+        <div class="tree-node main" data-id="${p.id}">
+          <div class="node-icon">${p.flag||'👤'}</div>
+          <div class="node-name">${getFullName(p)}</div>
+          <div class="node-date">${life(p)}</div>
+        </div>
+
+        ${partners.length?'<div class="couple-plus">+</div>':''}
+        ${partners.length?partners.map(partnerNode).join(''):emptyNode('Kein Partner eingetragen')}
+      </div>
+
+      <div class="tree-middle-line"><div class="tree-connector-down"></div></div>
+
+      <div class="children-immediate">
+        <div class="tree-label">Kinder sofort sichtbar</div>
+        <div class="children-count">${children.length?children.length+' Kind(er) gefunden':'Keine Kinder gefunden'} · Insgesamt sichtbar: ${totalShown} Person(en)</div>
+        <div class="tree-level children wide-generation">
+          ${children.length?children.map(childNode).join(''):emptyNode('Keine Kinder eingetragen')}
+        </div>
+      </div>
     </div>
-    <div class="generation-note">${greatGrandparents.length?greatGrandparents.length+' Person(en) in dieser Generation':''}</div>
+
+    <div class="tree-label">Eltern</div>
+    <div class="tree-level parents wide-generation">
+      ${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}
+    </div>
 
     <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
 
@@ -211,26 +297,11 @@ function renderFamilyTree(id){
 
     <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
 
-    <div class="tree-label">Eltern</div>
-    <div class="tree-level parents wide-generation">
-      ${parents.length?parents.map(treeNode).join(''):emptyNode('Keine Eltern eingetragen')}
+    <div class="tree-label">Urgroßeltern / ältere Generation</div>
+    <div class="tree-level wide-generation">
+      ${greatGrandparents.length?greatGrandparents.map(person=>treeNode(person,'small-generation')).join(''):emptyNode('Keine Urgroßeltern eingetragen')}
     </div>
-
-    <div class="tree-middle-line"><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="tree-label">Person und Partner</div>
-    <div class="tree-level main-level wide-generation">
-      <div class="tree-node main" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>
-      ${partners.length?partners.map(partnerNode).join(''):''}
-    </div>
-
-    <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
-
-    <div class="tree-label">Alle Kinder</div>
-    <div class="children-count">${children.length?children.length+' Kind(er) gefunden':'Keine Kinder gefunden'} · Insgesamt sichtbar: ${totalShown} Person(en)</div>
-    <div class="tree-level children wide-generation">
-      ${children.length?children.map(childNode).join(''):emptyNode('Keine Kinder eingetragen')}
-    </div>
+    <div class="generation-note">${greatGrandparents.length?greatGrandparents.length+' Person(en) in dieser Generation':''}</div>
 
     <div class="tree-middle-line"><div class="tree-connector-up"></div><div class="tree-connector-horizontal"></div><div class="tree-connector-down"></div></div>
 
@@ -251,7 +322,7 @@ function renderFamilyTree(id){
   document.querySelectorAll('.tree-node[data-id]').forEach(item=>item.addEventListener('click',()=>selectPerson(item.getAttribute('data-id'))));
 }
 function treeNode(p,extraClass=''){return `<div class="tree-node ${extraClass}" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
-function childNode(p){return `<div class="tree-node child" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
+function childNode(p){const partners=getPeopleByIds(p.partners||[]); const partnerText=partners.length?`<div class="child-partner-line">Partner: ${partners.map(getFullName).join(', ')}</div>`:''; return `<div class="tree-node child" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div>${partnerText}</div>`;}
 function grandchildNode(p){return treeNode(p,'descendant');}
 function partnerNode(p){return `<div class="tree-node partner" data-id="${p.id}"><div class="node-icon">${p.flag||'👤'}</div><div class="node-name">${getFullName(p)}</div><div class="node-date">${life(p)}</div></div>`;}
 function emptyNode(text){return `<div class="tree-node empty-node"><div class="node-icon">—</div><div class="node-name">${text}</div></div>`;}
