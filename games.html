@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Three small Python games running directly in your browser – powered by Pyodide.">
+<meta name="description" content="Five Python games, including Snake and Tetris, running directly in your browser – powered by Pyodide.">
 <title>Games | Los Finkos</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -549,6 +549,298 @@
     opacity: 1;
   }
 
+  .jump-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .jump-links a {
+    padding: 7px 13px;
+    border: 1px solid #3a3a3a;
+    border-radius: 999px;
+    background: #242424;
+    color: #9fdfff;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color .2s ease, background .2s ease, color .2s ease;
+  }
+
+  .jump-links a:hover {
+    border-color: var(--accent);
+    background: rgba(0, 191, 255, .08);
+    color: var(--text);
+  }
+
+  .section-head {
+    max-width: 780px;
+    margin: 30px auto 22px;
+    text-align: center;
+  }
+
+  .section-head.spaced { margin-top: 52px; }
+
+  .section-head h2 {
+    margin: 0 0 6px;
+    color: var(--text);
+    font-size: 26px;
+  }
+
+  .section-head p {
+    margin: 0;
+    color: var(--dim);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .arcade-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    align-items: stretch;
+    text-align: left;
+  }
+
+  .arcade-card { padding: 24px; }
+
+  .arcade-card .game-desc { min-height: 44px; }
+
+  .emoji-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .canvas-shell {
+    display: flex;
+    justify-content: center;
+    margin: 4px 0 14px;
+  }
+
+  .game-stage {
+    border-radius: 14px;
+    background: #151515;
+    box-shadow: inset 0 0 0 1px #383838, 0 8px 20px rgba(0, 0, 0, .25);
+  }
+
+  .game-stage:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .game-stage.is-idle { cursor: pointer; }
+
+  #snake-stage {
+    width: min(100%, 380px);
+  }
+
+  #snake-canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    background: #151515;
+  }
+
+  .feedback.compact {
+    min-height: 52px;
+    margin-bottom: 10px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+  }
+
+  .arcade-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  .dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 38px);
+    grid-template-rows: repeat(2, 38px);
+    gap: 5px;
+    flex: 0 0 auto;
+  }
+
+  .dpad-btn {
+    display: grid;
+    place-items: center;
+    border: 1px solid #3b3b3b;
+    border-radius: 9px;
+    background: #222;
+    color: #9fdfff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, color .2s ease;
+  }
+
+  .dpad-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(0, 191, 255, .09);
+    color: var(--text);
+  }
+
+  .dpad-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+
+  .dpad-btn.up { grid-area: 1 / 2; }
+  .dpad-btn.left { grid-area: 2 / 1; }
+  .dpad-btn.down { grid-area: 2 / 2; }
+  .dpad-btn.right { grid-area: 2 / 3; }
+
+  .control-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .control-hint {
+    margin: 10px 0 0;
+    color: #777;
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+
+  .tetris-layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 18px;
+    margin: 4px 0 0;
+  }
+
+  .tetris-board-col {
+    flex: 0 1 280px;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  #tetris-stage {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  #tetris-canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    background: #151515;
+  }
+
+  .tetris-board-col .feedback {
+    margin: 10px 0 0;
+  }
+
+  .tetris-side {
+    display: flex;
+    flex: 1 1 180px;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 170px;
+  }
+
+  .next-piece {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid #383838;
+    border-radius: 12px;
+    background: #222;
+  }
+
+  .mini-label {
+    color: #777;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  #tetris-next {
+    flex: 0 0 76px;
+    width: 76px;
+    height: 76px;
+    display: block;
+    border-radius: 8px;
+    background: #1a1a1a;
+  }
+
+  .tetris-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .tetris-stats .stat {
+    flex: 1 1 60px;
+    padding: 7px 8px;
+    text-align: center;
+  }
+
+  .tetris-stats .stat strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 17px;
+  }
+
+  .tetris-side .btn-row {
+    flex-direction: column;
+  }
+
+  .tetris-side .btn { width: 100%; }
+
+  .tetris-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .pad-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 9px 3px;
+    border: 1px solid #3b3b3b;
+    border-radius: 9px;
+    background: #222;
+    color: var(--muted);
+    font: inherit;
+    font-size: 10px;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, color .2s ease;
+  }
+
+  .pad-btn i {
+    color: var(--accent);
+    font-size: 13px;
+  }
+
+  .pad-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(0, 191, 255, .09);
+    color: var(--text);
+  }
+
+  .pad-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+
+  .pad-btn.drop { grid-column: span 2; }
+
   .note {
     max-width: 780px;
     margin: 36px auto 0;
@@ -606,6 +898,10 @@
     50% { opacity: .45; transform: scale(.8); }
   }
 
+  @media (max-width: 900px) {
+    .arcade-grid { grid-template-columns: 1fr; }
+  }
+
   @media (max-width: 600px) {
     header { padding-top: 42px; }
     h1 { font-size: 38px; }
@@ -613,9 +909,17 @@
     .runtime { max-width: 100%; }
     main { padding: 0 14px; }
     .game-grid { grid-template-columns: 1fr; }
-    .game-card { padding: 19px; }
-    .game-desc { min-height: 0; }
+    .game-card,
+    .arcade-card { padding: 19px; }
+    .game-desc,
+    .arcade-card .game-desc { min-height: 0; }
     .hm-letters { gap: 5px; }
+    .section-head { margin-top: 25px; }
+    .section-head.spaced { margin-top: 40px; }
+    .section-head h2 { font-size: 22px; }
+    .arcade-controls { justify-content: center; }
+    .tetris-layout { gap: 14px; }
+    .tetris-side { flex: 1 1 100%; min-width: 0; }
   }
 </style>
 </head>
@@ -625,7 +929,7 @@
   <p class="eyebrow"><i class="fas fa-terminal"></i> Python Arcade</p>
   <h1><i class="fas fa-gamepad"></i> Games</h1>
   <p class="subtitle">
-    Three tiny Python games, running directly in your browser. No installation,
+    Five Python games, running directly in your browser. No installation,
     no server – just real Python via WebAssembly.
   </p>
 
@@ -638,9 +942,157 @@
     The first visit downloads the Python runtime (about 12 MB) from a CDN.
     After that it is cached by your browser; the games themselves run locally.
   </p>
+
+  <nav class="jump-links" aria-label="Game sections">
+    <a href="#arcade"><i class="fas fa-gamepad"></i> Arcade</a>
+    <a href="#quick-games"><i class="fas fa-dice"></i> Quick games</a>
+  </nav>
 </header>
 
 <main>
+  <div class="section-head" id="arcade">
+    <h2>Snake &amp; Tetris</h2>
+    <p>Two classics with keyboard and touch controls. The game logic is Python; the board is drawn on a canvas.</p>
+  </div>
+
+  <div class="arcade-grid">
+
+    <section class="game-card arcade-card" aria-labelledby="snake-title">
+      <div class="game-head">
+        <div class="game-icon"><span class="emoji-icon" aria-hidden="true">🐍</span></div>
+        <div>
+          <h2 id="snake-title">Snake</h2>
+          <p class="game-sub">Game 01 · Arcade</p>
+        </div>
+      </div>
+      <p class="game-desc">
+        Steer the snake around the grid, eat apples and grow. One wrong turn
+        into the wall or your own tail ends the run.
+      </p>
+
+      <div class="stat-row">
+        <span class="stat">Score <strong id="snake-score">0</strong></span>
+        <span class="stat">Best <strong id="snake-best">0</strong></span>
+        <span class="stat">Grid <strong>20 × 20</strong></span>
+      </div>
+
+      <div class="canvas-shell">
+        <div class="game-stage" id="snake-stage" tabindex="0" role="application"
+             aria-label="Snake game board. Use the arrow keys or WASD to steer. Press Space to start or pause.">
+          <canvas id="snake-canvas" width="400" height="400" aria-label="Snake game board"></canvas>
+        </div>
+      </div>
+
+      <div class="feedback compact" id="snake-feedback" aria-live="polite">
+        Waiting for the Python runtime…
+      </div>
+
+      <div class="arcade-controls">
+        <div class="dpad" role="group" aria-label="Snake direction">
+          <button class="dpad-btn up" type="button" data-snake-dir="up" data-needs-python disabled aria-label="Up">
+            <i class="fas fa-chevron-up"></i>
+          </button>
+          <button class="dpad-btn left" type="button" data-snake-dir="left" data-needs-python disabled aria-label="Left">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="dpad-btn down" type="button" data-snake-dir="down" data-needs-python disabled aria-label="Down">
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <button class="dpad-btn right" type="button" data-snake-dir="right" data-needs-python disabled aria-label="Right">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="control-buttons">
+          <button class="btn primary" id="snake-start" type="button" data-needs-python disabled>
+            <i class="fas fa-play" id="snake-start-icon"></i>
+            <span id="snake-start-label">Start</span>
+          </button>
+          <button class="btn ghost" id="snake-new" type="button" data-needs-python disabled>
+            <i class="fas fa-rotate-right"></i> New game
+          </button>
+        </div>
+      </div>
+
+      <p class="control-hint">Arrow keys / WASD steer · Space starts or pauses · On touch screens use the D-pad.</p>
+    </section>
+
+    <section class="game-card arcade-card" aria-labelledby="tetris-title">
+      <div class="game-head">
+        <div class="game-icon"><i class="fas fa-cubes"></i></div>
+        <div>
+          <h2 id="tetris-title">Tetris</h2>
+          <p class="game-sub">Game 02 · Arcade</p>
+        </div>
+      </div>
+      <p class="game-desc">
+        Stack falling tetrominoes, complete horizontal lines and survive as
+        long as you can. Every ten lines makes the pieces fall faster.
+      </p>
+
+      <div class="tetris-layout">
+        <div class="tetris-board-col">
+          <div class="game-stage" id="tetris-stage" tabindex="0" role="application"
+               aria-label="Tetris game board. Arrow keys move, up rotates, down soft drops, space hard drops and P pauses.">
+            <canvas id="tetris-canvas" width="280" height="560" aria-label="Tetris game board"></canvas>
+          </div>
+          <div class="feedback compact" id="tetris-feedback" aria-live="polite">
+            Waiting for the Python runtime…
+          </div>
+        </div>
+
+        <aside class="tetris-side">
+          <div class="next-piece">
+            <span class="mini-label">Next</span>
+            <canvas id="tetris-next" width="96" height="96" aria-label="Next tetromino"></canvas>
+          </div>
+
+          <div class="tetris-stats">
+            <div class="stat">Score <strong id="tetris-score">0</strong></div>
+            <div class="stat">Lines <strong id="tetris-lines">0</strong></div>
+            <div class="stat">Level <strong id="tetris-level">1</strong></div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn primary" id="tetris-start" type="button" data-needs-python disabled>
+              <i class="fas fa-play" id="tetris-start-icon"></i>
+              <span id="tetris-start-label">Start</span>
+            </button>
+            <button class="btn ghost" id="tetris-new" type="button" data-needs-python disabled>
+              <i class="fas fa-rotate-right"></i> New game
+            </button>
+          </div>
+
+          <div class="tetris-controls" role="group" aria-label="Tetris controls">
+            <button class="pad-btn" type="button" data-tetris-action="left" data-needs-python disabled>
+              <i class="fas fa-arrow-left"></i><span>Left</span>
+            </button>
+            <button class="pad-btn" type="button" data-tetris-action="rotate" data-needs-python disabled>
+              <i class="fas fa-rotate"></i><span>Rotate</span>
+            </button>
+            <button class="pad-btn" type="button" data-tetris-action="right" data-needs-python disabled>
+              <i class="fas fa-arrow-right"></i><span>Right</span>
+            </button>
+            <button class="pad-btn" type="button" data-tetris-action="down" data-needs-python disabled>
+              <i class="fas fa-arrow-down"></i><span>Down</span>
+            </button>
+            <button class="pad-btn drop" type="button" data-tetris-action="drop" data-needs-python disabled>
+              <i class="fas fa-angles-down"></i><span>Hard drop</span>
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      <p class="control-hint">← → move · ↑ / X rotate · ↓ soft drop · Space hard drop · P pause</p>
+    </section>
+
+  </div>
+
+  <div class="section-head spaced" id="quick-games">
+    <h2>Quick games</h2>
+    <p>Short rounds for a coffee break – no keyboard skills required.</p>
+  </div>
+
   <div class="game-grid">
 
     <section class="game-card" aria-labelledby="ng-title">
@@ -648,7 +1100,7 @@
         <div class="game-icon"><i class="fas fa-bullseye"></i></div>
         <div>
           <h2 id="ng-title">Guess the Number</h2>
-          <p class="game-sub">Game 01 · Logic</p>
+          <p class="game-sub">Game 03 · Logic</p>
         </div>
       </div>
       <p class="game-desc">
@@ -688,7 +1140,7 @@
         <div class="game-icon"><i class="fas fa-hand-scissors"></i></div>
         <div>
           <h2 id="rps-title">Rock · Paper · Scissors</h2>
-          <p class="game-sub">Game 02 · Chance</p>
+          <p class="game-sub">Game 04 · Chance</p>
         </div>
       </div>
       <p class="game-desc">
@@ -739,7 +1191,7 @@
         <div class="game-icon"><i class="fas fa-font"></i></div>
         <div>
           <h2 id="hm-title">Hangman</h2>
-          <p class="game-sub">Game 03 · Words</p>
+          <p class="game-sub">Game 05 · Words</p>
         </div>
       </div>
       <p class="game-desc">
@@ -1015,6 +1467,376 @@ def hm_guess(letter):
         message = "No " + letter + ". " + str(hm_lives) + " lives left."
 
     return hm_payload("playing", message)
+
+
+# ------------------------------------------------------------
+# Game 4: Snake
+# ------------------------------------------------------------
+SN_GRID = 20
+sn_snake = []
+sn_direction = (1, 0)
+sn_pending = (1, 0)
+sn_food = [0, 0]
+sn_score = 0
+sn_best = 0
+sn_alive = True
+sn_running = False
+
+
+def sn_place_food():
+    global sn_food
+    occupied = set((segment[0], segment[1]) for segment in sn_snake)
+    free = []
+    for y in range(SN_GRID):
+        for x in range(SN_GRID):
+            if (x, y) not in occupied:
+                free.append((x, y))
+
+    if not free:
+        sn_food = [-1, -1]
+        return False
+
+    food = random.choice(free)
+    sn_food = [food[0], food[1]]
+    return True
+
+
+def snake_payload(message=""):
+    return json.dumps({
+        "snake": sn_snake,
+        "food": sn_food,
+        "direction": [sn_direction[0], sn_direction[1]],
+        "score": sn_score,
+        "best": sn_best,
+        "alive": sn_alive,
+        "running": sn_running,
+        "grid": SN_GRID,
+        "message": message
+    })
+
+
+def snake_new():
+    global sn_snake, sn_direction, sn_pending, sn_score, sn_alive, sn_running
+    center = SN_GRID // 2
+    sn_snake = [[center, center], [center - 1, center], [center - 2, center]]
+    sn_direction = (1, 0)
+    sn_pending = (1, 0)
+    sn_score = 0
+    sn_alive = True
+    sn_running = False
+    sn_place_food()
+    return snake_payload("Press Start or an arrow key.")
+
+
+def snake_start():
+    global sn_running
+    if not sn_alive:
+        return snake_payload("Press New game to start again.")
+    sn_running = True
+    return snake_payload("Go! Eat the apples and avoid yourself.")
+
+
+def snake_pause():
+    global sn_running
+    if sn_alive:
+        sn_running = False
+    return snake_payload("Paused.")
+
+
+def snake_set_direction(direction):
+    global sn_pending, sn_running
+    moves = {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)}
+    if direction not in moves:
+        return snake_payload("")
+    if not sn_alive:
+        return snake_payload("Press New game to start again.")
+
+    move = moves[direction]
+    if move == (-sn_direction[0], -sn_direction[1]):
+        return snake_payload("No U-turns – pick another direction.")
+
+    sn_pending = move
+    if not sn_running:
+        sn_running = True
+    return snake_payload("")
+
+
+def snake_step():
+    global sn_snake, sn_direction, sn_pending, sn_score, sn_best, sn_alive, sn_running
+
+    if not sn_alive or not sn_running:
+        return snake_payload("")
+
+    sn_direction = sn_pending
+    head = sn_snake[0]
+    new_head = [head[0] + sn_direction[0], head[1] + sn_direction[1]]
+
+    outside = (new_head[0] < 0 or new_head[0] >= SN_GRID or
+               new_head[1] < 0 or new_head[1] >= SN_GRID)
+    # The tail moves away, so its old cell is safe to enter.
+    hit_body = new_head in sn_snake[:-1]
+
+    if outside or hit_body:
+        sn_alive = False
+        sn_running = False
+        return snake_payload("Game over – final score " + str(sn_score) + ". Press New game.")
+
+    sn_snake.insert(0, new_head)
+
+    if new_head == sn_food:
+        sn_score += 10
+        if sn_score > sn_best:
+            sn_best = sn_score
+        if not sn_place_food():
+            sn_alive = False
+            sn_running = False
+            return snake_payload("You filled the board! Final score " + str(sn_score) + ".")
+    else:
+        sn_snake.pop()
+
+    return snake_payload("")
+
+
+# ------------------------------------------------------------
+# Game 5: Tetris
+# ------------------------------------------------------------
+TB_WIDTH = 10
+TB_HEIGHT = 20
+TB_PIECES = {
+    "I": [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
+    "O": [[1, 1, 0], [1, 1, 0], [0, 0, 0]],
+    "T": [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
+    "S": [[0, 1, 1], [1, 1, 0], [0, 0, 0]],
+    "Z": [[1, 1, 0], [0, 1, 1], [0, 0, 0]],
+    "J": [[1, 0, 0], [1, 1, 1], [0, 0, 0]],
+    "L": [[0, 0, 1], [1, 1, 1], [0, 0, 0]]
+}
+TB_COLORS = {"I": 1, "O": 2, "T": 3, "S": 4, "Z": 5, "J": 6, "L": 7}
+tb_board = [[0 for _ in range(TB_WIDTH)] for _ in range(TB_HEIGHT)]
+tb_piece = None
+tb_next_type = "I"
+tb_score = 0
+tb_lines = 0
+tb_level = 1
+tb_running = False
+tb_over = False
+
+
+def tb_collides(matrix, px, py):
+    for row_index, row in enumerate(matrix):
+        for col_index, value in enumerate(row):
+            if not value:
+                continue
+            board_x = px + col_index
+            board_y = py + row_index
+            if board_x < 0 or board_x >= TB_WIDTH or board_y >= TB_HEIGHT:
+                return True
+            if board_y >= 0 and tb_board[board_y][board_x]:
+                return True
+    return False
+
+
+def tb_spawn():
+    global tb_piece, tb_next_type, tb_over, tb_running
+    piece_type = tb_next_type
+    tb_next_type = random.choice(list(TB_PIECES.keys()))
+    matrix = [row[:] for row in TB_PIECES[piece_type]]
+    px = (TB_WIDTH - len(matrix[0])) // 2
+    py = 0
+
+    if tb_collides(matrix, px, py):
+        tb_piece = None
+        tb_over = True
+        tb_running = False
+        return False
+
+    tb_piece = {"type": piece_type, "matrix": matrix, "x": px, "y": py}
+    return True
+
+
+def tb_lock_piece():
+    if not tb_piece:
+        return
+
+    matrix = tb_piece["matrix"]
+    color = TB_COLORS[tb_piece["type"]]
+    for row_index, row in enumerate(matrix):
+        for col_index, value in enumerate(row):
+            if not value:
+                continue
+            board_x = tb_piece["x"] + col_index
+            board_y = tb_piece["y"] + row_index
+            if 0 <= board_x < TB_WIDTH and 0 <= board_y < TB_HEIGHT:
+                tb_board[board_y][board_x] = color
+
+
+def tb_clear_lines():
+    global tb_board, tb_score, tb_lines, tb_level
+    kept = [row for row in tb_board if any(value == 0 for value in row)]
+    cleared = TB_HEIGHT - len(kept)
+
+    if cleared == 0:
+        return 0
+
+    tb_board = [[0 for _ in range(TB_WIDTH)] for _ in range(cleared)] + kept
+    points = {1: 100, 2: 300, 3: 500, 4: 800}.get(cleared, 1200)
+    tb_score += points * tb_level
+    tb_lines += cleared
+    tb_level = 1 + tb_lines // 10
+    return cleared
+
+
+def tb_payload(message=""):
+    active = []
+    ghost = []
+
+    if tb_piece:
+        matrix = tb_piece["matrix"]
+        color = TB_COLORS[tb_piece["type"]]
+
+        for row_index, row in enumerate(matrix):
+            for col_index, value in enumerate(row):
+                if value:
+                    active.append([
+                        tb_piece["x"] + col_index,
+                        tb_piece["y"] + row_index,
+                        color
+                    ])
+
+        ghost_y = tb_piece["y"]
+        while not tb_collides(matrix, tb_piece["x"], ghost_y + 1):
+            ghost_y += 1
+
+        for row_index, row in enumerate(matrix):
+            for col_index, value in enumerate(row):
+                if value:
+                    ghost.append([
+                        tb_piece["x"] + col_index,
+                        ghost_y + row_index
+                    ])
+
+    next_matrix = [row[:] for row in TB_PIECES[tb_next_type]]
+    drop_ms = max(110, 720 - (tb_level - 1) * 65)
+
+    return json.dumps({
+        "board": tb_board,
+        "active": active,
+        "ghost": ghost,
+        "nextMatrix": next_matrix,
+        "nextColor": TB_COLORS[tb_next_type],
+        "score": tb_score,
+        "lines": tb_lines,
+        "level": tb_level,
+        "running": tb_running,
+        "over": tb_over,
+        "dropMs": drop_ms,
+        "message": message
+    })
+
+
+def tb_new():
+    global tb_board, tb_score, tb_lines, tb_level, tb_over, tb_running, tb_next_type
+    tb_board = [[0 for _ in range(TB_WIDTH)] for _ in range(TB_HEIGHT)]
+    tb_score = 0
+    tb_lines = 0
+    tb_level = 1
+    tb_over = False
+    tb_running = False
+    tb_next_type = random.choice(list(TB_PIECES.keys()))
+    tb_spawn()
+    return tb_payload("Press Start to play. Clear lines to level up.")
+
+
+def tb_start():
+    global tb_running
+    if tb_over:
+        return tb_payload("Game over – press New game.")
+    tb_running = True
+    return tb_payload("Go! Stack the pieces and clear lines.")
+
+
+def tb_pause():
+    global tb_running
+    if not tb_over:
+        tb_running = False
+    return tb_payload("Paused.")
+
+
+def tb_move(dx):
+    if not tb_running or tb_over or not tb_piece:
+        return tb_payload("")
+    new_x = tb_piece["x"] + int(dx)
+    if not tb_collides(tb_piece["matrix"], new_x, tb_piece["y"]):
+        tb_piece["x"] = new_x
+    return tb_payload("")
+
+
+def tb_rotate():
+    if not tb_running or tb_over or not tb_piece:
+        return tb_payload("")
+    matrix = tb_piece["matrix"]
+    rotated = [list(row) for row in zip(*matrix[::-1])]
+
+    for kick in (0, -1, 1, -2, 2):
+        new_x = tb_piece["x"] + kick
+        if not tb_collides(rotated, new_x, tb_piece["y"]):
+            tb_piece["matrix"] = rotated
+            tb_piece["x"] = new_x
+            return tb_payload("")
+    return tb_payload("Can't rotate here.")
+
+
+def tb_lock_and_spawn():
+    global tb_piece
+    tb_lock_piece()
+    cleared = tb_clear_lines()
+    tb_piece = None
+    tb_spawn()
+
+    if tb_over:
+        return tb_payload("Game over – final score " + str(tb_score) + ".")
+
+    if cleared == 4:
+        message = "Tetris! Four lines cleared."
+    elif cleared > 0:
+        suffix = " line." if cleared == 1 else " lines."
+        message = "Cleared " + str(cleared) + suffix + " Level " + str(tb_level) + "."
+    else:
+        message = ""
+
+    return tb_payload(message)
+
+
+def tb_tick():
+    if not tb_running or tb_over or not tb_piece:
+        return tb_payload("")
+    if not tb_collides(tb_piece["matrix"], tb_piece["x"], tb_piece["y"] + 1):
+        tb_piece["y"] += 1
+        return tb_payload("")
+    return tb_lock_and_spawn()
+
+
+def tb_soft_drop():
+    global tb_score
+    if not tb_running or tb_over or not tb_piece:
+        return tb_payload("")
+    if not tb_collides(tb_piece["matrix"], tb_piece["x"], tb_piece["y"] + 1):
+        tb_piece["y"] += 1
+        tb_score += 1
+        return tb_payload("")
+    return tb_lock_and_spawn()
+
+
+def tb_hard_drop():
+    global tb_score
+    if not tb_running or tb_over or not tb_piece:
+        return tb_payload("")
+    distance = 0
+    while not tb_collides(tb_piece["matrix"], tb_piece["x"], tb_piece["y"] + 1):
+        tb_piece["y"] += 1
+        distance += 1
+    tb_score += distance * 2
+    return tb_lock_and_spawn()
 `;
 
   const pyRuntime = document.getElementById("py-runtime");
@@ -1075,6 +1897,36 @@ def hm_guess(letter):
   function reportGameError(element, err) {
     console.error(err);
     setFeedback(element, "The Python engine hit an error. Reload the page to restart.", "error");
+  }
+
+  function roundedRect(ctx, x, y, width, height, radius) {
+    const r = Math.min(radius, width / 2, height / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + width - r, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+    ctx.lineTo(x + width, y + height - r);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    ctx.lineTo(x + r, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function drawCanvasOverlay(ctx, width, height, title, subtitle) {
+    ctx.save();
+    ctx.fillStyle = "rgba(8, 12, 14, .82)";
+    ctx.fillRect(0, 0, width, height);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#fff";
+    ctx.font = "700 22px 'Segoe UI', sans-serif";
+    ctx.fillText(title, width / 2, height / 2 - 10);
+    ctx.fillStyle = "#a9c7d2";
+    ctx.font = "13px 'Segoe UI', sans-serif";
+    ctx.fillText(subtitle, width / 2, height / 2 + 18);
+    ctx.restore();
   }
 
   // ----------------------------------------------------------
@@ -1297,12 +2149,604 @@ def hm_guess(letter):
   });
 
   // ----------------------------------------------------------
+  // Snake (canvas arcade)
+  // ----------------------------------------------------------
+  const snakeCanvas = document.getElementById("snake-canvas");
+  const snakeCtx = snakeCanvas.getContext("2d");
+  const snakeStage = document.getElementById("snake-stage");
+  const snakeFeedback = document.getElementById("snake-feedback");
+  const snakeScore = document.getElementById("snake-score");
+  const snakeBest = document.getElementById("snake-best");
+  const snakeStart = document.getElementById("snake-start");
+  const snakeStartIcon = document.getElementById("snake-start-icon");
+  const snakeStartLabel = document.getElementById("snake-start-label");
+  const snakeNew = document.getElementById("snake-new");
+
+  const SNAKE_GRID = 20;
+  const SNAKE_TICK_MS = 135;
+
+  let snakeTimer = null;
+  let snakeState = null;
+
+  function drawSnake(state) {
+    const ctx = snakeCtx;
+    const width = snakeCanvas.width;
+    const height = snakeCanvas.height;
+    const cell = width / SNAKE_GRID;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "#151515";
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.strokeStyle = "rgba(255, 255, 255, .035)";
+    ctx.lineWidth = 1;
+    for (let index = 0; index <= SNAKE_GRID; index += 1) {
+      const position = Math.round(index * cell) + 0.5;
+      ctx.beginPath();
+      ctx.moveTo(position, 0);
+      ctx.lineTo(position, height);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, position);
+      ctx.lineTo(width, position);
+      ctx.stroke();
+    }
+
+    if (state.food && state.food[0] >= 0) {
+      const foodX = state.food[0] * cell + cell / 2;
+      const foodY = state.food[1] * cell + cell / 2;
+      ctx.save();
+      ctx.shadowColor = "#ff5a5a";
+      ctx.shadowBlur = 14;
+      ctx.fillStyle = "#ff5a5a";
+      ctx.beginPath();
+      ctx.arc(foodX, foodY, cell * 0.32, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      ctx.fillStyle = "#5ee6a8";
+      ctx.beginPath();
+      ctx.ellipse(foodX + cell * 0.13, foodY - cell * 0.28, cell * 0.13, cell * 0.06, -0.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    state.snake.forEach((segment, index) => {
+      const isHead = index === 0;
+      const padding = 1.5;
+      ctx.globalAlpha = isHead ? 1 : Math.max(0.45, 1 - index * 0.015);
+      ctx.fillStyle = isHead ? "#8ceaff" : "#00bfff";
+      roundedRect(
+        ctx,
+        segment[0] * cell + padding,
+        segment[1] * cell + padding,
+        cell - padding * 2,
+        cell - padding * 2,
+        4
+      );
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    const head = state.snake[0];
+    if (head) {
+      const direction = state.direction || [1, 0];
+      const centerX = head[0] * cell + cell / 2;
+      const centerY = head[1] * cell + cell / 2;
+      const forward = cell * 0.13;
+      const side = cell * 0.16;
+
+      ctx.fillStyle = "#0b2b33";
+      [-1, 1].forEach(sign => {
+        const eyeX = centerX + direction[0] * forward + (-direction[1]) * side * sign;
+        const eyeY = centerY + direction[1] * forward + direction[0] * side * sign;
+        ctx.beginPath();
+        ctx.arc(eyeX, eyeY, cell * 0.075, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    if (!state.alive) {
+      drawCanvasOverlay(ctx, width, height, "GAME OVER", "Score " + state.score + " · press Play again");
+    } else if (!state.running) {
+      const paused = (state.message || "").toLowerCase().includes("paused");
+      drawCanvasOverlay(
+        ctx,
+        width,
+        height,
+        paused ? "PAUSED" : "READY",
+        paused ? "Press Start or tap to continue" : "Press Start or an arrow key"
+      );
+    }
+  }
+
+  function updateSnakeUi(state) {
+    snakeScore.textContent = state.score;
+    snakeBest.textContent = state.best;
+    snakeStage.classList.toggle("is-idle", !state.running);
+
+    if (!state.alive) {
+      snakeStartLabel.textContent = "Play again";
+      snakeStartIcon.className = "fas fa-rotate-right";
+    } else if (state.running) {
+      snakeStartLabel.textContent = "Pause";
+      snakeStartIcon.className = "fas fa-pause";
+    } else {
+      snakeStartLabel.textContent = "Start";
+      snakeStartIcon.className = "fas fa-play";
+    }
+
+    if (state.message) {
+      let tone = "hint";
+      if (!state.alive) tone = "error";
+      else if (state.message.startsWith("Go")) tone = "success";
+      setFeedback(snakeFeedback, state.message, tone);
+    }
+  }
+
+  function stopSnakeTimer() {
+    if (snakeTimer) {
+      clearTimeout(snakeTimer);
+      snakeTimer = null;
+    }
+  }
+
+  function scheduleSnake() {
+    stopSnakeTimer();
+    if (!snakeState || !snakeState.alive || !snakeState.running) return;
+    snakeTimer = setTimeout(snakeTick, SNAKE_TICK_MS);
+  }
+
+  function applySnake(state) {
+    snakeState = state;
+    drawSnake(state);
+    updateSnakeUi(state);
+    scheduleSnake();
+  }
+
+  function snakeTick() {
+    if (!pyReady) return;
+    try {
+      applySnake(pyCall("snake_step"));
+    } catch (err) {
+      stopSnakeTimer();
+      reportGameError(snakeFeedback, err);
+    }
+  }
+
+  function toggleSnake() {
+    if (!pyReady) return;
+    try {
+      let state;
+      if (!snakeState || !snakeState.alive) {
+        pauseTetrisIfRunning();
+        pyCall("snake_new");
+        state = pyCall("snake_start");
+      } else if (snakeState.running) {
+        state = pyCall("snake_pause");
+      } else {
+        pauseTetrisIfRunning();
+        state = pyCall("snake_start");
+      }
+      applySnake(state);
+      snakeStage.focus({ preventScroll: true });
+    } catch (err) {
+      reportGameError(snakeFeedback, err);
+    }
+  }
+
+  function newSnakeGame() {
+    if (!pyReady) return;
+    try {
+      pauseTetrisIfRunning();
+      pyCall("snake_new");
+      applySnake(pyCall("snake_start"));
+      snakeStage.focus({ preventScroll: true });
+    } catch (err) {
+      reportGameError(snakeFeedback, err);
+    }
+  }
+
+  function setSnakeDirection(direction) {
+    if (!pyReady) return;
+    try {
+      if (!snakeState || !snakeState.alive || !snakeState.running) {
+        pauseTetrisIfRunning();
+      }
+      if (!snakeState || !snakeState.alive) {
+        pyCall("snake_new");
+      }
+      applySnake(pyCall("snake_set_direction", direction));
+    } catch (err) {
+      reportGameError(snakeFeedback, err);
+    }
+  }
+
+  snakeStart.addEventListener("click", toggleSnake);
+  snakeNew.addEventListener("click", newSnakeGame);
+  snakeStage.addEventListener("click", () => {
+    if (snakeState && !snakeState.running) toggleSnake();
+  });
+
+  document.querySelectorAll("[data-snake-dir]").forEach(button => {
+    button.addEventListener("click", () => setSnakeDirection(button.dataset.snakeDir));
+  });
+
+  const snakeKeyMap = {
+    arrowup: "up",
+    w: "up",
+    arrowdown: "down",
+    s: "down",
+    arrowleft: "left",
+    a: "left",
+    arrowright: "right",
+    d: "right"
+  };
+
+  snakeStage.addEventListener("keydown", event => {
+    const key = event.key.toLowerCase();
+    if (key === " " || key === "spacebar") {
+      event.preventDefault();
+      toggleSnake();
+      return;
+    }
+
+    const direction = snakeKeyMap[key];
+    if (direction) {
+      event.preventDefault();
+      setSnakeDirection(direction);
+    }
+  });
+
+  // ----------------------------------------------------------
+  // Tetris (canvas arcade)
+  // ----------------------------------------------------------
+  const tetrisCanvas = document.getElementById("tetris-canvas");
+  const tetrisCtx = tetrisCanvas.getContext("2d");
+  const tetrisNext = document.getElementById("tetris-next");
+  const tetrisNextCtx = tetrisNext.getContext("2d");
+  const tetrisStage = document.getElementById("tetris-stage");
+  const tetrisFeedback = document.getElementById("tetris-feedback");
+  const tetrisScore = document.getElementById("tetris-score");
+  const tetrisLines = document.getElementById("tetris-lines");
+  const tetrisLevel = document.getElementById("tetris-level");
+  const tetrisStart = document.getElementById("tetris-start");
+  const tetrisStartIcon = document.getElementById("tetris-start-icon");
+  const tetrisStartLabel = document.getElementById("tetris-start-label");
+  const tetrisNew = document.getElementById("tetris-new");
+
+  const TETRIS_COLORS = {
+    1: "#00d5ff",
+    2: "#ffd166",
+    3: "#b388ff",
+    4: "#5ee6a8",
+    5: "#ff6b6b",
+    6: "#4d8dff",
+    7: "#ff9f43"
+  };
+
+  let tetrisTimer = null;
+  let tetrisState = null;
+
+  function drawTetrisBlock(ctx, x, y, size, color, alpha = 1) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    roundedRect(ctx, x + 1, y + 1, size - 2, size - 2, 3);
+    ctx.fill();
+
+    ctx.globalAlpha = alpha * 0.45;
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 1;
+    roundedRect(ctx, x + 1.5, y + 1.5, size - 3, size - 3, 3);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawTetris(state) {
+    const ctx = tetrisCtx;
+    const width = tetrisCanvas.width;
+    const height = tetrisCanvas.height;
+    const cell = width / 10;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "#151515";
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.strokeStyle = "rgba(255, 255, 255, .045)";
+    ctx.lineWidth = 1;
+    for (let column = 1; column < 10; column += 1) {
+      const x = Math.round(column * cell) + 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
+    }
+    for (let row = 1; row < 20; row += 1) {
+      const y = Math.round(row * cell) + 0.5;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+    }
+
+    state.board.forEach((row, rowIndex) => {
+      row.forEach((value, columnIndex) => {
+        if (value) {
+          drawTetrisBlock(
+            ctx,
+            columnIndex * cell,
+            rowIndex * cell,
+            cell,
+            TETRIS_COLORS[value] || "#ffffff",
+            1
+          );
+        }
+      });
+    });
+
+    const ghostColor = state.active.length
+      ? TETRIS_COLORS[state.active[0][2]] || "#00bfff"
+      : "#00bfff";
+
+    state.ghost.forEach(cellPosition => {
+      const [x, y] = cellPosition;
+      if (y < 0) return;
+      ctx.save();
+      ctx.globalAlpha = 0.16;
+      ctx.fillStyle = ghostColor;
+      roundedRect(ctx, x * cell + 2, y * cell + 2, cell - 4, cell - 4, 3);
+      ctx.fill();
+      ctx.globalAlpha = 0.55;
+      ctx.strokeStyle = ghostColor;
+      ctx.lineWidth = 1;
+      roundedRect(ctx, x * cell + 2, y * cell + 2, cell - 4, cell - 4, 3);
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    state.active.forEach(cellPosition => {
+      const [x, y, colorIndex] = cellPosition;
+      if (y < 0) return;
+      drawTetrisBlock(
+        ctx,
+        x * cell,
+        y * cell,
+        cell,
+        TETRIS_COLORS[colorIndex] || "#ffffff",
+        1
+      );
+    });
+
+    if (state.over) {
+      drawCanvasOverlay(ctx, width, height, "GAME OVER", "Score " + state.score + " · press Play again");
+    } else if (!state.running) {
+      const paused = (state.message || "").toLowerCase().includes("paused");
+      drawCanvasOverlay(
+        ctx,
+        width,
+        height,
+        paused ? "PAUSED" : "READY",
+        paused ? "Press Start or tap to continue" : "Press Start or tap the board"
+      );
+    }
+  }
+
+  function drawTetrisNext(matrix, colorIndex) {
+    const ctx = tetrisNextCtx;
+    const size = tetrisNext.width;
+    const cell = 20;
+
+    ctx.clearRect(0, 0, size, size);
+    ctx.fillStyle = "#1a1a1a";
+    ctx.fillRect(0, 0, size, size);
+
+    if (!matrix || !matrix.length) return;
+
+    const rows = matrix.length;
+    const columns = matrix[0].length;
+    const offsetX = (size - columns * cell) / 2;
+    const offsetY = (size - rows * cell) / 2;
+    const color = TETRIS_COLORS[colorIndex] || "#ffffff";
+
+    matrix.forEach((row, rowIndex) => {
+      row.forEach((value, columnIndex) => {
+        if (!value) return;
+        drawTetrisBlock(
+          ctx,
+          offsetX + columnIndex * cell,
+          offsetY + rowIndex * cell,
+          cell,
+          color,
+          1
+        );
+      });
+    });
+  }
+
+  function updateTetrisUi(state) {
+    tetrisScore.textContent = state.score;
+    tetrisLines.textContent = state.lines;
+    tetrisLevel.textContent = state.level;
+    tetrisStage.classList.toggle("is-idle", !state.running);
+
+    if (state.over) {
+      tetrisStartLabel.textContent = "Play again";
+      tetrisStartIcon.className = "fas fa-rotate-right";
+    } else if (state.running) {
+      tetrisStartLabel.textContent = "Pause";
+      tetrisStartIcon.className = "fas fa-pause";
+    } else {
+      tetrisStartLabel.textContent = "Start";
+      tetrisStartIcon.className = "fas fa-play";
+    }
+
+    if (state.message) {
+      let tone = "hint";
+      if (state.over) tone = "error";
+      else if (state.message.startsWith("Tetris!") || state.message.startsWith("Cleared")) tone = "success";
+      setFeedback(tetrisFeedback, state.message, tone);
+    }
+
+    const actionsDisabled = !state.running || state.over;
+    document.querySelectorAll("[data-tetris-action]").forEach(button => {
+      button.disabled = actionsDisabled;
+    });
+  }
+
+  function stopTetrisTimer() {
+    if (tetrisTimer) {
+      clearTimeout(tetrisTimer);
+      tetrisTimer = null;
+    }
+  }
+
+  function scheduleTetris() {
+    stopTetrisTimer();
+    if (!tetrisState || !tetrisState.running || tetrisState.over) return;
+    tetrisTimer = setTimeout(tetrisTick, tetrisState.dropMs || 700);
+  }
+
+  function applyTetris(state, reschedule = true) {
+    tetrisState = state;
+    drawTetris(state);
+    drawTetrisNext(state.nextMatrix, state.nextColor);
+    updateTetrisUi(state);
+    if (reschedule) scheduleTetris();
+  }
+
+  function tetrisTick() {
+    if (!pyReady) return;
+    try {
+      applyTetris(pyCall("tb_tick"));
+    } catch (err) {
+      stopTetrisTimer();
+      reportGameError(tetrisFeedback, err);
+    }
+  }
+
+  function toggleTetris() {
+    if (!pyReady) return;
+    try {
+      let state;
+      if (!tetrisState || tetrisState.over) {
+        pauseSnakeIfRunning();
+        pyCall("tb_new");
+        state = pyCall("tb_start");
+      } else if (tetrisState.running) {
+        state = pyCall("tb_pause");
+      } else {
+        pauseSnakeIfRunning();
+        state = pyCall("tb_start");
+      }
+      applyTetris(state);
+      tetrisStage.focus({ preventScroll: true });
+    } catch (err) {
+      reportGameError(tetrisFeedback, err);
+    }
+  }
+
+  function newTetrisGame() {
+    if (!pyReady) return;
+    try {
+      pauseSnakeIfRunning();
+      pyCall("tb_new");
+      applyTetris(pyCall("tb_start"));
+      tetrisStage.focus({ preventScroll: true });
+    } catch (err) {
+      reportGameError(tetrisFeedback, err);
+    }
+  }
+
+  function tetrisAction(action) {
+    if (!pyReady || !tetrisState || !tetrisState.running || tetrisState.over) return;
+
+    try {
+      let state;
+      if (action === "left") {
+        state = pyCall("tb_move", -1);
+        applyTetris(state, false);
+      } else if (action === "right") {
+        state = pyCall("tb_move", 1);
+        applyTetris(state, false);
+      } else if (action === "rotate") {
+        state = pyCall("tb_rotate");
+        applyTetris(state, false);
+      } else if (action === "down") {
+        state = pyCall("tb_soft_drop");
+        applyTetris(state);
+      } else if (action === "drop") {
+        state = pyCall("tb_hard_drop");
+        applyTetris(state);
+      }
+    } catch (err) {
+      reportGameError(tetrisFeedback, err);
+    }
+  }
+
+  tetrisStart.addEventListener("click", toggleTetris);
+  tetrisNew.addEventListener("click", newTetrisGame);
+  tetrisStage.addEventListener("click", () => {
+    if (tetrisState && !tetrisState.running) toggleTetris();
+  });
+
+  document.querySelectorAll("[data-tetris-action]").forEach(button => {
+    button.addEventListener("click", () => tetrisAction(button.dataset.tetrisAction));
+  });
+
+  tetrisStage.addEventListener("keydown", event => {
+    const key = event.key;
+    const lower = key.toLowerCase();
+
+    if (!tetrisState || !tetrisState.running || tetrisState.over) {
+      if (key === " " || lower === "p") {
+        event.preventDefault();
+        toggleTetris();
+      }
+      return;
+    }
+
+    if (key === "ArrowLeft") {
+      event.preventDefault();
+      tetrisAction("left");
+    } else if (key === "ArrowRight") {
+      event.preventDefault();
+      tetrisAction("right");
+    } else if (key === "ArrowUp" || lower === "x") {
+      event.preventDefault();
+      tetrisAction("rotate");
+    } else if (key === "ArrowDown") {
+      event.preventDefault();
+      tetrisAction("down");
+    } else if (key === " ") {
+      event.preventDefault();
+      tetrisAction("drop");
+    } else if (lower === "p") {
+      event.preventDefault();
+      toggleTetris();
+    }
+  });
+
+  function pauseSnakeIfRunning() {
+    if (pyReady && snakeState && snakeState.running) {
+      applySnake(pyCall("snake_pause"));
+    }
+  }
+
+  function pauseTetrisIfRunning() {
+    if (pyReady && tetrisState && tetrisState.running) {
+      applyTetris(pyCall("tb_pause"));
+    }
+  }
+
+  // ----------------------------------------------------------
   // Runtime bootstrap
   // ----------------------------------------------------------
   function initGames() {
     renderNumber(pyCall("ng_new"));
     renderRps(pyCall("rps_reset"));
     renderHangman(pyCall("hm_new"));
+    applySnake(pyCall("snake_new"));
+    applyTetris(pyCall("tb_new"));
   }
 
   async function initPython() {
@@ -1333,6 +2777,8 @@ def hm_guess(letter):
         console.error("Python runtime failed:", err);
         pyReady = false;
         pyodide = null;
+        stopSnakeTimer();
+        stopTetrisTimer();
         setGameControlsDisabled(true);
         setRuntime("error", "Python could not be loaded. Check your connection and retry.");
       } finally {
