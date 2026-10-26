@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wildlife Photography | Los Finkos</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #1e1e1e;
+    --card: #2b2b2b;
+    --accent: #00bfff;
+    --text: #fff;
+    --muted: #bbb;
+    --dim: #888;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    text-align: center;
+  }
+
+  header {
+    padding: 55px 20px 10px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    color: var(--accent);
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #00bfff44;
+    margin: 0 0 12px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 720px;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .section {
+    margin-top: 55px;
+  }
+
+  .section h2 {
+    color: var(--text);
+    font-size: 26px;
+    margin: 0 0 8px;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 760px;
+    margin: 0 auto 28px;
+  }
+
+  .tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .tip {
+    background: var(--card);
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 22px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+
+  .tip:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,191,255,0.18);
+  }
+
+  .tip i {
+    color: var(--accent);
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+
+  .tip h3 {
+    color: var(--accent);
+    font-size: 17px;
+    margin: 0 0 8px;
+  }
+
+  .tip p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .tip ul {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .tip li { margin-bottom: 4px; }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    text-align: left;
+  }
+
+  .sighting {
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1px solid #333;
+    border-radius: 15px;
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+
+  .sighting:hover,
+  .sighting:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,191,255,0.25);
+    outline: none;
+  }
+
+  .sighting:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .sighting img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    display: block;
+    background: #222;
+  }
+
+  .sighting-body {
+    padding: 14px 16px 16px;
+  }
+
+  .sighting h3 {
+    color: var(--accent);
+    font-size: 16px;
+    line-height: 1.3;
+    margin: 0 0 2px;
+  }
+
+  .sci {
+    color: var(--dim);
+    font-size: 12px;
+    font-style: italic;
+    margin: 0 0 8px;
+  }
+
+  .sighting .meta {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .sighting .credit {
+    color: #777;
+    font-size: 11px;
+    line-height: 1.4;
+    margin: 10px 0 0;
+  }
+
+  .status {
+    color: var(--dim);
+    font-size: 13px;
+    margin: 22px 0 14px;
+  }
+
+  .inline-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .inline-link:hover { text-decoration: underline; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 26px;
+    background: var(--card);
+    color: var(--accent);
+    border: 1px solid #3a3a3a;
+    border-radius: 18px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .3s ease;
+  }
+
+  .btn:hover:not(:disabled) {
+    background: var(--accent);
+    color: #1e1e1e;
+    transform: scale(1.04);
+  }
+
+  .btn:disabled {
+    opacity: .6;
+    cursor: wait;
+  }
+
+  .source {
+    margin: 25px 0 0;
+    font-size: 14px;
+  }
+
+  .source a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .source a:hover { text-decoration: underline; }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 50px auto 0;
+    padding: 16px 28px;
+    background: var(--card);
+    color: var(--accent);
+    text-decoration: none;
+    border-radius: 18px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    font-size: 16px;
+    font-weight: 500;
+    transition: all .3s ease;
+  }
+
+  .back-btn:hover {
+    background: var(--accent);
+    color: #1e1e1e;
+    transform: scale(1.05);
+  }
+
+  footer {
+    margin-top: 45px;
+    padding: 22px;
+    color: var(--dim);
+    font-size: 13px;
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 36px; }
+    header { padding-top: 40px; }
+    .section h2 { font-size: 22px; }
+    .sighting img { height: 230px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><i class="fas fa-camera-retro"></i> Wildlife Photography</h1>
+  <p class="subtitle">
+    Fieldcraft, camera settings and fresh wildlife sightings from Austria –
+    with photos shared by the iNaturalist community.
+  </p>
+</header>
+
+<main>
+  <section class="section">
+    <h2>Field notes &amp; settings</h2>
+    <p class="section-sub">
+      Wild animals rarely wait for you. These fundamentals help you get close
+      (optically), stay unobtrusive and come home with sharp images.
+    </p>
+
+    <div class="tips">
+      <div class="tip">
+        <i class="fas fa-sun"></i>
+        <h3>Light first</h3>
+        <p>
+          The golden hour after sunrise and before sunset gives warm, soft light.
+          Overcast days are ideal for even tones and fine detail. Avoid harsh
+          midday sun and always expose for the highlights.
+        </p>
+      </div>
+
+      <div class="tip">
+        <i class="fas fa-sliders-h"></i>
+        <h3>Camera settings</h3>
+        <ul>
+          <li>Birds in flight: 1/2000 s, continuous AF, burst mode</li>
+          <li>Perched birds: 1/500 s or faster</li>
+          <li>Mammals: 1/250–1/1000 s depending on movement</li>
+          <li>Aperture f/5.6–f/8 for sharpness, ISO as low as possible</li>
+          <li>Shoot RAW and use silent shutter when available</li>
+        </ul>
+      </div>
+
+      <div class="tip">
+        <i class="fas fa-leaf"></i>
+        <h3>Fieldcraft</h3>
+        <p>
+          Move slowly and stop often. Use natural cover, avoid skylining yourself
+          and keep conversations quiet. Patience beats chasing: find a promising
+          spot, settle down and let the animals come to you.
+        </p>
+      </div>
+
+      <div class="tip">
+        <i class="fas fa-heart"></i>
+        <h3>Ethics first</h3>
+        <ul>
+          <li>Keep your distance – use a telephoto, not your feet</li>
+          <li>Never disturb nests, dens or young animals</li>
+          <li>No baiting or excessive playback for predators</li>
+          <li>Stay on trails and respect protected areas</li>
+          <li>No flash at night; leave no trace</li>
+        </ul>
+      </div>
+
+      <div class="tip">
+        <i class="fas fa-binoculars"></i>
+        <h3>Gear checklist</h3>
+        <ul>
+          <li>300–600 mm telephoto (or 100–400 mm + teleconverter)</li>
+          <li>Monopod or bean bag for stability</li>
+          <li>Spare batteries and memory cards</li>
+          <li>Rain cover, lens cloth and binoculars</li>
+          <li>Quiet clothing that blends with the habitat</li>
+        </ul>
+      </div>
+
+      <div class="tip">
+        <i class="fas fa-map-location-dot"></i>
+        <h3>Time &amp; places</h3>
+        <p>
+          Dawn and dusk are most active. Spring and autumn bring migration and
+          courtship behaviour; after rain amphibians and insects appear. Local
+          wetlands, forest edges and national parks are great starting points.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sightings">
+    <h2>Recent wildlife sightings</h2>
+    <p class="section-sub">
+      Live from iNaturalist: research-grade animal observations from Austria with
+      CC-licensed photos. Click a card to open the observation and photographer.
+    </p>
+
+    <div class="gallery" id="gallery"></div>
+    <p class="status" id="gallery-status">Loading sightings…</p>
+    <button class="btn" id="load-more" type="button" hidden>
+      <i class="fas fa-arrows-rotate"></i> Load more sightings
+    </button>
+
+    <p class="source">
+      <a href="https://www.inaturalist.org/observations?place_id=8057&taxon_id=1&photos=true&quality_grade=research"
+         target="_blank" rel="noopener noreferrer">
+        Explore all sightings on iNaturalist <i class="fas fa-arrow-up-right-from-square"></i>
+      </a>
+    </p>
+  </section>
+</main>
+
+<a href="wildlife.html" class="back-btn">
+  <i class="fas fa-arrow-left"></i> Back to Wildlife Tracker
+</a>
+
+<footer>
+  © 2026 Los Finkos | Wildlife Photography · Sightings via iNaturalist
+</footer>
+
+<script>
+  const API_URL = "https://api.inaturalist.org/v1/observations";
+  const PLACE_ID = 8057;          // Austria
+  const PER_PAGE = 12;
+  const CACHE_KEY = "inat-at-wildlife-v1";
+  const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+  const gallery = document.getElementById("gallery");
+  const statusEl = document.getElementById("gallery-status");
+  const loadMoreBtn = document.getElementById("load-more");
+
+  let nextPage = 1;
+  let loadedCount = 0;
+  let loading = false;
+
+  function buildUrl(pageNumber) {
+    const params = new URLSearchParams({
+      place_id: PLACE_ID,
+      taxon_id: 1,                 // Animalia
+      photos: "true",
+      photo_license: "cc0,cc-by,cc-by-nc,cc-by-sa,cc-by-nc-sa",
+      quality_grade: "research",
+      captive: "false",
+      order_by: "observed_on",
+      order: "desc",
+      per_page: PER_PAGE,
+      page: pageNumber,
+      locale: "en"
+    });
+    return API_URL + "?" + params.toString();
+  }
+
+  function getCache() {
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+      if (cached && Date.now() - cached.time < CACHE_TTL && Array.isArray(cached.results)) {
+        return cached;
+      }
+    } catch (e) { /* localStorage nicht verfügbar */ }
+    return null;
+  }
+
+  function setCache(results) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), results }));
+    } catch (e) { /* ignorieren */ }
+  }
+
+  function formatDate(value) {
+    if (!value) return "";
+    const date = new Date(value + "T12:00:00");
+    if (isNaN(date)) return value;
+    return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  }
+
+  function renderSightings(results) {
+    const fragment = document.createDocumentFragment();
+
+    results.forEach(obs => {
+      const photo = obs.photos && obs.photos[0];
+      if (!photo || !photo.url) return;
+
+      const taxon = obs.taxon || {};
+      const commonName = taxon.preferred_common_name || taxon.name || "Unknown species";
+      const scientificName = taxon.preferred_common_name ? taxon.name : "";
+      const meta = [formatDate(obs.observed_on), obs.place_guess].filter(Boolean).join(" · ");
+      const credit = photo.attribution || (obs.user ? "© " + obs.user.login : "");
+
+      const card = document.createElement("a");
+      card.className = "sighting";
+      card.href = obs.uri;
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+
+      const img = document.createElement("img");
+      img.src = photo.url.replace("/square.", "/medium.");
+      img.alt = commonName + (obs.place_guess ? " – " + obs.place_guess : "");
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.addEventListener("error", () => { img.style.display = "none"; });
+
+      const body = document.createElement("div");
+      body.className = "sighting-body";
+
+      const title = document.createElement("h3");
+      title.textContent = commonName;
+      body.appendChild(title);
+
+      if (scientificName) {
+        const sci = document.createElement("p");
+        sci.className = "sci";
+        sci.textContent = scientificName;
+        body.appendChild(sci);
+      }
+
+      const metaEl = document.createElement("p");
+      metaEl.className = "meta";
+      metaEl.textContent = meta;
+      body.appendChild(metaEl);
+
+      const creditEl = document.createElement("p");
+      creditEl.className = "credit";
+      creditEl.textContent = credit;
+      body.appendChild(creditEl);
+
+      card.append(img, body);
+      fragment.appendChild(card);
+    });
+
+    gallery.appendChild(fragment);
+  }
+
+  function showError() {
+    statusEl.textContent = "Could not load sightings right now. ";
+
+    const link = document.createElement("a");
+    link.className = "inline-link";
+    link.href = "https://www.inaturalist.org/observations?place_id=8057&taxon_id=1&photos=true";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "Open iNaturalist instead →";
+
+    statusEl.appendChild(link);
+  }
+
+  async function loadSightings() {
+    if (loading) return;
+    loading = true;
+    loadMoreBtn.hidden = true;
+    statusEl.textContent = nextPage === 1 ? "Loading sightings…" : "Loading more sightings…";
+
+    let results = null;
+
+    if (nextPage === 1) {
+      const cached = getCache();
+      if (cached) results = cached.results;
+    }
+
+    if (!results) {
+      try {
+        const response = await fetch(buildUrl(nextPage));
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const data = await response.json();
+        results = Array.isArray(data.results) ? data.results : [];
+
+        if (nextPage === 1) setCache(results);
+      } catch (err) {
+        loading = false;
+        showError();
+        if (nextPage > 1) loadMoreBtn.hidden = false;
+        return;
+      }
+    }
+
+    renderSightings(results);
+    loadedCount += results.length;
+    nextPage += 1;
+    loading = false;
+
+    if (loadedCount === 0) {
+      statusEl.textContent = "No sightings found right now.";
+      return;
+    }
+
+    statusEl.textContent = "Showing the " + loadedCount + " most recent sightings in Austria.";
+    loadMoreBtn.hidden = false;
+  }
+
+  loadMoreBtn.addEventListener("click", loadSightings);
+  loadSightings();
+</script>
+
+</body>
+</html>
