@@ -220,6 +220,8 @@
         neoLoading: "🔭 Loading asteroids...",
         neoNone: "No asteroids found today 🛰️",
         neoError: "🚨 Failed to load asteroid data.",
+        neoHazard: "Potentially hazardous",
+        neoOpen: "Open NASA NeoWs",
         neoApprox: "Close approach",
         neoSize: "Size",
         neoMiss: "Miss distance"
@@ -243,6 +245,8 @@
         neoLoading: "🔭 Lade Asteroiden...",
         neoNone: "Heute keine Asteroiden gefunden 🛰️",
         neoError: "🚨 Asteroidendaten konnten nicht geladen werden.",
+        neoHazard: "Potenziell gefährlich",
+        neoOpen: "NASA NeoWs öffnen",
         neoApprox: "Vorbeiflug",
         neoSize: "Größe",
         neoMiss: "Abstand"
@@ -430,48 +434,169 @@
     const neoWrapper = document.getElementById("neo-wrapper");
     const neoList = document.getElementById("neo-list");
     const arrowIcon = document.getElementById("arrow-icon");
+    const NEO_CACHE_KEY = "neo-cache-v1";
+    const NEO_CACHE_TTL = 60 * 60 * 1000; // 1 hour
     let neoOpen = false;
+
+    function neoDateKey() {
+      return new Date().toISOString().split("T")[0];
+    }
+
+    function setNeoOpen(open) {
+      neoOpen = open;
+      arrowIcon.classList.toggle("rotate", open);
+      neoWrapper.style.maxHeight = open ? (neoList.scrollHeight + 80) + "px" : "0";
+    }
+
+    function setNeoMessage(text) {
+      neoList.innerHTML = "";
+      const li = document.createElement("li");
+      li.textContent = text;
+      neoList.appendChild(li);
+      return li;
+    }
+
+    function getNeoCache(date) {
+      try {
+        const cached = JSON.parse(localStorage.getItem(NEO_CACHE_KEY) || "null");
+        if (cached && cached.date === date && Date.now() - cached.time < NEO_CACHE_TTL && cached.data) {
+          return cached.data;
+        }
+      } catch (e) { /* localStorage nicht verfügbar */ }
+      return null;
+    }
+
+    function setNeoCache(date, data) {
+      try {
+        localStorage.setItem(NEO_CACHE_KEY, JSON.stringify({ date, time: Date.now(), data }));
+      } catch (e) { /* ignorieren */ }
+    }
+
+    async function fetchNeoFeed(date) {
+      // NeoWs-Frontend liefert dieselben Daten ohne API-Key und ohne DEMO_KEY-Limit.
+      // api.nasa.gov bleibt als Fallback.
+      const sources = [
+        "https://www.neowsapp.com/rest/v1/feed?start_date=" + date + "&end_date=" + date + "&detailed=false",
+        "https://api.nasa.gov/neo/rest/v1/feed?start_date=" + date + "&end_date=" + date + "&api_key=DEMO_KEY"
+      ];
+      let lastError = null;
+
+      for (const url of sources) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) {
+            const err = new Error("HTTP " + res.status);
+            err.status = res.status;
+            throw err;
+          }
+          const data = await res.json();
+          if (data && data.near_earth_objects && Object.keys(data.near_earth_objects).length) {
+            return data;
+          }
+          throw new Error("Empty NEO feed");
+        } catch (err) {
+          lastError = err;
+        }
+      }
+
+      throw lastError || new Error("NEO feed unavailable");
+    }
+
+    function neoDistance(asteroid) {
+      const approach = (asteroid.close_approach_data || [])[0] || {};
+      const distance = Number(approach.miss_distance && approach.miss_distance.kilometers);
+      return Number.isFinite(distance) ? distance : Infinity;
+    }
+
+    function buildNeoItem(asteroid) {
+      const t = translations[currentLang];
+      const approach = (asteroid.close_approach_data || [])[0] || {};
+      const distance = Number(approach.miss_distance && approach.miss_distance.kilometers);
+      const size = Number(asteroid.estimated_diameter && asteroid.estimated_diameter.meters && asteroid.estimated_diameter.meters.estimated_diameter_max);
+      const time = approach.close_approach_date_full || approach.close_approach_date || "";
+
+      const li = document.createElement("li");
+      li.style.marginBottom = "18px";
+
+      const title = document.createElement("strong");
+      title.textContent = "☄️ " + (asteroid.name || "Unknown asteroid");
+
+      if (asteroid.is_potentially_hazardous_asteroid) {
+        const hazard = document.createElement("span");
+        hazard.textContent = " ⚠️ " + t.neoHazard;
+        hazard.style.color = "#ff4d4d";
+        hazard.style.fontSize = "12px";
+        hazard.style.fontWeight = "600";
+        title.appendChild(hazard);
+      }
+
+      li.appendChild(title);
+
+      const lines = [];
+      if (time) lines.push("📅 " + time);
+      if (Number.isFinite(size)) lines.push("📏 " + t.neoSize + ": ~" + size.toFixed(1) + " m");
+      if (Number.isFinite(distance)) lines.push("🌍 " + t.neoMiss + ": " + Math.round(distance).toLocaleString("en-US") + " km");
+
+      lines.forEach(line => {
+        li.appendChild(document.createElement("br"));
+        li.appendChild(document.createTextNode(line));
+      });
+
+      return li;
+    }
+
+    async function loadNeo() {
+      const today = neoDateKey();
+
+      setNeoMessage(translations[currentLang].neoLoading);
+      setNeoOpen(true);
+
+      let data = getNeoCache(today);
+
+      if (!data) {
+        try {
+          data = await fetchNeoFeed(today);
+          setNeoCache(today, data);
+        } catch (err) {
+          const li = setNeoMessage(translations[currentLang].neoError + " ");
+
+          const link = document.createElement("a");
+          link.href = "https://eyes.nasa.gov/apps/asteroids/";
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = translations[currentLang].neoOpen;
+          link.style.color = "#00bfff";
+
+          const br = document.createElement("br");
+          li.appendChild(br);
+          li.appendChild(link);
+          setNeoOpen(true);
+          return;
+        }
+      }
+
+      const byDate = data.near_earth_objects[today];
+      const asteroids = (Array.isArray(byDate) ? byDate : Object.values(data.near_earth_objects).flat())
+        .slice()
+        .sort((a, b) => neoDistance(a) - neoDistance(b));
+
+      neoList.innerHTML = "";
+
+      if (!asteroids.length) {
+        setNeoMessage(translations[currentLang].neoNone);
+      } else {
+        asteroids.forEach(asteroid => neoList.appendChild(buildNeoItem(asteroid)));
+      }
+
+      setNeoOpen(true);
+    }
 
     loadNeoButton.addEventListener("click", function (e) {
       e.preventDefault();
-      neoOpen = !neoOpen;
-      neoWrapper.style.maxHeight = neoOpen ? "1000px" : "0";
-      arrowIcon.classList.toggle("rotate", neoOpen);
-
       if (neoOpen) {
-        neoList.innerHTML = translations[currentLang].neoLoading;
-        const today = new Date();
-        const startDate = today.toISOString().split("T")[0];
-        const apiKey = "DEMO_KEY";
-        const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${startDate}&end_date=${startDate}&api_key=${apiKey}`;
-
-        fetch(url)
-          .then(res => res.json())
-          .then(data => {
-            const asteroids = data.near_earth_objects[startDate];
-            if (!asteroids || asteroids.length === 0) {
-              neoList.innerHTML = `<li>${translations[currentLang].neoNone}</li>`;
-              return;
-            }
-            neoList.innerHTML = "";
-            asteroids.forEach(asteroid => {
-              const name = asteroid.name;
-              const dist = asteroid.close_approach_data[0].miss_distance.kilometers;
-              const size = asteroid.estimated_diameter.meters.estimated_diameter_max.toFixed(1);
-              const time = asteroid.close_approach_data[0].close_approach_date_full;
-              const t = translations[currentLang];
-              const li = document.createElement("li");
-              li.style.marginBottom = "18px";
-              li.innerHTML = `☄️ <strong>${name}</strong><br>
-                📅 ${time}<br>
-                📏 ${t.neoSize}: ~${size} m<br>
-                🌍 ${t.neoMiss}: ${parseInt(dist).toLocaleString()} km`;
-              neoList.appendChild(li);
-            });
-          })
-          .catch(err => {
-            neoList.innerHTML = `<li>${translations[currentLang].neoError}</li>`;
-          });
+        setNeoOpen(false);
+      } else {
+        loadNeo();
       }
     });
   </script>
