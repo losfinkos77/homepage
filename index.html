@@ -10,7 +10,7 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: #121212;
+      background: #050807;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -34,13 +34,71 @@
       to { opacity: 0; visibility: hidden; }
     }
 
+    html {
+      background: #050807;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #1e1e1e;
+      background: transparent;
       color: white;
       padding: 40px 20px;
       margin: 0;
       text-align: center;
+    }
+
+    #matrix-rain {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      opacity: .62;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #matrix-rain { opacity: .4; }
+    }
+
+    #nasa-apod {
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #nasa-apod h2,
+    #apod-title,
+    #ip-info {
+      text-shadow: 0 0 10px rgba(5, 8, 7, .95), 0 1px 2px rgba(0, 0, 0, .8);
+    }
+
+    #apod-desc {
+      max-width: 860px;
+      margin: 14px auto 0;
+      padding: 16px 20px;
+      border: 1px solid rgba(0, 191, 255, .16);
+      border-radius: 14px;
+      background: rgba(8, 14, 12, .82);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
+      color: #ccc;
+      font-size: 14.5px;
+      line-height: 1.65;
+      text-align: left;
+    }
+
+    #apod-desc a {
+      color: #00bfff;
+    }
+
+    #neo-list:not(:empty) {
+      padding: 18px 22px;
+      border: 1px solid rgba(0, 191, 255, .16);
+      border-radius: 16px;
+      background: rgba(8, 14, 12, .82);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
+      text-align: left;
     }
 
     .lang-switch {
@@ -152,6 +210,8 @@
 </head>
 <body>
 
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
+
   <div class="lang-switch">
     <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
     <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
@@ -188,7 +248,7 @@
   </div>
 
   <div id="neo-wrapper">
-    <ul id="neo-list" style="list-style: none; padding: 0; margin-top: 30px; color: #00bfff; text-align: center;"></ul>
+    <ul id="neo-list" style="list-style: none; max-width: 780px; margin: 30px auto 0; color: #00bfff;"></ul>
   </div>
 
   <div id="nasa-apod" style="margin-top: 60px; color: #00bfff;">
@@ -602,6 +662,172 @@
         loadNeo();
       }
     });
+  </script>
+
+  <script>
+    // Matrix rain background for the homepage.
+    (function () {
+      const canvas = document.getElementById("matrix-rain");
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
+      const GLYPHS = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const FONT_SIZE = 16;
+      const FRAME_MS = 33;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      let columns = [];
+      let width = 0;
+      let height = 0;
+      let rafId = null;
+      let lastFrame = 0;
+      let running = false;
+      let resizeTimer = null;
+
+      function glyph() {
+        return GLYPHS.charAt(Math.floor(Math.random() * GLYPHS.length));
+      }
+
+      function setupColumns() {
+        const count = Math.ceil(width / FONT_SIZE);
+        columns = [];
+
+        for (let index = 0; index < count; index += 1) {
+          columns.push({
+            x: index * FONT_SIZE,
+            y: Math.random() * height - height,
+            speed: 3 + Math.random() * 6
+          });
+        }
+      }
+
+      function paintBackground() {
+        ctx.fillStyle = "#050807";
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      function setCanvasFont() {
+        ctx.font = FONT_SIZE + "px 'Courier New', monospace";
+        ctx.textBaseline = "top";
+      }
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        setCanvasFont();
+
+        setupColumns();
+        paintBackground();
+
+        if (reducedMotion.matches) drawStatic();
+      }
+
+      function drawFrame() {
+        // Fade the previous frames slightly instead of clearing them – that
+        // leaves the falling green trails behind each glyph.
+        ctx.fillStyle = "rgba(5, 8, 7, .085)";
+        ctx.fillRect(0, 0, width, height);
+        setCanvasFont();
+
+        columns.forEach(column => {
+          if (column.y > -FONT_SIZE && column.y < height) {
+            ctx.fillStyle = "#c9ffd8";
+            ctx.fillText(glyph(), column.x, column.y);
+
+            // A second, dimmer glyph just above makes the head of the trail
+            // read as a streak even at slower column speeds.
+            if (column.y > FONT_SIZE) {
+              ctx.fillStyle = "rgba(0, 255, 102, .55)";
+              ctx.fillText(glyph(), column.x, column.y - FONT_SIZE);
+            }
+          }
+
+          column.y += column.speed;
+
+          if (column.y > height + FONT_SIZE * 2) {
+            column.y = -FONT_SIZE - Math.random() * height * 0.6;
+            column.speed = 3 + Math.random() * 6;
+          }
+        });
+      }
+
+      function drawStatic() {
+        paintBackground();
+        setCanvasFont();
+
+        columns.forEach((column, index) => {
+          if (index % 2 !== 0) return;
+
+          const startY = (index * 137) % height;
+          for (let step = 0; step < 9; step += 1) {
+            ctx.fillStyle = step === 0
+              ? "rgba(201, 255, 216, .7)"
+              : "rgba(0, 255, 102, .22)";
+            ctx.fillText(glyph(), column.x, startY + step * FONT_SIZE);
+          }
+        });
+      }
+
+      function loop(timestamp) {
+        if (!running) return;
+        rafId = window.requestAnimationFrame(loop);
+
+        if (timestamp - lastFrame < FRAME_MS) return;
+        lastFrame = timestamp;
+        drawFrame();
+      }
+
+      function start() {
+        if (running || reducedMotion.matches) return;
+        running = true;
+        lastFrame = 0;
+        rafId = window.requestAnimationFrame(loop);
+      }
+
+      function stop() {
+        running = false;
+        if (rafId !== null) {
+          window.cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      }
+
+      function handleMotionChange() {
+        stop();
+        if (reducedMotion.matches) {
+          drawStatic();
+        } else {
+          resize();
+          start();
+        }
+      }
+
+      window.addEventListener("resize", () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(resize, 150);
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          stop();
+        } else {
+          start();
+        }
+      });
+
+      if (typeof reducedMotion.addEventListener === "function") {
+        reducedMotion.addEventListener("change", handleMotionChange);
+      } else if (typeof reducedMotion.addListener === "function") {
+        reducedMotion.addListener(handleMotionChange);
+      }
+
+      resize();
+      start();
+    })();
   </script>
 </body>
 </html>
