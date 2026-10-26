@@ -193,7 +193,7 @@
   <div id="nasa-apod" style="margin-top: 60px; color: #00bfff;">
     <h2 style="font-size: 22px;">🌌 <span data-i18n="apodTitle">NASA Picture of the Day</span></h2>
     <p id="apod-title" style="font-weight: bold;"></p>
-    <img id="apod-img" src="" alt="NASA APOD" style="max-width: 100%; border-radius: 12px; margin: 10px 0;">
+    <div id="apod-media"></div>
     <p id="apod-desc" style="color: #ccc;"></p>
   </div>
 
@@ -213,6 +213,10 @@
         ipLoading: "Loading IP address...",
         ipError: "Could not load IP address.",
         apodError: "Could not load NASA APOD.",
+        apodLimit: "NASA API limit reached – please try again later.",
+        apodLoading: "Loading NASA APOD…",
+        apodVideo: "Watch today's video",
+        apodOpen: "Open APOD on NASA",
         neoLoading: "🔭 Loading asteroids...",
         neoNone: "No asteroids found today 🛰️",
         neoError: "🚨 Failed to load asteroid data.",
@@ -232,6 +236,10 @@
         ipLoading: "Lade IP-Adresse...",
         ipError: "IP-Adresse konnte nicht geladen werden.",
         apodError: "NASA APOD konnte nicht geladen werden.",
+        apodLimit: "NASA-API-Limit erreicht – bitte später erneut versuchen.",
+        apodLoading: "Lade NASA APOD…",
+        apodVideo: "Video des Tages ansehen",
+        apodOpen: "APOD bei NASA öffnen",
         neoLoading: "🔭 Lade Asteroiden...",
         neoNone: "Heute keine Asteroiden gefunden 🛰️",
         neoError: "🚨 Asteroidendaten konnten nicht geladen werden.",
@@ -262,13 +270,19 @@
         ? "Your IP address: " + ipAddress
         : translations[lang].ipLoading);
 
-      if (apodFailed) {
-        document.getElementById("apod-title").textContent = translations[lang].apodError;
+      if (apodData) {
+        renderApod(apodData);
+      } else if (apodFailed) {
+        document.getElementById("apod-title").textContent = translations[lang][apodFailKey];
+      } else {
+        document.getElementById("apod-title").textContent = translations[lang].apodLoading;
       }
     }
 
     let ipAddress = null;
+    let apodData = null;
     let apodFailed = false;
+    let apodFailKey = "apodError";
 
     fetch('https://api.ipify.org?format=json')
       .then(response => response.json())
@@ -280,17 +294,137 @@
         document.getElementById('ip-info').textContent = translations[currentLang].ipError;
       });
 
-    fetch("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("apod-title").textContent = data.title;
-        document.getElementById("apod-img").src = data.url;
-        document.getElementById("apod-desc").textContent = data.explanation;
-      })
-      .catch(err => {
-        apodFailed = true;
-        document.getElementById("apod-title").textContent = translations[currentLang].apodError;
+    const APOD_CACHE_KEY = "apod-cache-v2";
+
+    // APOD-Datum in US-Ostküstenzeit (dort wird das Bild des Tages gewechselt)
+    function apodDateKey() {
+      try {
+        return new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
+      } catch (e) {
+        return new Date().toISOString().slice(0, 10);
+      }
+    }
+
+    // Neue offizielle Quelle: NASA-WordPress liefert dasselbe Schema wie die API,
+    // aber ohne DEMO_KEY-Rate-Limit. Datum im Format YYMMDD.
+    function apodWpUrl(dateKey) {
+      return "https://science.nasa.gov/wp-json/wp/v2/apod-basic/" + dateKey.slice(2).replace(/-/g, "");
+    }
+
+    // HTML aus der NASA-Antwort auf harmlose Tags beschränken
+    function sanitizeApodHtml(html) {
+      const doc = new DOMParser().parseFromString(html || "", "text/html");
+      const allowed = new Set(["A", "B", "STRONG", "EM", "I", "BR"]);
+      doc.body.querySelectorAll("*").forEach(el => {
+        if (!allowed.has(el.tagName)) {
+          el.replaceWith(...Array.from(el.childNodes));
+          return;
+        }
+        Array.from(el.attributes).forEach(attr => {
+          if (!(el.tagName === "A" && attr.name === "href")) el.removeAttribute(attr.name);
+        });
+        if (el.tagName === "A") {
+          const href = el.getAttribute("href") || "";
+          if (!/^https?:\/\//i.test(href)) {
+            el.removeAttribute("href");
+          } else {
+            el.target = "_blank";
+            el.rel = "noopener noreferrer";
+          }
+        }
       });
+      return doc.body.innerHTML;
+    }
+
+    function renderApod(data) {
+      apodData = data;
+      apodFailed = false;
+      document.getElementById("apod-title").textContent = data.title || "NASA APOD";
+      document.getElementById("apod-desc").innerHTML = sanitizeApodHtml(data.explanation);
+
+      const media = document.getElementById("apod-media");
+      media.innerHTML = "";
+
+      const pageUrl = data.permalink || data.url || "https://science.nasa.gov/apod/";
+      const imageUrl = data.hdurl || (data.media_type === "image" ? data.url : "");
+      const isImage = data.media_type === "image" && /^https?:\/\//i.test(imageUrl || "");
+
+      if (isImage) {
+        const link = document.createElement("a");
+        link.href = pageUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+
+        const img = document.createElement("img");
+        img.src = imageUrl.replace(/^http:\/\//i, "https://");
+        img.alt = data.alt || data.title || "NASA APOD";
+        img.loading = "lazy";
+        img.style.cssText = "max-width:100%; border-radius:12px; margin:10px 0;";
+        link.appendChild(img);
+        media.appendChild(link);
+      } else {
+        const link = document.createElement("a");
+        link.href = pageUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "▶ " + translations[currentLang].apodVideo;
+        link.style.cssText = "display:inline-block; margin:12px 0; color:#00bfff; font-weight:600;";
+        media.appendChild(link);
+      }
+    }
+
+    function showApodError(key) {
+      apodFailed = true;
+      apodFailKey = key;
+      document.getElementById("apod-media").innerHTML = "";
+      document.getElementById("apod-title").textContent = translations[currentLang][key];
+      document.getElementById("apod-desc").innerHTML =
+        '<a href="https://science.nasa.gov/apod/" target="_blank" rel="noopener noreferrer" style="color:#00bfff;">' +
+        translations[currentLang].apodOpen + "</a>";
+    }
+
+    async function fetchApodData(dateKey) {
+      try {
+        const res = await fetch(apodWpUrl(dateKey));
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.title && data.media_type) return data;
+        }
+      } catch (e) { /* Fallback unten */ }
+
+      const res = await fetch("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY");
+      if (!res.ok) {
+        const err = new Error("HTTP " + res.status);
+        err.status = res.status;
+        throw err;
+      }
+      return res.json();
+    }
+
+    async function loadApod() {
+      document.getElementById("apod-title").textContent = translations[currentLang].apodLoading;
+
+      const today = apodDateKey();
+      try {
+        const cached = JSON.parse(localStorage.getItem(APOD_CACHE_KEY) || "null");
+        if (cached && cached.dateKey === today && cached.data) {
+          renderApod(cached.data);
+          return;
+        }
+      } catch (e) { /* localStorage nicht verfügbar */ }
+
+      try {
+        const data = await fetchApodData(today);
+        try {
+          localStorage.setItem(APOD_CACHE_KEY, JSON.stringify({ dateKey: today, data }));
+        } catch (e) { /* ignorieren */ }
+        renderApod(data);
+      } catch (err) {
+        showApodError(err.status === 429 ? "apodLimit" : "apodError");
+      }
+    }
+
+    loadApod();
 
     const loadNeoButton = document.getElementById("load-neo");
     const neoWrapper = document.getElementById("neo-wrapper");
