@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Three small Python games running directly in your browser – powered by Pyodide.">
+<title>Games | Los Finkos</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #1e1e1e;
+    --card: #2b2b2b;
+    --card-dark: #242424;
+    --accent: #00bfff;
+    --text: #fff;
+    --muted: #bbb;
+    --dim: #888;
+    --green: #5ee6a8;
+    --red: #ff6b6b;
+    --yellow: #ffd166;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background:
+      radial-gradient(circle at 15% -10%, rgba(0, 191, 255, .13), transparent 42%),
+      radial-gradient(circle at 92% 8%, rgba(0, 191, 255, .06), transparent 30%),
+      var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    text-align: center;
+  }
+
+  header {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 55px 20px 0;
+  }
+
+  .eyebrow {
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+  }
+
+  h1 {
+    color: var(--accent);
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #00bfff44;
+    margin: 0 0 12px;
+  }
+
+  h1 i { margin-right: 6px; }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .runtime {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin: 24px auto 0;
+    padding: 9px 15px;
+    border: 1px solid #3a3a3a;
+    border-radius: 999px;
+    background: #242424;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .runtime-dot {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border-radius: 50%;
+    background: var(--yellow);
+    box-shadow: 0 0 10px rgba(255, 209, 102, .55);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  .runtime[data-state="ready"] .runtime-dot {
+    background: var(--green);
+    box-shadow: 0 0 10px rgba(94, 230, 168, .55);
+    animation: none;
+  }
+
+  .runtime[data-state="error"] .runtime-dot {
+    background: var(--red);
+    box-shadow: 0 0 10px rgba(255, 107, 107, .55);
+    animation: none;
+  }
+
+  .runtime-retry {
+    margin-left: 4px;
+    padding: 3px 10px;
+    border: 1px solid #4a4a4a;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--accent);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .runtime-retry:hover {
+    border-color: var(--accent);
+    background: rgba(0, 191, 255, .08);
+  }
+
+  .runtime-hint {
+    max-width: 660px;
+    margin: 9px auto 0;
+    color: #777;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  main {
+    max-width: 1240px;
+    margin: 34px auto 0;
+    padding: 0 20px;
+  }
+
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px;
+    align-items: start;
+    text-align: left;
+  }
+
+  .game-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 22px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #2d2d2d, #272727);
+    border: 1px solid #3a3a3a;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  }
+
+  .game-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), transparent 80%);
+    opacity: .8;
+  }
+
+  .game-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 12px;
+  }
+
+  .game-icon {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(0, 191, 255, .12);
+    color: var(--accent);
+    font-size: 19px;
+  }
+
+  .game-head h2 {
+    color: var(--text);
+    font-size: 20px;
+    margin: 1px 0 3px;
+  }
+
+  .game-sub {
+    margin: 0;
+    color: var(--dim);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+  }
+
+  .game-desc {
+    min-height: 44px;
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 13px;
+  }
+
+  .stat {
+    padding: 6px 10px;
+    border: 1px solid #383838;
+    border-radius: 9px;
+    background: #222;
+    color: #999;
+    font-size: 12px;
+  }
+
+  .stat strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .feedback {
+    display: flex;
+    align-items: center;
+    min-height: 62px;
+    margin-bottom: 14px;
+    padding: 11px 14px;
+    border: 1px solid #383838;
+    border-radius: 12px;
+    background: #222;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .feedback.hint {
+    border-color: rgba(0, 191, 255, .25);
+    background: rgba(0, 191, 255, .06);
+    color: #cceeff;
+  }
+
+  .feedback.success {
+    border-color: rgba(94, 230, 168, .4);
+    background: rgba(94, 230, 168, .07);
+    color: #b9f5d9;
+  }
+
+  .feedback.error {
+    border-color: rgba(255, 107, 107, .4);
+    background: rgba(255, 107, 107, .07);
+    color: #ffb9b9;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 9px;
+    margin-bottom: 10px;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid #444;
+    border-radius: 10px;
+    outline: none;
+    background: #1d1d1d;
+    color: var(--text);
+    font: inherit;
+    font-size: 15px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+
+  input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0, 191, 255, .15);
+  }
+
+  input[type="number"]:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
+  }
+
+  .btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+
+  .btn.primary {
+    background: var(--accent);
+    color: #13232a;
+  }
+
+  .btn.primary:hover:not(:disabled) {
+    background: #3ed3ff;
+    transform: translateY(-1px);
+  }
+
+  .btn.ghost {
+    border: 1px solid #3d3d3d;
+    background: #222;
+    color: #8fdfff;
+  }
+
+  .btn.ghost:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+
+  .history {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-height: 24px;
+    margin-top: 12px;
+  }
+
+  .history-label {
+    margin-right: 2px;
+    color: #777;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+  }
+
+  .guess-chip {
+    padding: 3px 8px;
+    border: 1px solid #3a3a3a;
+    border-radius: 999px;
+    background: #202020;
+    color: #ccc;
+    font-size: 12px;
+  }
+
+  .rps-choices {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 13px;
+  }
+
+  .choice-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 5px;
+    border: 1px solid #3b3b3b;
+    border-radius: 12px;
+    background: #222;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: transform .2s ease, border-color .2s ease, background .2s ease, color .2s ease;
+  }
+
+  .choice-btn .emoji {
+    font-size: 23px;
+    line-height: 1;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(0, 191, 255, .09);
+    color: var(--text);
+    transform: translateY(-2px);
+  }
+
+  .choice-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+
+  .versus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    color: #888;
+    font-size: 12px;
+  }
+
+  .versus strong {
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  .versus .vs {
+    color: #555;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .rps-score {
+    display: flex;
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+
+  .score-box {
+    flex: 1;
+    padding: 8px 4px;
+    border: 1px solid #363636;
+    border-radius: 10px;
+    background: #222;
+    text-align: center;
+  }
+
+  .score-box span {
+    display: block;
+    color: #777;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+  }
+
+  .score-box strong {
+    color: var(--accent);
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  .hm-word {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 42px;
+    margin: 2px 0 14px;
+  }
+
+  .hm-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 38px;
+    padding: 0 4px;
+    border: 1px solid #3a3a3a;
+    border-radius: 7px;
+    background: #202020;
+    color: var(--accent);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .hm-letter.blank {
+    border-style: dashed;
+    background: transparent;
+    color: #555;
+  }
+
+  .hm-lives {
+    display: inline-flex;
+    gap: 1px;
+    color: var(--red);
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .hm-lives .empty { color: #555; }
+
+  .hm-letters {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 13px;
+  }
+
+  .letter-btn {
+    padding: 8px 0;
+    border: 1px solid #3b3b3b;
+    border-radius: 7px;
+    background: #222;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, color .2s ease;
+  }
+
+  .letter-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .letter-btn:disabled {
+    opacity: .45;
+    cursor: default;
+  }
+
+  .letter-btn.hit {
+    border-color: rgba(94, 230, 168, .5);
+    background: rgba(94, 230, 168, .12);
+    color: #9ff2c9;
+    opacity: 1;
+  }
+
+  .letter-btn.miss {
+    border-color: rgba(255, 107, 107, .4);
+    background: rgba(255, 107, 107, .1);
+    color: #ff9c9c;
+    opacity: 1;
+  }
+
+  .note {
+    max-width: 780px;
+    margin: 36px auto 0;
+    color: #777;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .note a,
+  .source a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .note a:hover,
+  .source a:hover { text-decoration: underline; }
+
+  .source {
+    margin: 18px 0 0;
+    color: #777;
+    font-size: 12px;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 45px auto 0;
+    padding: 16px 28px;
+    border-radius: 18px;
+    background: var(--card);
+    color: var(--accent);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .2);
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all .3s ease;
+  }
+
+  .back-btn:hover {
+    background: var(--accent);
+    color: #1e1e1e;
+    transform: scale(1.05);
+  }
+
+  footer {
+    margin-top: 40px;
+    padding: 22px;
+    color: #777;
+    font-size: 13px;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .45; transform: scale(.8); }
+  }
+
+  @media (max-width: 600px) {
+    header { padding-top: 42px; }
+    h1 { font-size: 38px; }
+    .subtitle { font-size: 16px; }
+    .runtime { max-width: 100%; }
+    main { padding: 0 14px; }
+    .game-grid { grid-template-columns: 1fr; }
+    .game-card { padding: 19px; }
+    .game-desc { min-height: 0; }
+    .hm-letters { gap: 5px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow"><i class="fas fa-terminal"></i> Python Arcade</p>
+  <h1><i class="fas fa-gamepad"></i> Games</h1>
+  <p class="subtitle">
+    Three tiny Python games, running directly in your browser. No installation,
+    no server – just real Python via WebAssembly.
+  </p>
+
+  <div class="runtime" id="py-runtime" data-state="loading" role="status" aria-live="polite">
+    <span class="runtime-dot" aria-hidden="true"></span>
+    <span id="py-runtime-text">Loading Python runtime…</span>
+    <button class="runtime-retry" id="py-retry" type="button" hidden>Retry</button>
+  </div>
+  <p class="runtime-hint">
+    The first visit downloads the Python runtime (about 12 MB) from a CDN.
+    After that it is cached by your browser; the games themselves run locally.
+  </p>
+</header>
+
+<main>
+  <div class="game-grid">
+
+    <section class="game-card" aria-labelledby="ng-title">
+      <div class="game-head">
+        <div class="game-icon"><i class="fas fa-bullseye"></i></div>
+        <div>
+          <h2 id="ng-title">Guess the Number</h2>
+          <p class="game-sub">Game 01 · Logic</p>
+        </div>
+      </div>
+      <p class="game-desc">
+        Python has picked a secret number between 1 and 100. Find it within
+        ten attempts – after every guess the range gets smaller.
+      </p>
+
+      <div class="stat-row">
+        <span class="stat">Attempts <strong id="ng-attempts">0</strong></span>
+        <span class="stat">Range <strong id="ng-range">1–100</strong></span>
+      </div>
+
+      <div class="feedback" id="ng-feedback" aria-live="polite">
+        Waiting for the Python runtime…
+      </div>
+
+      <form class="input-row" id="ng-form">
+        <label class="sr-only" for="ng-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Your guess</label>
+        <input id="ng-input" type="number" min="1" max="100" inputmode="numeric"
+               placeholder="Your guess" data-needs-python disabled>
+        <button class="btn primary" id="ng-submit" type="submit" data-needs-python disabled>
+          Guess
+        </button>
+      </form>
+
+      <div class="btn-row">
+        <button class="btn ghost" id="ng-new" type="button" data-needs-python disabled>
+          <i class="fas fa-rotate-right"></i> New game
+        </button>
+      </div>
+
+      <div class="history" id="ng-history" aria-label="Previous guesses"></div>
+    </section>
+
+    <section class="game-card" aria-labelledby="rps-title">
+      <div class="game-head">
+        <div class="game-icon"><i class="fas fa-hand-scissors"></i></div>
+        <div>
+          <h2 id="rps-title">Rock · Paper · Scissors</h2>
+          <p class="game-sub">Game 02 · Chance</p>
+        </div>
+      </div>
+      <p class="game-desc">
+        The classic duel against Python's random module. Pick a move and see
+        whether you can get ahead in the score.
+      </p>
+
+      <div class="rps-choices" role="group" aria-label="Choose your move">
+        <button class="choice-btn" type="button" data-rps-choice="rock" data-needs-python disabled>
+          <span class="emoji" aria-hidden="true">✊</span>
+          <span>Rock</span>
+        </button>
+        <button class="choice-btn" type="button" data-rps-choice="paper" data-needs-python disabled>
+          <span class="emoji" aria-hidden="true">✋</span>
+          <span>Paper</span>
+        </button>
+        <button class="choice-btn" type="button" data-rps-choice="scissors" data-needs-python disabled>
+          <span class="emoji" aria-hidden="true">✌️</span>
+          <span>Scissors</span>
+        </button>
+      </div>
+
+      <div class="feedback" id="rps-feedback" aria-live="polite">
+        Waiting for the Python runtime…
+      </div>
+
+      <div class="versus" aria-live="polite">
+        <span>You <strong id="rps-player">—</strong></span>
+        <span class="vs">vs</span>
+        <span>Python <strong id="rps-computer">—</strong></span>
+      </div>
+
+      <div class="rps-score" aria-label="Score">
+        <div class="score-box"><span>You</span><strong id="rps-wins">0</strong></div>
+        <div class="score-box"><span>Python</span><strong id="rps-losses">0</strong></div>
+        <div class="score-box"><span>Draws</span><strong id="rps-draws">0</strong></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn ghost" id="rps-reset" type="button" data-needs-python disabled>
+          <i class="fas fa-rotate-right"></i> Reset score
+        </button>
+      </div>
+    </section>
+
+    <section class="game-card" aria-labelledby="hm-title">
+      <div class="game-head">
+        <div class="game-icon"><i class="fas fa-font"></i></div>
+        <div>
+          <h2 id="hm-title">Hangman</h2>
+          <p class="game-sub">Game 03 · Words</p>
+        </div>
+      </div>
+      <p class="game-desc">
+        Guess the hidden word one letter at a time. You get six wrong guesses
+        before the round is over.
+      </p>
+
+      <div class="stat-row">
+        <span class="stat">Lives <span class="hm-lives" id="hm-lives" aria-label="6 of 6 lives left">♥♥♥♥♥♥</span></span>
+        <span class="stat">Letters <strong id="hm-length">0</strong></span>
+      </div>
+
+      <div class="hm-word" id="hm-word" aria-live="polite"></div>
+
+      <div class="feedback" id="hm-feedback" aria-live="polite">
+        Waiting for the Python runtime…
+      </div>
+
+      <div class="hm-letters" id="hm-letters" aria-label="Pick a letter"></div>
+
+      <div class="btn-row">
+        <button class="btn ghost" id="hm-new" type="button" data-needs-python disabled>
+          <i class="fas fa-rotate-right"></i> New word
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="note">
+    Powered by <a href="https://pyodide.org/" target="_blank" rel="noopener noreferrer">Pyodide</a>
+    and Python 3. The game logic lives in Python; only the interface is HTML, CSS and JavaScript.
+  </p>
+  <p class="source">
+    <i class="fas fa-lock"></i> Everything runs in your browser – no scores or guesses are sent anywhere.
+  </p>
+</main>
+
+<a href="index.html" class="back-btn">
+  <i class="fas fa-arrow-left"></i> Back to homepage
+</a>
+
+<footer>
+  © 2026 Los Finkos | Games · Python Arcade
+</footer>
+
+<script>
+  const PYODIDE_VERSION = "0.29.5";
+  const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v" + PYODIDE_VERSION + "/full/";
+
+  const PYTHON_CODE = `
+import json
+import random
+
+# ------------------------------------------------------------
+# Game 1: Guess the number
+# ------------------------------------------------------------
+NG_MAX_ATTEMPTS = 10
+ng_secret = 1
+ng_attempts = 0
+ng_low = 1
+ng_high = 100
+ng_history = []
+ng_done = True
+
+
+def ng_payload(status, message):
+    return json.dumps({
+        "status": status,
+        "message": message,
+        "attempts": ng_attempts,
+        "maxAttempts": NG_MAX_ATTEMPTS,
+        "low": ng_low,
+        "high": ng_high,
+        "history": ng_history[-8:],
+        "answer": ng_secret if status in ("won", "lost") else None
+    })
+
+
+def ng_new():
+    global ng_secret, ng_attempts, ng_low, ng_high, ng_history, ng_done
+    ng_secret = random.randint(1, 100)
+    ng_attempts = 0
+    ng_low = 1
+    ng_high = 100
+    ng_history = []
+    ng_done = False
+    return ng_payload("playing", "I picked a number between 1 and 100. You have 10 attempts.")
+
+
+def ng_guess(value):
+    global ng_attempts, ng_low, ng_high, ng_history, ng_done
+
+    if ng_done:
+        return ng_payload("over", "This round is over. Start a new game.")
+
+    try:
+        guess = int(value)
+    except (TypeError, ValueError):
+        return ng_payload("playing", "Please enter a whole number.")
+
+    if guess < ng_low or guess > ng_high:
+        return ng_payload(
+            "playing",
+            "Stay inside the remaining range " + str(ng_low) + "–" + str(ng_high) + "."
+        )
+
+    ng_attempts += 1
+    ng_history.append(guess)
+
+    if guess == ng_secret:
+        ng_done = True
+        return ng_payload(
+            "won",
+            "Correct! You found it in " + str(ng_attempts) + " attempts."
+        )
+
+    if guess < ng_secret:
+        ng_low = guess + 1
+        message = "Too low – try higher."
+    else:
+        ng_high = guess - 1
+        message = "Too high – try lower."
+
+    if ng_attempts >= NG_MAX_ATTEMPTS:
+        ng_done = True
+        return ng_payload(
+            "lost",
+            "Out of attempts. The number was " + str(ng_secret) + "."
+        )
+
+    remaining = NG_MAX_ATTEMPTS - ng_attempts
+    suffix = " attempt" if remaining == 1 else " attempts"
+    return ng_payload("playing", message + " " + str(remaining) + suffix + " left.")
+
+
+# ------------------------------------------------------------
+# Game 2: Rock, paper, scissors
+# ------------------------------------------------------------
+RPS_CHOICES = ("rock", "paper", "scissors")
+RPS_BEATS = {"rock": "scissors", "paper": "rock", "scissors": "paper"}
+rps_wins = 0
+rps_losses = 0
+rps_draws = 0
+
+
+def rps_payload(status, message, player=None, computer=None):
+    return json.dumps({
+        "status": status,
+        "message": message,
+        "player": player,
+        "computer": computer,
+        "wins": rps_wins,
+        "losses": rps_losses,
+        "draws": rps_draws
+    })
+
+
+def rps_reset():
+    global rps_wins, rps_losses, rps_draws
+    rps_wins = 0
+    rps_losses = 0
+    rps_draws = 0
+    return rps_payload("ready", "Pick rock, paper or scissors.")
+
+
+def rps_play(player):
+    global rps_wins, rps_losses, rps_draws
+
+    player = str(player).lower()
+    if player not in RPS_CHOICES:
+        return rps_payload("ready", "Pick rock, paper or scissors.")
+
+    computer = random.choice(RPS_CHOICES)
+
+    if player == computer:
+        rps_draws += 1
+        return rps_payload(
+            "draw",
+            "Draw – you both picked " + player + ".",
+            player,
+            computer
+        )
+
+    if RPS_BEATS[player] == computer:
+        rps_wins += 1
+        return rps_payload(
+            "win",
+            "You win! " + player.capitalize() + " beats " + computer + ".",
+            player,
+            computer
+        )
+
+    rps_losses += 1
+    return rps_payload(
+        "loss",
+        "Python wins! " + computer.capitalize() + " beats " + player + ".",
+        player,
+        computer
+    )
+
+
+# ------------------------------------------------------------
+# Game 3: Hangman
+# ------------------------------------------------------------
+HM_MAX_LIVES = 6
+HM_WORDS = [
+    "PYTHON", "GALAXY", "ROCKET", "ASTEROID", "WILDLIFE",
+    "CAMERA", "OCEAN", "FOREST", "TELESCOPE", "PANDA",
+    "LIGHTNING", "MOUNTAIN", "FALCON", "VOLCANO", "JUPITER"
+]
+hm_word = ""
+hm_guessed = set()
+hm_lives = HM_MAX_LIVES
+hm_done = True
+
+
+def hm_payload(status, message):
+    display_letters = [letter if letter in hm_guessed else "_" for letter in hm_word]
+    correct = sorted([letter for letter in hm_guessed if letter in hm_word])
+    wrong = sorted([letter for letter in hm_guessed if letter not in hm_word])
+    return json.dumps({
+        "status": status,
+        "message": message,
+        "wordDisplay": " ".join(display_letters),
+        "wordLength": len(hm_word),
+        "guessed": sorted(hm_guessed),
+        "correct": correct,
+        "wrong": wrong,
+        "lives": hm_lives,
+        "maxLives": HM_MAX_LIVES
+    })
+
+
+def hm_new():
+    global hm_word, hm_guessed, hm_lives, hm_done
+    hm_word = random.choice(HM_WORDS)
+    hm_guessed = set()
+    hm_lives = HM_MAX_LIVES
+    hm_done = False
+    return hm_payload("playing", "A new word is ready. Pick a letter.")
+
+
+def hm_guess(letter):
+    global hm_guessed, hm_lives, hm_done
+
+    if hm_done:
+        return hm_payload("over", "This round is over. Start a new word.")
+
+    letter = str(letter).upper()
+    if len(letter) != 1 or letter not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+        return hm_payload("playing", "Please pick a letter from A to Z.")
+
+    if letter in hm_guessed:
+        return hm_payload("playing", "You already tried " + letter + ".")
+
+    hm_guessed.add(letter)
+
+    if letter not in hm_word:
+        hm_lives -= 1
+
+    if all(ch in hm_guessed for ch in hm_word):
+        hm_done = True
+        return hm_payload("won", "You got it! The word was " + hm_word + ".")
+
+    if hm_lives <= 0:
+        hm_done = True
+        return hm_payload("lost", "Out of lives. The word was " + hm_word + ".")
+
+    if letter in hm_word:
+        message = "Nice – " + letter + " is in the word."
+    else:
+        message = "No " + letter + ". " + str(hm_lives) + " lives left."
+
+    return hm_payload("playing", message)
+`;
+
+  const pyRuntime = document.getElementById("py-runtime");
+  const pyRuntimeText = document.getElementById("py-runtime-text");
+  const pyRetry = document.getElementById("py-retry");
+
+  let pyodide = null;
+  let pyReady = false;
+  let pyInitPromise = null;
+
+  function setRuntime(state, text) {
+    pyRuntime.dataset.state = state;
+    pyRuntimeText.textContent = text;
+    pyRetry.hidden = state !== "error";
+    pyRetry.disabled = state === "loading";
+  }
+
+  function setGameControlsDisabled(disabled) {
+    document.querySelectorAll("[data-needs-python]").forEach(element => {
+      element.disabled = disabled;
+    });
+  }
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error("Failed to load " + src));
+      document.head.appendChild(script);
+    });
+  }
+
+  function pyCall(name, ...args) {
+    if (!pyReady || !pyodide) {
+      throw new Error("Python runtime is not ready");
+    }
+
+    const fn = pyodide.globals.get(name);
+    if (!fn) {
+      throw new Error("Missing Python function: " + name);
+    }
+
+    try {
+      const raw = fn(...args);
+      return JSON.parse(raw);
+    } finally {
+      try { fn.destroy(); } catch (err) { /* already released */ }
+    }
+  }
+
+  function setFeedback(element, message, tone) {
+    element.textContent = message;
+    element.classList.remove("hint", "success", "error");
+    if (tone) element.classList.add(tone);
+  }
+
+  function reportGameError(element, err) {
+    console.error(err);
+    setFeedback(element, "The Python engine hit an error. Reload the page to restart.", "error");
+  }
+
+  // ----------------------------------------------------------
+  // Guess the number
+  // ----------------------------------------------------------
+  const ngForm = document.getElementById("ng-form");
+  const ngInput = document.getElementById("ng-input");
+  const ngSubmit = document.getElementById("ng-submit");
+  const ngNew = document.getElementById("ng-new");
+  const ngFeedback = document.getElementById("ng-feedback");
+  const ngAttempts = document.getElementById("ng-attempts");
+  const ngRange = document.getElementById("ng-range");
+  const ngHistory = document.getElementById("ng-history");
+
+  let ngFinished = false;
+
+  function renderNumber(state) {
+    ngAttempts.textContent = state.attempts;
+    ngRange.textContent = state.low + "–" + state.high;
+
+    ngHistory.innerHTML = "";
+    if (Array.isArray(state.history) && state.history.length > 0) {
+      const label = document.createElement("span");
+      label.className = "history-label";
+      label.textContent = "Guesses";
+      ngHistory.appendChild(label);
+
+      state.history.forEach(value => {
+        const chip = document.createElement("span");
+        chip.className = "guess-chip";
+        chip.textContent = value;
+        ngHistory.appendChild(chip);
+      });
+    }
+
+    ngFinished = state.status === "won" || state.status === "lost" || state.status === "over";
+
+    let tone = "hint";
+    if (state.status === "won") tone = "success";
+    else if (ngFinished) tone = "error";
+
+    setFeedback(ngFeedback, state.message, tone);
+
+    ngInput.disabled = ngFinished;
+    ngSubmit.disabled = ngFinished;
+
+    if (!ngFinished) {
+      ngInput.min = state.low;
+      ngInput.max = state.high;
+    }
+  }
+
+  ngForm.addEventListener("submit", event => {
+    event.preventDefault();
+    if (!pyReady || ngFinished) return;
+
+    const value = ngInput.value.trim();
+    if (!value) {
+      setFeedback(ngFeedback, "Type a number first.", "hint");
+      ngInput.focus();
+      return;
+    }
+
+    try {
+      const state = pyCall("ng_guess", value);
+      renderNumber(state);
+      ngInput.value = "";
+      if (!ngFinished) ngInput.focus({ preventScroll: true });
+    } catch (err) {
+      reportGameError(ngFeedback, err);
+    }
+  });
+
+  ngNew.addEventListener("click", () => {
+    if (!pyReady) return;
+    try {
+      renderNumber(pyCall("ng_new"));
+      ngInput.value = "";
+      ngInput.focus({ preventScroll: true });
+    } catch (err) {
+      reportGameError(ngFeedback, err);
+    }
+  });
+
+  // ----------------------------------------------------------
+  // Rock, paper, scissors
+  // ----------------------------------------------------------
+  const rpsFeedback = document.getElementById("rps-feedback");
+  const rpsPlayer = document.getElementById("rps-player");
+  const rpsComputer = document.getElementById("rps-computer");
+  const rpsWins = document.getElementById("rps-wins");
+  const rpsLosses = document.getElementById("rps-losses");
+  const rpsDraws = document.getElementById("rps-draws");
+  const rpsReset = document.getElementById("rps-reset");
+
+  function choiceLabel(choice) {
+    if (!choice) return "—";
+    return choice.charAt(0).toUpperCase() + choice.slice(1);
+  }
+
+  function renderRps(state) {
+    rpsPlayer.textContent = choiceLabel(state.player);
+    rpsComputer.textContent = choiceLabel(state.computer);
+    rpsWins.textContent = state.wins;
+    rpsLosses.textContent = state.losses;
+    rpsDraws.textContent = state.draws;
+
+    let tone = "hint";
+    if (state.status === "win") tone = "success";
+    else if (state.status === "loss") tone = "error";
+
+    setFeedback(rpsFeedback, state.message, tone);
+  }
+
+  document.querySelectorAll("[data-rps-choice]").forEach(button => {
+    button.addEventListener("click", () => {
+      if (!pyReady) return;
+      try {
+        renderRps(pyCall("rps_play", button.dataset.rpsChoice));
+      } catch (err) {
+        reportGameError(rpsFeedback, err);
+      }
+    });
+  });
+
+  rpsReset.addEventListener("click", () => {
+    if (!pyReady) return;
+    try {
+      renderRps(pyCall("rps_reset"));
+    } catch (err) {
+      reportGameError(rpsFeedback, err);
+    }
+  });
+
+  // ----------------------------------------------------------
+  // Hangman
+  // ----------------------------------------------------------
+  const hmFeedback = document.getElementById("hm-feedback");
+  const hmWord = document.getElementById("hm-word");
+  const hmLives = document.getElementById("hm-lives");
+  const hmLength = document.getElementById("hm-length");
+  const hmLetters = document.getElementById("hm-letters");
+  const hmNew = document.getElementById("hm-new");
+
+  let hmFinished = false;
+
+  function buildHangmanKeyboard() {
+    if (hmLetters.childElementCount > 0) return;
+
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "letter-btn";
+      button.textContent = letter;
+      button.dataset.letter = letter;
+      button.setAttribute("data-needs-python", "");
+      button.setAttribute("aria-label", "Guess " + letter);
+      button.disabled = true;
+
+      button.addEventListener("click", () => {
+        if (!pyReady || hmFinished) return;
+        try {
+          renderHangman(pyCall("hm_guess", letter));
+        } catch (err) {
+          reportGameError(hmFeedback, err);
+        }
+      });
+
+      hmLetters.appendChild(button);
+    });
+  }
+
+  function renderHangman(state) {
+    hmWord.innerHTML = "";
+
+    state.wordDisplay.split(" ").forEach(character => {
+      const letterBox = document.createElement("span");
+      letterBox.className = "hm-letter" + (character === "_" ? " blank" : "");
+      letterBox.textContent = character;
+      hmWord.appendChild(letterBox);
+    });
+
+    hmLength.textContent = state.wordLength;
+    hmLives.innerHTML = "";
+    for (let index = 0; index < state.maxLives; index += 1) {
+      const heart = document.createElement("span");
+      heart.textContent = index < state.lives ? "♥" : "♡";
+      if (index >= state.lives) heart.className = "empty";
+      hmLives.appendChild(heart);
+    }
+    hmLives.setAttribute("aria-label", state.lives + " of " + state.maxLives + " lives left");
+
+    hmFinished = state.status === "won" || state.status === "lost" || state.status === "over";
+
+    let tone = "hint";
+    if (state.status === "won") tone = "success";
+    else if (hmFinished) tone = "error";
+
+    setFeedback(hmFeedback, state.message, tone);
+
+    const guessed = new Set(state.guessed || []);
+    const correct = new Set(state.correct || []);
+    const wrong = new Set(state.wrong || []);
+
+    hmLetters.querySelectorAll(".letter-btn").forEach(button => {
+      const letter = button.dataset.letter;
+      button.disabled = hmFinished || guessed.has(letter);
+      button.classList.toggle("hit", correct.has(letter));
+      button.classList.toggle("miss", wrong.has(letter));
+    });
+  }
+
+  hmNew.addEventListener("click", () => {
+    if (!pyReady) return;
+    try {
+      renderHangman(pyCall("hm_new"));
+    } catch (err) {
+      reportGameError(hmFeedback, err);
+    }
+  });
+
+  // ----------------------------------------------------------
+  // Runtime bootstrap
+  // ----------------------------------------------------------
+  function initGames() {
+    renderNumber(pyCall("ng_new"));
+    renderRps(pyCall("rps_reset"));
+    renderHangman(pyCall("hm_new"));
+  }
+
+  async function initPython() {
+    if (pyReady) return;
+    if (pyInitPromise) return pyInitPromise;
+
+    setGameControlsDisabled(true);
+    setRuntime("loading", "Loading Python runtime…");
+
+    pyInitPromise = (async () => {
+      try {
+        if (!window.loadPyodide) {
+          await loadScript(PYODIDE_URL + "pyodide.js");
+        }
+
+        setRuntime("loading", "Starting Python…");
+        pyodide = await loadPyodide({ indexURL: PYODIDE_URL });
+
+        setRuntime("loading", "Waking up the games…");
+        await pyodide.runPythonAsync(PYTHON_CODE);
+
+        pyReady = true;
+        buildHangmanKeyboard();
+        setGameControlsDisabled(false);
+        setRuntime("ready", "Python ready – games run locally in your browser.");
+        initGames();
+      } catch (err) {
+        console.error("Python runtime failed:", err);
+        pyReady = false;
+        pyodide = null;
+        setGameControlsDisabled(true);
+        setRuntime("error", "Python could not be loaded. Check your connection and retry.");
+      } finally {
+        pyInitPromise = null;
+      }
+    })();
+
+    return pyInitPromise;
+  }
+
+  pyRetry.addEventListener("click", () => {
+    if (pyInitPromise) return;
+    pyReady = false;
+    pyodide = null;
+    initPython();
+  });
+
+  initPython();
+</script>
+
+</body>
+</html>
