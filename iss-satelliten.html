@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>ISS &amp; Satelliten Live-Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    html {
+      background: radial-gradient(1200px 800px at 50% 0%, #101826 0%, #050807 55%, #040604 100%);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 16px 60px;
+      color: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(28px, 6vw, 56px);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #00bfff;
+      text-shadow: 0 0 18px rgba(0, 191, 255, 0.25);
+    }
+
+    header p {
+      margin: 10px auto 0;
+      max-width: 760px;
+      color: #c9d1d9;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #00bfff;
+      background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      transition: all 0.25s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background: #00bfff;
+      color: #050807;
+      box-shadow: 0 10px 30px rgba(0, 191, 255, 0.25);
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      gap: 26px;
+    }
+
+    .panel {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 191, 255, 0.25);
+      background: radial-gradient(600px 400px at 50% 0%, rgba(0, 191, 255, 0.18), transparent 70%), rgba(9, 14, 20, 0.9);
+      box-shadow: 0 40px 80px -60px rgba(0, 191, 255, 0.9);
+    }
+
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 26px 0;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: clamp(18px, 3vw, 28px);
+    }
+
+    .panel-title p {
+      margin: 4px 0 0;
+      color: #9aa5b1;
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(0, 191, 255, 0.16);
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      color: #e6f7ff;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .tracker-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      min-height: 520px;
+    }
+
+    .tracker-frame iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      border-radius: 16px;
+      border: 1px solid rgba(0, 191, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.14) 0%, transparent 60%), rgba(9, 14, 20, 0.92);
+      padding: 24px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .card h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card p {
+      margin: 0;
+      color: #c9d1d9;
+    }
+
+    .card a {
+      justify-self: start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #00bfff;
+      text-decoration: none;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #6b7785;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ISS &amp; Satelliten Live-Tracker</h1>
+    <p>Verfolge die Internationale Raumstation, Iridium-NEXT, Starlink-Konstellationen und weitere bemannte sowie unbemannte Objekte in Echtzeit über unseren Globus.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+      <a class="nav-link" href="rocketlaunch.html"><i class="fas fa-rocket"></i> Raketenstarts</a>
+      <a class="nav-link" href="https://www.n2yo.com/" target="_blank" rel="noopener noreferrer"><i class="fas fa-satellite-dish"></i> N2YO.com</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <div class="badge"><i class="fas fa-satellite"></i> Live Tracking</div>
+          <div>
+            <h2>ISS Live-Position in 3D</h2>
+            <p>Verfolgt in Echtzeit mit Standpunkt, Vorbeiflugzeiten &amp; beleuchteten Passagen</p>
+          </div>
+        </div>
+        <div class="badge"><i class="fas fa-globe"></i> Weltweit</div>
+      </div>
+      <div class="tracker-frame">
+        <iframe title="ISS Live Tracker" src="https://isstracker.spaceflight.esa.int/" loading="lazy" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h3><i class="fas fa-crosshairs"></i> Wo ist die ISS gerade?</h3>
+        <p>Mit N2YO kannst du ganz gezielt nach deiner aktuellen Position suchen, Vorhersagen für sichtbare Passagen berechnen und Alarme für ISS-Durchgänge einrichten.</p>
+        <a href="https://www.n2yo.com/space-station/" target="_blank" rel="noopener noreferrer">ISS auf N2YO öffnen <i class="fas fa-external-link-alt"></i></a>
+      </article>
+      <article class="card">
+        <h3><i class="fas fa-satellite"></i> Starlink &amp; Konstellationen</h3>
+        <p>Verfolge ganze Konstellationen wie Starlink, OneWeb, Kuiper oder Iridium in Echtzeit und finde heraus, wann sie als "train" über deinen Himmel ziehen.</p>
+        <a href="https://www.n2yo.com/satellites/?c=53" target="_blank" rel="noopener noreferrer">Starlink-Satelliten live verfolgen <i class="fas fa-external-link-alt"></i></a>
+      </article>
+      <article class="card">
+        <h3><i class="fas fa-eye"></i> Sichtbare Überflüge</h3>
+        <p>Am besten zu beobachten sind helle Passagen kurz nach Sonnenuntergang oder vor Sonnenaufgang. Heavens-Above gibt dir exakte Zeitpunkte für deinen Standort.</p>
+        <a href="https://heavens-above.com/" target="_blank" rel="noopener noreferrer">Passagen auf Heavens-Above berechnen <i class="fas fa-external-link-alt"></i></a>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <p>ISS &amp; Satelliten Live-Tracker &mdash; Daten von ESA, N2YO &amp; Heavens-Above</p>
+  </footer>
+</body>
+</html>
