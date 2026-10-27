@@ -1,0 +1,3912 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Meteorschauer-Kalender – Los Finkos</title>
+  <meta name="description" content="Wann ist der nächste Meteorschauer? Kalender mit Ortssuche, Radiantenhöhe, Mondphase, Bewölkung und Lichtverschmutzung für deinen Standort.">
+  <meta name="theme-color" content="#050807">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #050807;
+      --panel: rgba(7, 14, 11, 0.86);
+      --cyan: #00bfff;
+      --green: #00ff66;
+      --violet: #a06bff;
+      --pink: #ff6bd6;
+      --amber: #ffb347;
+      --text: #e9f4ee;
+      --muted: #93a8a0;
+      --line: rgba(255, 179, 71, 0.16);
+      --line-violet: rgba(160, 107, 255, 0.26);
+      --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Courier New", monospace;
+      --q0: #5f776d;
+      --q1: #ff5c5c;
+      --q2: #ffb347;
+      --q3: #4fd8ff;
+      --q4: #00ff88;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { background: var(--bg); scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: transparent;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::selection { background: rgba(255, 179, 71, 0.3); color: #ffffff; }
+
+    a { color: var(--cyan); }
+
+    /* ---------- Hintergrund ---------- */
+
+    #stars {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 58% 40% at 18% 2%, rgba(255, 179, 71, 0.09), transparent 62%),
+        radial-gradient(ellipse 52% 38% at 84% 24%, rgba(160, 107, 255, 0.12), transparent 58%),
+        radial-gradient(ellipse 70% 50% at 50% 100%, rgba(0, 191, 255, 0.05), transparent 65%),
+        linear-gradient(180deg, rgba(5, 8, 7, 0.6), rgba(5, 8, 7, 0.93));
+    }
+
+    /* ---------- Grundlayout ---------- */
+
+    .page {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 0 22px 56px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 0 14px;
+      background: linear-gradient(180deg, rgba(5, 8, 7, 0.94) 60%, rgba(5, 8, 7, 0));
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #cfe6f2;
+      text-shadow: 0 0 12px rgba(255, 179, 71, 0.28);
+    }
+
+    .brand i { font-size: 12px; color: var(--amber); }
+    .brand:hover { color: #ffffff; }
+
+    .lang-switch {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: rgba(12, 20, 17, 0.8);
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: #7d918a;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 6px 11px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .lang-btn:hover { color: #d9e8e1; }
+    .lang-btn.active { background: var(--amber); color: #1c1103; }
+
+    .lang-btn:focus-visible,
+    .btn:focus-visible,
+    .event-card:focus-visible,
+    .month-item:focus-visible,
+    .row-btn:focus-visible,
+    .suggestion:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 3px;
+    }
+
+    /* ---------- Hero ---------- */
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      align-items: start;
+      gap: 40px;
+      padding: 22px 0 42px;
+    }
+
+    .dome-panel {
+      position: sticky;
+      top: 84px;
+      min-width: 0;
+    }
+
+    .dome-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .dome-stage::before {
+      content: "";
+      position: absolute;
+      inset: 6%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 179, 71, 0.15), rgba(160, 107, 255, 0.08) 48%, transparent 70%);
+      filter: blur(30px);
+    }
+
+    .dome-canvas {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .dome-caption {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px 12px;
+      margin-top: 6px;
+      padding: 0 4px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #8fa79e;
+    }
+
+    .dome-caption strong { color: #ffe9d2; font-weight: 600; }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(9, 17, 14, 0.8);
+    }
+
+    .slider-row i { color: var(--amber); font-size: 12px; }
+
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 0;
+      accent-color: var(--amber);
+      height: 4px;
+    }
+
+    .slider-time {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #eaf6ff;
+      min-width: 44px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hero-copy { min-width: 0; }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 12px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .kicker .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 0 0 rgba(255, 179, 71, 0.55);
+      animation: pulse 2.6s ease-out infinite;
+      flex: none;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(38px, 5.4vw, 62px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+      background: linear-gradient(100deg, #ffffff 0%, #ffe9d2 36%, var(--amber) 68%, var(--violet) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    h1 em { font-style: normal; }
+
+    .lede {
+      max-width: 57ch;
+      margin: 0 0 20px;
+      font-size: 15.5px;
+      line-height: 1.72;
+      color: #a7bab2;
+    }
+    /* ---------- Ortssuche ---------- */
+
+    .search-wrap {
+      position: relative;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .search-box > i {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6d867c;
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 14px 12px 36px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(9, 17, 14, 0.9);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .search-input::placeholder { color: #6d867c; }
+
+    .search-input:focus {
+      border-color: rgba(255, 179, 71, 0.55);
+      box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.12);
+    }
+
+    .suggestions {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      z-index: 40;
+      margin: 0;
+      padding: 6px;
+      list-style: none;
+      border: 1px solid rgba(255, 179, 71, 0.3);
+      border-radius: 12px;
+      background: rgba(7, 12, 10, 0.98);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.55);
+      max-height: 280px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .suggestions.open { display: block; }
+
+    .suggestion {
+      display: block;
+      width: 100%;
+      padding: 9px 11px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: #d6e6df;
+      font-family: inherit;
+      font-size: 13.5px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .suggestion strong { color: #ffffff; font-weight: 600; }
+    .suggestion span { display: block; font-family: var(--mono); font-size: 10.5px; color: #7f978d; }
+    .suggestion:hover, .suggestion.active { background: rgba(255, 179, 71, 0.14); }
+
+    .search-hint {
+      padding: 10px 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #7f978d;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(10, 18, 14, 0.8);
+      color: #cfe6f2;
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 179, 71, 0.45);
+      background: rgba(255, 179, 71, 0.1);
+      color: #ffffff;
+    }
+
+    .btn:disabled { opacity: 0.6; cursor: progress; transform: none; }
+
+    .btn-amber {
+      background: linear-gradient(100deg, var(--amber), #e07b28);
+      border-color: transparent;
+      color: #1c1103;
+    }
+
+    .btn-amber:hover { background: linear-gradient(100deg, #ffd08a, #f0923d); color: #1c1103; }
+
+    /* ---------- Ortskarte ---------- */
+
+    .place-card {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(150deg, rgba(28, 20, 12, 0.74), rgba(7, 13, 11, 0.9));
+    }
+
+    .place-name {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 4px 9px;
+      margin: 0 0 2px;
+      font-size: 17px;
+      font-weight: 600;
+      color: #f2f8ff;
+    }
+
+    .place-name small {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #b09372;
+    }
+
+    .place-meta {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: #7f978d;
+    }
+
+    .place-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+      color: #b9cec6;
+      background: rgba(9, 17, 14, 0.7);
+    }
+
+    .pill i { font-size: 10px; }
+    .pill b { color: #eaf6ff; font-weight: 600; }
+
+    .pill.bortle-0, .pill.bortle-1 { border-color: rgba(80, 110, 255, 0.4); color: #9fb0ff; }
+    .pill.bortle-2, .pill.bortle-3 { border-color: rgba(0, 191, 255, 0.35); color: #7fdcff; }
+    .pill.bortle-4, .pill.bortle-5 { border-color: rgba(255, 179, 71, 0.35); color: #ffcf8a; }
+    .pill.bortle-6, .pill.bortle-7 { border-color: rgba(255, 92, 92, 0.35); color: #ff9a9a; }
+    .pill.bortle-8, .pill.bortle-9 { border-color: rgba(255, 255, 255, 0.35); color: #f2f2f2; }
+
+    /* ---------- Kurzinfo-Chips ---------- */
+
+    .chips {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(9, 17, 14, 0.82);
+    }
+
+    .chip-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #789088;
+      margin-bottom: 2px;
+    }
+
+    .chip-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #eaf6ff;
+      letter-spacing: -0.01em;
+    }
+
+    .chip-value.q0 { color: var(--q0); }
+    .chip-value.q1 { color: var(--q1); }
+    .chip-value.q2 { color: var(--q2); }
+    .chip-value.q3 { color: var(--q3); }
+    .chip-value.q4 { color: var(--q4); }
+
+    .chip-sub {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: #6f8a90;
+      margin-top: 1px;
+    }
+
+    /* ---------- Abschnitte ---------- */
+
+    .section { margin-bottom: 54px; scroll-margin-top: 92px; }
+
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 6px 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(20px, 2.8vw, 26px);
+      letter-spacing: -0.01em;
+    }
+
+    .section-head h2 i { color: var(--amber); font-size: 0.72em; margin-right: 6px; }
+    .section-head p { margin: 0; color: #7f978d; font-size: 12.5px; font-family: var(--mono); }
+
+    .note {
+      margin: 12px 0 0;
+      padding: 11px 14px;
+      border: 1px solid rgba(255, 179, 71, 0.18);
+      border-left: 2px solid var(--amber);
+      border-radius: 0 10px 10px 0;
+      background: rgba(255, 179, 71, 0.05);
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: #a7bab2;
+    }
+
+    /* ---------- Kommende Maxima ---------- */
+
+    .upcoming-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .event-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(22, 17, 12, 0.86), rgba(6, 12, 9, 0.9));
+      color: inherit;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .event-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 179, 71, 0.42);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.35);
+    }
+
+    .event-card.selected {
+      border-color: rgba(255, 179, 71, 0.6);
+      background: linear-gradient(160deg, rgba(44, 30, 15, 0.9), rgba(10, 15, 11, 0.92));
+    }
+
+    .event-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .event-code {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.15em;
+      color: var(--amber);
+    }
+
+    .event-date {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      color: #93a8a0;
+      text-align: right;
+    }
+
+    .event-name {
+      margin: 0;
+      font-size: 17.5px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: #f2f8ff;
+    }
+
+    .event-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px 10px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: #8fa79e;
+    }
+
+    .event-meta i { color: #6f8a90; font-size: 9px; margin-right: 3px; }
+
+    .event-bar {
+      height: 3px;
+      margin-top: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .event-bar span { display: block; height: 100%; border-radius: 2px; }
+    .event-bar span.q0 { background: var(--q0); }
+    .event-bar span.q1 { background: var(--q1); }
+    .event-bar span.q2 { background: var(--q2); }
+    .event-bar span.q3 { background: var(--q3); }
+    .event-bar span.q4 { background: var(--q4); }
+
+    /* ---------- Detail ---------- */
+
+    .detail-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(6, 13, 10, 0.86);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
+    }
+
+    .detail-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px 20px;
+      margin-bottom: 14px;
+    }
+
+    .detail-title {
+      margin: 0;
+      font-size: clamp(20px, 2.6vw, 25px);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .detail-sub {
+      margin: 3px 0 0;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: #8fa79e;
+    }
+
+    .night-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .night-tab {
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(10, 18, 14, 0.8);
+      color: #93a8a0;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    }
+
+    .night-tab:hover { background: rgba(255, 179, 71, 0.1); border-color: rgba(255, 179, 71, 0.4); color: #f0e6d6; }
+    .night-tab.active { background: var(--amber); border-color: transparent; color: #1c1103; font-weight: 700; }
+
+    .detail-chart { height: 290px; }
+
+    .chart-card {
+      padding: 16px 16px 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(6, 13, 10, 0.86);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.3);
+    }
+
+    .chart-wrap { position: relative; width: 100%; height: 310px; }
+    .chart-wrap canvas { width: 100%; height: 100%; display: block; }
+
+    .chart-foot {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 18px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 179, 71, 0.1);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: #8fa79e;
+    }
+
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+    .legend i {
+      width: 14px;
+      height: 3px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .chart-note {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: #6d867c;
+      text-align: right;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .stat {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(9, 17, 14, 0.72);
+    }
+
+    .stat-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #789088;
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 16px;
+      font-weight: 600;
+      color: #eaf6ff;
+      line-height: 1.25;
+    }
+
+    .stat-value.q0 { color: var(--q0); }
+    .stat-value.q1 { color: var(--q1); }
+    .stat-value.q2 { color: var(--q2); }
+    .stat-value.q3 { color: var(--q3); }
+    .stat-value.q4 { color: var(--q4); }
+
+    .stat-sub {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: #6f8a90;
+      margin-top: 1px;
+    }
+
+    .shower-facts {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .shower-fact {
+      padding: 9px 12px;
+      border: 1px solid rgba(160, 107, 255, 0.14);
+      border-radius: 12px;
+      background: rgba(12, 10, 20, 0.5);
+    }
+
+    .shower-fact span {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #857ba0;
+      margin-bottom: 2px;
+    }
+
+    .shower-fact b {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #d9e8e1;
+      line-height: 1.4;
+    }
+
+    .detail-note {
+      margin: 14px 0 0;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: #9fb3ab;
+    }
+
+    .detail-note b { color: #ffe9d2; font-weight: 600; }
+
+    /* ---------- Jahresübersicht ---------- */
+
+    .year-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .month-card {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(6, 13, 10, 0.72);
+    }
+
+    .month-card.current { border-color: rgba(0, 255, 102, 0.32); }
+
+    .month-name {
+      margin: 0 0 7px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #8fa79e;
+    }
+
+    .month-card.current .month-name { color: var(--green); }
+
+    .month-item {
+      display: block;
+      width: 100%;
+      padding: 6px 7px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: inherit;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.16s ease;
+    }
+
+    .month-item:hover { background: rgba(255, 179, 71, 0.09); }
+    .month-item.selected { background: rgba(255, 179, 71, 0.13); }
+
+    .mi-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .mi-name { font-size: 12.5px; font-weight: 600; color: #dfeae4; line-height: 1.3; }
+
+    .mi-code {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      letter-spacing: 0.08em;
+      color: var(--amber);
+      flex: none;
+    }
+
+    .mi-meta {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: #6f8a90;
+      margin-top: 1px;
+    }
+
+    .month-empty {
+      margin: 2px 0;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: #5f776d;
+    }
+
+    .month-empty.dark { color: #8b7bb0; }
+
+    /* ---------- Tabelle ---------- */
+
+    .table-wrap {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(6, 13, 10, 0.8);
+      overflow-x: auto;
+    }
+
+    .shower-table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    .shower-table th {
+      padding: 11px 12px;
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #789088;
+      border-bottom: 1px solid rgba(255, 179, 71, 0.16);
+      white-space: nowrap;
+    }
+
+    .shower-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+      color: #b6c9c1;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .shower-table tbody tr { cursor: pointer; transition: background 0.15s ease; }
+    .shower-table tbody tr:hover { background: rgba(255, 179, 71, 0.06); }
+    .shower-table tbody tr.selected { background: rgba(255, 179, 71, 0.1); }
+    .shower-table tbody tr:last-child td { border-bottom: none; }
+
+    .shower-table .t-name { color: #eaf6ff; font-weight: 600; }
+    .shower-table .t-code {
+      display: block;
+      font-family: var(--mono);
+      font-size: 8.5px;
+      letter-spacing: 0.1em;
+      color: var(--amber);
+      font-weight: 400;
+    }
+
+    .shower-table .t-mono { font-family: var(--mono); font-size: 10.5px; }
+    .shower-table .t-center { text-align: center; }
+
+    .t-rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 10px;
+    }
+
+    .t-rating .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      flex: none;
+    }
+
+    .t-rating.q0 { color: var(--q0); }
+    .t-rating.q1 { color: var(--q1); }
+    .t-rating.q2 { color: var(--q2); }
+    .t-rating.q3 { color: var(--q3); }
+    .t-rating.q4 { color: var(--q4); }
+
+    .empty-note {
+      padding: 18px;
+      border: 1px dashed rgba(255, 179, 71, 0.28);
+      border-radius: 14px;
+      background: rgba(20, 15, 10, 0.5);
+      color: #a7bab2;
+      font-size: 13.5px;
+    }
+
+    /* ---------- Lichtverschmutzung ---------- */
+
+    .lp-card {
+      padding: 18px;
+      border: 1px solid var(--line-violet);
+      border-radius: 18px;
+      background: linear-gradient(155deg, rgba(24, 16, 32, 0.8), rgba(6, 12, 9, 0.9));
+    }
+
+    .lp-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .lp-class {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .lp-num {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(8, 14, 11, 0.8);
+      font-size: 26px;
+      font-weight: 700;
+      color: #eaf6ff;
+      line-height: 1;
+      flex: none;
+    }
+
+    .lp-title { margin: 0; font-size: 16px; font-weight: 600; color: #f2f8ff; }
+    .lp-sub { margin: 2px 0 0; font-family: var(--mono); font-size: 10.5px; color: #8fa79e; }
+
+    .lp-values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #8fa79e;
+    }
+
+    .lp-values b { display: block; font-size: 15px; color: #eaf6ff; font-weight: 600; }
+
+    .bortle-scale {
+      position: relative;
+      height: 10px;
+      margin: 26px 0 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        #142f72 0%, #2154d8 14%, #0f5714 28%, #1fa12a 40%,
+        #6e641e 52%, #b8a625 62%, #bf641e 72%, #fd9650 80%,
+        #fb5a49 87%, #fb998a 93%, #f2f2f2 100%);
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .bortle-marker {
+      position: absolute;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      margin-left: -8px;
+      margin-top: -8px;
+      border-radius: 50%;
+      border: 2px solid #050807;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 0 16px rgba(255, 255, 255, 0.55);
+      transition: left 0.3s ease;
+    }
+
+    .bortle-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: #6d867c;
+      margin-bottom: 16px;
+    }
+
+    .lp-desc {
+      margin: 0 0 14px;
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: #a7bab2;
+      max-width: 78ch;
+    }
+
+    .lp-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+    }
+
+    .lp-tips {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 7px;
+    }
+
+    .lp-tips li {
+      display: flex;
+      gap: 9px;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: #9fb3ab;
+    }
+
+    .lp-tips i { color: var(--amber); font-size: 11px; margin-top: 4px; flex: none; }
+
+    .lp-controls {
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(9, 17, 14, 0.72);
+    }
+
+    .lp-controls label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #789088;
+      margin-bottom: 6px;
+    }
+
+    .lp-controls select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(6, 12, 9, 0.95);
+      color: #d9e8e1;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .lp-controls p {
+      margin: 8px 0 0;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      line-height: 1.5;
+      color: #6d867c;
+    }
+
+    .lp-status {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: #8fa79e;
+      margin-top: 10px;
+    }
+
+    .lp-status.error { color: #ffb347; }
+
+    .attribution {
+      margin-top: 14px;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: #5f776d;
+    }
+
+    .attribution a { color: #8f9fc9; text-decoration: none; }
+    .attribution a:hover { text-decoration: underline; }
+
+    /* ---------- Erklärung ---------- */
+
+    .explain {
+      max-width: 82ch;
+      margin: 0 0 18px;
+      color: #a7bab2;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .fact {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(8, 15, 12, 0.72);
+    }
+
+    .fact strong {
+      display: block;
+      font-size: 21px;
+      letter-spacing: -0.02em;
+      color: #eaf6ff;
+      margin-bottom: 4px;
+    }
+
+    .fact span { font-size: 12.5px; line-height: 1.6; color: #8fa79e; }
+
+    /* ---------- Footer ---------- */
+
+    footer {
+      margin-top: 8px;
+      padding-top: 26px;
+      border-top: 1px solid rgba(255, 179, 71, 0.14);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: #6d867c;
+    }
+
+    .footer-links { display: flex; flex-wrap: wrap; gap: 16px; }
+
+    .footer-links a { color: #8fa79e; text-decoration: none; transition: color 0.2s ease; }
+    .footer-links a:hover { color: var(--amber); }
+
+    /* ---------- Animationen ---------- */
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 179, 71, 0.55); }
+      70% { box-shadow: 0 0 0 9px rgba(255, 179, 71, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 179, 71, 0); }
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade { animation: fade-in 0.5s ease both; }
+
+    /* ---------- Responsive ---------- */
+
+    @media (max-width: 960px) {
+      .upcoming-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .year-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .shower-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .lp-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 820px) {
+      .hero { grid-template-columns: 1fr; gap: 26px; padding-top: 12px; }
+      .dome-panel { position: static; order: 2; width: 100%; max-width: 420px; margin: 0 auto; }
+      .hero-copy { order: 1; }
+      .facts { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .year-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .page { padding: 0 14px 42px; }
+      .search-wrap { flex-wrap: wrap; }
+      .search-box { flex-basis: 100%; }
+      .btn-amber { flex: 1; }
+      .chips { gap: 7px; }
+      .chip { padding: 9px 10px; }
+      .chip-value { font-size: 14px; }
+      .upcoming-grid { grid-template-columns: 1fr; }
+      .detail-card { padding: 12px; }
+      .detail-chart { height: 250px; }
+      .stats { gap: 6px; }
+      .shower-facts { grid-template-columns: 1fr; }
+      .year-grid { grid-template-columns: 1fr; }
+      .lp-top { flex-direction: column; }
+      .bortle-labels { font-size: 8px; }
+      .chart-note { text-align: left; }
+      .night-tabs { width: 100%; }
+      .night-tab { flex: 1; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="index.html"><i class="fas fa-chevron-left"></i> los finkos</a>
+      <div class="lang-switch" role="group" aria-label="Sprache / Language">
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn active" data-lang="de" onclick="setLang('de')">DE</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="dome-panel">
+          <div class="dome-stage">
+            <canvas id="dome" class="dome-canvas" role="img" aria-label="Himmelskarte mit Meteorradiant"></canvas>
+          </div>
+          <div class="dome-caption">
+            <span id="dome-caption">–</span>
+            <span><strong id="rad-alt">–</strong> <span data-i18n="radiantHeight">Radiantenhöhe</span></span>
+          </div>
+          <div class="slider-row">
+            <i class="fas fa-clock" aria-hidden="true"></i>
+            <input id="time-slider" type="range" min="0" max="100" value="50" step="1" aria-labelledby="dome-caption">
+            <span class="slider-time" id="slider-time">–</span>
+          </div>
+        </div>
+
+        <div class="hero-copy">
+          <p class="kicker"><span class="dot"></span> <span data-i18n="kicker">meteorschauer-kalender</span></p>
+          <h1 id="page-title"><span data-i18n="h1a">Wann kommt der nächste</span> <em data-i18n="h1b">Meteorschauer</em>?</h1>
+          <p class="lede" data-i18n="lede">Ort eingeben und sehen, wann der nächste Strom seinen Höhepunkt erreicht – mit Radiantenhöhe, Mondstörung, Bewölkung und Lichtverschmutzung.</p>
+
+          <div class="search-wrap">
+            <div class="search-box">
+              <i class="fas fa-location-dot" aria-hidden="true"></i>
+              <input id="place-input" class="search-input" type="text" autocomplete="off" spellcheck="false"
+                     placeholder="Ort suchen – z. B. Wien" data-i18n-placeholder="searchPlaceholder"
+                     role="combobox" aria-expanded="false" aria-controls="suggestions">
+              <div class="suggestions" id="suggestions" role="listbox"></div>
+            </div>
+            <button type="button" class="btn btn-amber" id="geo-btn"><i class="fas fa-crosshairs"></i> <span data-i18n="useLocation">Mein Standort</span></button>
+          </div>
+
+          <div class="place-card">
+            <p class="place-name"><span id="place-name">Wien</span> <small id="place-country">Österreich</small></p>
+            <p class="place-meta" id="place-meta">48.208° N · 16.372° O · Europe/Vienna</p>
+            <div class="place-badges" id="place-badges"></div>
+          </div>
+
+          <div class="chips" id="chips"></div>
+        </div>
+      </section>
+
+      <section class="section" id="maxima" aria-labelledby="maxima-title">
+        <div class="section-head">
+          <h2 id="maxima-title"><i class="fas fa-meteor"></i> <span data-i18n="upTitle">Kommende Maxima</span></h2>
+          <p data-i18n="upSub">die nächsten sechs Maxima</p>
+        </div>
+        <div class="upcoming-grid" id="upcoming-grid"></div>
+        <p class="note" data-i18n="upNote">Die Eignung gilt für den gewählten Standort und berücksichtigt Radiantenhöhe, Dunkelheit, Mond und Lichtverschmutzung. Karte anklicken für Details.</p>
+      </section>
+
+      <section class="section" id="detail" aria-labelledby="detail-title">
+        <div class="section-head">
+          <h2 id="detail-heading"><i class="fas fa-crosshairs"></i> <span data-i18n="detailTitle">Im Detail</span></h2>
+          <p data-i18n="detailSub">die beste Nacht rund um das Maximum</p>
+        </div>
+        <div class="detail-card">
+          <div class="detail-head">
+            <div>
+              <h3 class="detail-title" id="detail-title">–</h3>
+              <p class="detail-sub" id="detail-sub">–</p>
+            </div>
+            <div class="night-tabs" id="night-tabs" role="group" aria-label="Nächte"></div>
+          </div>
+
+          <div class="chart-wrap detail-chart"><canvas id="chart" role="img" aria-label="Diagramm der Radiantenhöhe"></canvas></div>
+          <div class="chart-foot">
+            <div class="legend">
+              <span><i style="background:#ffb347"></i> <span data-i18n="legRad">Radiant</span></span>
+              <span><i style="background:#cfe8ff;opacity:.8"></i> <span data-i18n="legMoon">Mond</span></span>
+              <span><i style="background:#ffe08a;opacity:.55"></i> <span data-i18n="legSun">Sonne</span></span>
+              <span><i style="background:rgba(160,107,255,.2)"></i> <span data-i18n="legDark">astronomische Dunkelheit</span></span>
+            </div>
+            <div class="chart-note" data-i18n="chartNote">Zeiten in Ortszeit · Zeiger über das Diagramm für Details</div>
+          </div>
+
+          <div class="stats" id="detail-stats"></div>
+          <div class="shower-facts" id="shower-facts"></div>
+          <p class="detail-note" id="detail-note"></p>
+        </div>
+      </section>
+
+      <section class="section" id="jahr" aria-labelledby="year-title">
+        <div class="section-head">
+          <h2 id="year-title"><i class="fas fa-calendar-days"></i> <span data-i18n="yearTitle">Im Jahresverlauf</span></h2>
+          <p data-i18n="yearSub">Maxima der nächsten 12 Monate</p>
+        </div>
+        <div class="year-grid" id="year-grid"></div>
+        <p class="note" data-i18n="yearHint">Monat anklicken, um den Meteorschauer auszuwählen. Die Farbe zeigt die Eignung am gewählten Standort.</p>
+      </section>
+
+      <section class="section" id="tabelle" aria-labelledby="table-title">
+        <div class="section-head">
+          <h2 id="table-title"><i class="fas fa-table-list"></i> <span data-i18n="tableTitle">Alle Ströme im Überblick</span></h2>
+          <p data-i18n="tableSub">IMO Working List · 19 Ströme</p>
+        </div>
+        <div class="table-wrap">
+          <table class="shower-table">
+            <thead>
+              <tr>
+                <th data-i18n="colShower">Strom</th>
+                <th data-i18n="colPeak">Maximum</th>
+                <th class="t-center">ZHR</th>
+                <th data-i18n="colRadiant">Radiant</th>
+                <th class="t-center">v∞</th>
+                <th data-i18n="colParent">Mutterkörper</th>
+                <th data-i18n="colRating">Eignung hier</th>
+              </tr>
+            </thead>
+            <tbody id="shower-rows"></tbody>
+          </table>
+        </div>
+        <p class="note">
+          <span data-i18n="tableSource">Daten: IMO Working List of Visual Meteor Showers 2026 (Jürgen Rendtel). ZHR = theoretische Stundenrate für einen Beobachter im Zenit bei perfektem Himmel.</span>
+          <a href="https://www.imo.net/files/meteor-shower/cal2026.pdf" target="_blank" rel="noopener noreferrer">IMO-Kalender 2026 (PDF)</a>
+        </p>
+      </section>
+
+      <section class="section" id="licht" aria-labelledby="lp-title">
+        <div class="section-head">
+          <h2 id="lp-title"><i class="fas fa-lightbulb"></i> <span data-i18n="lpTitle">Lichtverschmutzung</span></h2>
+          <p data-i18n="lpSub">Himmelshelligkeit am Standort</p>
+        </div>
+        <div class="lp-card">
+          <div class="lp-top">
+            <div class="lp-class">
+              <div class="lp-num" id="lp-num">–</div>
+              <div>
+                <p class="lp-title" id="lp-title-text" data-i18n="lpLoading">Lichtdaten werden geladen …</p>
+                <p class="lp-sub" id="lp-sub">–</p>
+              </div>
+            </div>
+            <div class="lp-values">
+              <div><span data-i18n="lpMpsas">Himmelshelligkeit</span><b id="lp-mpsas">–</b></div>
+              <div><span data-i18n="lpIndex">Lichtindex</span><b id="lp-index">–</b></div>
+              <div><span data-i18n="lpZone">Atlas-Zone</span><b id="lp-zone">–</b></div>
+            </div>
+          </div>
+
+          <div class="bortle-scale" aria-hidden="true">
+            <div class="bortle-marker" id="bortle-marker" style="left:50%"></div>
+          </div>
+          <div class="bortle-labels">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+          </div>
+
+          <p class="lp-desc" id="lp-desc" data-i18n="lpDescDefault">Die Bortle-Skala beschreibt, wie dunkel der Himmel ist – von 1 (exzellent) bis 9 (Innenstadt).</p>
+
+          <div class="lp-grid">
+            <ul class="lp-tips">
+              <li><i class="fas fa-check"></i> <span data-i18n="tip1">Fahre 30–60 Minuten aus der Stadt – die Himmelshelligkeit fällt mit der Entfernung schnell ab.</span></li>
+              <li><i class="fas fa-check"></i> <span data-i18n="tip2">Beobachte nach Mitternacht, wenn der Radiant höher steht und die Luft ruhiger ist.</span></li>
+              <li><i class="fas fa-check"></i> <span data-i18n="tip3">Lass die Augen 20 Minuten dunkeladaptieren und nutze nur rotes Licht.</span></li>
+            </ul>
+            <div class="lp-controls">
+              <label for="lp-override" data-i18n="lpOverrideLabel">Bortle-Klasse</label>
+              <select id="lp-override">
+                <option value="auto" data-i18n="lpAuto">Automatisch (Atlas)</option>
+              </select>
+              <p data-i18n="lpOverrideHint">Die Klasse beeinflusst die Eignung und die erwartete Rate. Manuell überschreiben, wenn du deinen Himmel besser kennst.</p>
+            </div>
+          </div>
+
+          <p class="lp-status" id="lp-status"></p>
+          <p class="attribution">
+            <span data-i18n="lpSource">Lichtdaten: Light Pollution Atlas 2025 von David Lorenz (CC BY-SA 3.0), basierend auf VIIRS.</span>
+            <a href="https://djlorenz.github.io/astronomy/lp/" target="_blank" rel="noopener noreferrer">djlorenz.github.io/astronomy/lp</a>
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="wie" aria-labelledby="how-title">
+        <div class="section-head">
+          <h2 id="how-title"><i class="fas fa-circle-info"></i> <span data-i18n="howTitle">Wie das funktioniert</span></h2>
+        </div>
+        <p class="explain" data-i18n="howText">Meteorschauer entstehen, wenn die Erde die Staubspur eines Kometen oder Asteroiden kreuzt. Die Teilchen verglühen in etwa 80–120 km Höhe; der Punkt, aus dem sie scheinbar kommen, heißt Radiant. Die Seite berechnet die Maxima aus der Sonnenlänge der IMO Working List, dazu Radiantenhöhe, Sonnen- und Mondposition für deinen Standort. Die Eignung kombiniert Radiantenhöhe, Dauer der dunklen Phase, Mondstörung, ZHR und Lichtverschmutzung. Die erwartete Rate ist eine idealisierte Schätzung für einen Beobachter mit freiem Himmel.</p>
+        <div class="facts">
+          <div class="fact">
+            <strong>≈ 100 km</strong>
+            <span data-i18n="fact1">hoch verglühen die meisten Meteore – lange bevor sie den Boden erreichen.</span>
+          </div>
+          <div class="fact">
+            <strong>11–72 km/s</strong>
+            <span data-i18n="fact2">schnell sind Meteorschauer-Teilchen beim Eintritt in die Atmosphäre.</span>
+          </div>
+          <div class="fact">
+            <strong>19</strong>
+            <span data-i18n="fact3">Strome der IMO Working List sind hier mit Maximum, Radiant und Mutterkörper versammelt.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span data-i18n="footer">© 2026 Los Finkos · Meteorschauer-Kalender</span>
+      <span class="footer-links">
+        <a href="index.html" data-i18n="home">Startseite</a>
+        <a href="milchstrasse.html" data-i18n="milkyway">Milchstraßen-Kalender</a>
+        <a href="moon.html" data-i18n="moon">Mondkalender</a>
+        <a href="weather.html" data-i18n="weather">Wetter</a>
+        <a href="https://www.instagram.com/los_finkos/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      </span>
+    </footer>
+  </div>
+  <script>
+    /* ================= Sprache ================= */
+
+    const I18N = {
+      de: {
+        kicker: "meteorschauer-kalender",
+        h1a: "Wann kommt der nächste",
+        h1b: "Meteorschauer",
+        lede: "Ort eingeben und sehen, wann der nächste Strom seinen Höhepunkt erreicht – mit Radiantenhöhe, Mondstörung, Bewölkung und Lichtverschmutzung.",
+        searchPlaceholder: "Ort suchen – z. B. Wien",
+        useLocation: "Mein Standort",
+        searching: "Suche …",
+        noResults: "Kein Ort gefunden.",
+        searchHint: "Tippe mindestens 2 Buchstaben.",
+        geoError: "Standort nicht verfügbar – bitte Ort suchen.",
+        searchError: "Ortssuche gerade nicht erreichbar.",
+        radiantHeight: "Radiantenhöhe",
+        upTitle: "Kommende Maxima",
+        upSub: "die nächsten sechs Maxima",
+        upNote: "Die Eignung gilt für den gewählten Standort und berücksichtigt Radiantenhöhe, Dunkelheit, Mond und Lichtverschmutzung. Karte anklicken für Details.",
+        detailTitle: "Im Detail",
+        detailSub: "die beste Nacht rund um das Maximum",
+        legRad: "Radiant",
+        legMoon: "Mond",
+        legSun: "Sonne",
+        legDark: "astronomische Dunkelheit",
+        chartNote: "Zeiten in Ortszeit · Zeiger über das Diagramm für Details",
+        yearTitle: "Im Jahresverlauf",
+        yearSub: "Maxima der nächsten 12 Monate",
+        yearHint: "Monat anklicken, um den Meteorschauer auszuwählen. Die Farbe zeigt die Eignung am gewählten Standort.",
+        tableTitle: "Alle Ströme im Überblick",
+        tableSub: "IMO Working List · 19 Ströme",
+        colShower: "Strom",
+        colPeak: "Maximum",
+        colRadiant: "Radiant",
+        colParent: "Mutterkörper",
+        colRating: "Eignung hier",
+        tableSource: "Daten: IMO Working List of Visual Meteor Showers 2026 (Jürgen Rendtel). ZHR = theoretische Stundenrate für einen Beobachter im Zenit bei perfektem Himmel.",
+        lpTitle: "Lichtverschmutzung",
+        lpSub: "Himmelshelligkeit am Standort",
+        lpLoading: "Lichtdaten werden geladen …",
+        lpMpsas: "Himmelshelligkeit",
+        lpIndex: "Lichtindex",
+        lpZone: "Atlas-Zone",
+        lpDescDefault: "Die Bortle-Skala beschreibt, wie dunkel der Himmel ist – von 1 (exzellent) bis 9 (Innenstadt).",
+        tip1: "Fahre 30–60 Minuten aus der Stadt – die Himmelshelligkeit fällt mit der Entfernung schnell ab.",
+        tip2: "Beobachte nach Mitternacht, wenn der Radiant höher steht und die Luft ruhiger ist.",
+        tip3: "Lass die Augen 20 Minuten dunkeladaptieren und nutze nur rotes Licht.",
+        lpOverrideLabel: "Bortle-Klasse",
+        lpAuto: "Automatisch (Atlas)",
+        lpOverrideHint: "Die Klasse beeinflusst die Eignung und die erwartete Rate. Manuell überschreiben, wenn du deinen Himmel besser kennst.",
+        lpSource: "Lichtdaten: Light Pollution Atlas 2025 von David Lorenz (CC BY-SA 3.0), basierend auf VIIRS.",
+        howTitle: "Wie das funktioniert",
+        howText: "Meteorschauer entstehen, wenn die Erde die Staubspur eines Kometen oder Asteroiden kreuzt. Die Teilchen verglühen in etwa 80–120 km Höhe; der Punkt, aus dem sie scheinbar kommen, heißt Radiant. Die Seite berechnet die Maxima aus der Sonnenlänge der IMO Working List, dazu Radiantenhöhe, Sonnen- und Mondposition für deinen Standort. Die Eignung kombiniert Radiantenhöhe, Dauer der dunklen Phase, Mondstörung, ZHR und Lichtverschmutzung. Die erwartete Rate ist eine idealisierte Schätzung für einen Beobachter mit freiem Himmel.",
+        fact1: "hoch verglühen die meisten Meteore – lange bevor sie den Boden erreichen.",
+        fact2: "schnell sind Meteorschauer-Teilchen beim Eintritt in die Atmosphäre.",
+        fact3: "Ströme der IMO Working List sind hier mit Maximum, Radiant und Mutterkörper versammelt.",
+        footer: "© 2026 Los Finkos · Meteorschauer-Kalender",
+        home: "Startseite",
+        milkyway: "Milchstraßen-Kalender",
+        moon: "Mondkalender",
+        weather: "Wetter",
+        score: "Eignung",
+        window: "Zeitfenster",
+        bestTime: "Beste Zeit",
+        maxAlt: "Radiantenhöhe",
+        rate: "Erwartete Rate",
+        zhr: "ZHR",
+        velocity: "Geschwindigkeit",
+        parent: "Mutterkörper",
+        activity: "Aktivität",
+        radiantPos: "Radiant",
+        hemisphere: "Hemisphäre",
+        north: "Nordhalbkugel",
+        south: "Südhalbkugel",
+        both: "beide Hemisphären",
+        moonLabel: "Mond",
+        moonWax: "zunehmend",
+        moonWane: "abnehmend",
+        cloud: "Bewölkung",
+        noCloud: "keine Wetterdaten",
+        noDark: "keine astronomische Dunkelheit",
+        noDarkShort: "keine dunkle Nacht",
+        radiantBelow: "Radiant unter dem Horizont",
+        radiantLow: "Radiant bleibt unter 5° Höhe",
+        noWindow: "kein nutzbares Fenster",
+        notVisible: "nicht beobachtbar",
+        nightBefore: "Nacht davor",
+        peakNight: "Maximumsnacht",
+        nightAfter: "Nacht danach",
+        bestNight: "Beste Nacht",
+        peak: "Maximum",
+        peakAt: "Maximum",
+        inUT: "UT",
+        localTime: "Ortszeit",
+        parentUnknown: "nicht gesichert",
+        perHour: "Meteore/h",
+        noForecast: "Wetterdaten gibt es erst 16 Tage im Voraus.",
+        ratingNone: "nicht sichtbar",
+        ratings: ["nicht sichtbar", "schlecht", "mäßig", "gut", "hervorragend"],
+        bortleNames: ["", "exzellent dunkel", "dunkler Landhimmel", "Landhimmel", "ländlich", "Vorstadt", "heller Vorstadt", "Stadtrand", "Stadt", "Innenstadt"],
+        bortleDescs: [
+          "",
+          "Praktisch kein Kunstlicht: Die Milchstraße wirft fast Schatten, der Tierkreislicht-Bogen ist deutlich zu sehen.",
+          "Typisch dunkler Landhimmel: Die Milchstraße zeigt feine Strukturen bis zum Horizont.",
+          "Landhimmel: Die Milchstraße ist klar und strukturiert, der Horizont leicht aufgehellt.",
+          "Ländlicher Übergang: Die Milchstraße ist gut sichtbar, aber die Aufhellung am Horizont nimmt zu.",
+          "Vorstadt: Die Milchstraße ist nur noch schwach zu erkennen, im Zenit geht es noch.",
+          "Heller Vorstadt-Himmel: Die Milchstraße ist höchstens zu erahnen, die Kernregion verschwindet.",
+          "Stadtrand: Die Milchstraße ist praktisch unsichtbar, nur helle Sterne bleiben.",
+          "Stadt: Nur die hellsten Sterne und Planeten sind zu sehen.",
+          "Innenstadt: Der Himmel ist grau-orange, Sterne sind kaum auszumachen."
+        ],
+        windowText: function (a, b) { return a + " – " + b; },
+        scoreSub: function (s) { return s > 0 ? s + " / 100" : "–"; },
+        rateSub: function (r) { return r > 0 ? "≈ " + Math.round(r) + " " + this.perHour : "–"; },
+        moonSub: function (pct, phase) { return pct + " % " + phase; },
+        cloudSub: function (pct) { return pct + " % Wolken"; },
+        peakDate: function (d, t) { return d + " · " + t; },
+        nightLabel: function (d) { return "Nacht vom " + d; },
+        locale: "de-AT"
+      },
+      en: {
+        kicker: "meteor shower calendar",
+        h1a: "When is the next",
+        h1b: "meteor shower",
+        lede: "Enter a place and see when the next shower peaks – with radiant altitude, moonlight, cloud cover and light pollution at your location.",
+        searchPlaceholder: "Search a place – e.g. Vienna",
+        useLocation: "My location",
+        searching: "Searching …",
+        noResults: "No place found.",
+        searchHint: "Type at least 2 characters.",
+        geoError: "Location unavailable – please search for a place.",
+        searchError: "Place search is unavailable right now.",
+        radiantHeight: "radiant altitude",
+        upTitle: "Upcoming maxima",
+        upSub: "the next six maxima",
+        upNote: "The rating applies to the selected location and considers radiant altitude, darkness, moon and light pollution. Click a card for details.",
+        detailTitle: "In detail",
+        detailSub: "the best night around the peak",
+        legRad: "radiant",
+        legMoon: "Moon",
+        legSun: "Sun",
+        legDark: "astronomical darkness",
+        chartNote: "Local times · hover the chart for details",
+        yearTitle: "Through the year",
+        yearSub: "maxima of the next 12 months",
+        yearHint: "Click a month entry to select the shower. The colour shows the rating at your location.",
+        tableTitle: "All showers at a glance",
+        tableSub: "IMO Working List · 19 showers",
+        colShower: "Shower",
+        colPeak: "Maximum",
+        colRadiant: "Radiant",
+        colParent: "Parent body",
+        colRating: "Rating here",
+        tableSource: "Data: IMO Working List of Visual Meteor Showers 2026 (Jürgen Rendtel). ZHR = theoretical hourly rate for a zenith observer under a perfect sky.",
+        lpTitle: "Light pollution",
+        lpSub: "sky brightness at this location",
+        lpLoading: "Loading light data …",
+        lpMpsas: "Sky brightness",
+        lpIndex: "Light index",
+        lpZone: "Atlas zone",
+        lpDescDefault: "The Bortle scale describes how dark the sky is – from 1 (excellent) to 9 (inner city).",
+        tip1: "Drive 30–60 minutes out of town – sky brightness drops quickly with distance.",
+        tip2: "Observe after midnight, when the radiant is higher and the air is steadier.",
+        tip3: "Let your eyes adapt for 20 minutes and use only red light.",
+        lpOverrideLabel: "Bortle class",
+        lpAuto: "Automatic (atlas)",
+        lpOverrideHint: "The class affects the rating and the expected rate. Override it manually if you know your sky better.",
+        lpSource: "Light data: Light Pollution Atlas 2025 by David Lorenz (CC BY-SA 3.0), based on VIIRS.",
+        howTitle: "How this works",
+        howText: "Meteor showers occur when Earth crosses the dust trail of a comet or asteroid. The particles burn up at about 80–120 km altitude; the point they appear to come from is the radiant. This page computes the maxima from the solar longitudes of the IMO Working List, plus radiant altitude, sun and moon positions for your location. The rating combines radiant altitude, duration of darkness, moonlight, ZHR and light pollution. The expected rate is an idealised estimate for an observer with an open sky.",
+        fact1: "high do most meteors burn up – long before they reach the ground.",
+        fact2: "fast are meteor shower particles when they enter the atmosphere.",
+        fact3: "showers of the IMO Working List are collected here with maximum, radiant and parent body.",
+        footer: "© 2026 Los Finkos · Meteor shower calendar",
+        home: "Home",
+        milkyway: "Milky Way calendar",
+        moon: "Moon calendar",
+        weather: "Weather",
+        score: "Rating",
+        window: "Time window",
+        bestTime: "Best time",
+        maxAlt: "Radiant altitude",
+        rate: "Expected rate",
+        zhr: "ZHR",
+        velocity: "Velocity",
+        parent: "Parent body",
+        activity: "Activity",
+        radiantPos: "Radiant",
+        hemisphere: "Hemisphere",
+        north: "northern hemisphere",
+        south: "southern hemisphere",
+        both: "both hemispheres",
+        moonLabel: "Moon",
+        moonWax: "waxing",
+        moonWane: "waning",
+        cloud: "Cloud cover",
+        noCloud: "no weather data",
+        noDark: "no astronomical darkness",
+        noDarkShort: "no dark night",
+        radiantBelow: "radiant below the horizon",
+        radiantLow: "radiant stays below 5° altitude",
+        noWindow: "no usable window",
+        notVisible: "not observable",
+        nightBefore: "Night before",
+        peakNight: "Peak night",
+        nightAfter: "Night after",
+        bestNight: "Best night",
+        peak: "Maximum",
+        peakAt: "Maximum",
+        inUT: "UT",
+        localTime: "local time",
+        parentUnknown: "not established",
+        perHour: "meteors/h",
+        noForecast: "Weather data is only available 16 days ahead.",
+        ratingNone: "not visible",
+        ratings: ["not visible", "poor", "fair", "good", "excellent"],
+        bortleNames: ["", "excellent dark", "dark rural sky", "rural sky", "rural transition", "suburban", "bright suburban", "urban fringe", "city", "inner city"],
+        bortleDescs: [
+          "",
+          "Almost no artificial light: the Milky Way casts faint shadows and the zodiacal light band is obvious.",
+          "Typical dark rural sky: the Milky Way shows fine structure down to the horizon.",
+          "Rural sky: the Milky Way is clear and structured, the horizon slightly brightened.",
+          "Rural transition: the Milky Way is clearly visible, but the horizon glow increases.",
+          "Suburban: the Milky Way is only faintly visible, the zenith is still okay.",
+          "Bright suburban sky: the Milky Way is barely hinted at, the core region disappears.",
+          "Urban fringe: the Milky Way is practically invisible, only bright stars remain.",
+          "City: only the brightest stars and planets are visible.",
+          "Inner city: the sky is grey-orange, stars are barely discernible."
+        ],
+        windowText: function (a, b) { return a + " – " + b; },
+        scoreSub: function (s) { return s > 0 ? s + " / 100" : "–"; },
+        rateSub: function (r) { return r > 0 ? "≈ " + Math.round(r) + " " + this.perHour : "–"; },
+        moonSub: function (pct, phase) { return pct + "% " + phase; },
+        cloudSub: function (pct) { return pct + "% clouds"; },
+        peakDate: function (d, t) { return d + " · " + t; },
+        nightLabel: function (d) { return "Night of " + d; },
+        locale: "en-GB"
+      }
+    };
+
+    let currentLang = "de";
+    let L = I18N.de;
+
+    function t(key) {
+      const v = L[key];
+      return typeof v === "string" ? v : key;
+    }
+
+    function setLang(code) {
+      if (!I18N[code]) return;
+      currentLang = code;
+      L = I18N[code];
+      document.documentElement.lang = code;
+
+      document.querySelectorAll(".lang-btn").forEach(function (btn) {
+        btn.classList.toggle("active", btn.dataset.lang === code);
+      });
+
+      document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        const value = L[el.getAttribute("data-i18n")];
+        if (typeof value === "string") el.textContent = value;
+      });
+
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+        const value = L[el.getAttribute("data-i18n-placeholder")];
+        if (typeof value === "string") el.placeholder = value;
+      });
+
+      document.getElementById("place-input").setAttribute("aria-label", t("searchPlaceholder"));
+      document.querySelector(".lang-switch").setAttribute("aria-label", code === "de" ? "Sprache" : "Language");
+      document.getElementById("night-tabs").setAttribute("aria-label", code === "de" ? "Nächte" : "Nights");
+
+      renderAll();
+    }
+
+    /* ================= Basis ================= */
+
+    const DAY = 86400000;
+    const HOUR = 3600000;
+    const MIN = 60000;
+    const RAD = Math.PI / 180;
+    const DEG = 180 / Math.PI;
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+    const state = {
+      lat: 48.20849,
+      lon: 16.37208,
+      name: "Wien",
+      country: "Österreich",
+      tz: "Europe/Vienna",
+      bortle: null,
+      bortleOverride: null,
+      lp: null,
+      lpState: "idle",
+      clouds: null,
+      cloudState: "idle",
+      events: [],
+      code: null,
+      offset: 1,
+      night: null,
+      slider: 50
+    };
+
+    const NOW = Date.now();
+
+    /* ================= Zeit & Format ================= */
+
+    let fmtParts = null;
+
+    function rebuildFormatters() {
+      const tz = state.tz || "UTC";
+      fmtParts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: tz, hour12: false,
+        year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", second: "2-digit"
+      });
+    }
+
+    function localParts(ms) {
+      const o = {};
+      fmtParts.formatToParts(new Date(ms)).forEach(function (p) { o[p.type] = p.value; });
+      let h = parseInt(o.hour, 10);
+      if (h === 24) h = 0;
+      return {
+        y: parseInt(o.year, 10),
+        m: parseInt(o.month, 10) - 1,
+        d: parseInt(o.day, 10),
+        h: h,
+        mi: parseInt(o.minute, 10)
+      };
+    }
+
+    function tzOffset(ms) {
+      const p = localParts(ms);
+      const asUTC = Date.UTC(p.y, p.m, p.d, p.h, p.mi);
+      return asUTC - Math.floor(ms / MIN) * MIN;
+    }
+
+    function localNoon(y, m, d) {
+      const target = Date.UTC(y, m, d, 12, 0, 0);
+      let guess = target;
+      for (let i = 0; i < 3; i += 1) guess = target - tzOffset(guess);
+      return guess;
+    }
+
+    function addDays(y, m, d, n) {
+      const dt = new Date(Date.UTC(y, m, d + n));
+      return { y: dt.getUTCFullYear(), m: dt.getUTCMonth(), d: dt.getUTCDate() };
+    }
+
+    function sameDate(a, b) {
+      return a && b && a.y === b.y && a.m === b.m && a.d === b.d;
+    }
+
+    function fmtDate(ms, options) {
+      const opts = Object.assign({ timeZone: state.tz }, options);
+      return new Intl.DateTimeFormat(L.locale, opts).format(new Date(ms));
+    }
+
+    function fmtTime(ms) {
+      return fmtDate(ms, { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function fmtDayShort(ms) {
+      return fmtDate(ms, { weekday: "short", day: "numeric", month: "short" });
+    }
+
+    function fmtDayLong(ms) {
+      return fmtDate(ms, { weekday: "long", day: "numeric", month: "long" });
+    }
+
+    function fmtMonthDay(month, day) {
+      return new Intl.DateTimeFormat(L.locale, { day: "numeric", month: "short", timeZone: "UTC" })
+        .format(new Date(Date.UTC(2024, month - 1, day)));
+    }
+
+    function fmtUT(ms) {
+      return new Intl.DateTimeFormat("en-GB", {
+        timeZone: "UTC", hour12: false, day: "2-digit", month: "short",
+        year: "numeric", hour: "2-digit", minute: "2-digit"
+      }).format(new Date(ms));
+    }
+
+    function compass(az) {
+      const dirs = currentLang === "de"
+        ? ["N", "NO", "O", "SO", "S", "SW", "W", "NW"]
+        : ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+      return dirs[Math.round((((az % 360) + 360) % 360) / 45) % 8];
+    }
+
+    /* ================= Astronomie ================= */
+
+    function toJD(ms) { return ms / DAY + 2440587.5; }
+
+    function gmst(ms) {
+      const jd = toJD(ms);
+      const T = (jd - 2451545) / 36525;
+      let g = 280.46061837 + 360.98564736629 * (jd - 2451545)
+        + 0.000387933 * T * T - T * T * T / 38710000;
+      return ((g % 360) + 360) % 360;
+    }
+
+    function sunEq(ms) {
+      const jd = toJD(ms);
+      const T = (jd - 2451545) / 36525;
+      const L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+      const M = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) * RAD;
+      const C = Math.sin(M) * (1.914602 - 0.004817 * T - 0.000014 * T * T)
+        + Math.sin(2 * M) * (0.019993 - 0.000101 * T)
+        + Math.sin(3 * M) * 0.000289;
+      const omega = (125.04 - 1934.136 * T) * RAD;
+      const lambda = (L0 + C - 0.00569 - 0.00478 * Math.sin(omega)) * RAD;
+      const eps0 = 23 + (26 + (21.448 - T * (46.815 + T * (0.00059 - T * 0.001813))) / 60) / 60;
+      const eps = (eps0 + 0.00256 * Math.cos(omega)) * RAD;
+      const dec = Math.asin(Math.sin(eps) * Math.sin(lambda)) * DEG;
+      let ra = Math.atan2(Math.cos(eps) * Math.sin(lambda), Math.cos(lambda)) * DEG;
+      ra = ((ra % 360) + 360) % 360;
+      return { ra: ra, dec: dec, lambda: ((lambda * DEG) % 360 + 360) % 360 };
+    }
+
+    // Die IMO-Sonnenlängen beziehen sich auf das Äquinoktium J2000.
+    // Die scheinbare Länge der Epoche wird daher um die Präzession reduziert.
+    function sunLong(ms) {
+      const T = (toJD(ms) - 2451545) / 36525;
+      const prec = 1.3969713 * T;
+      return ((sunEq(ms).lambda - prec) % 360 + 360) % 360;
+    }
+
+    function altAz(ms, ra, dec, lat, lon) {
+      const lst = gmst(ms) + lon;
+      let ha = lst - ra;
+      ha = ((ha + 180) % 360 + 360) % 360 - 180;
+      const haR = ha * RAD, decR = dec * RAD, latR = lat * RAD;
+      const sinAlt = Math.sin(latR) * Math.sin(decR) + Math.cos(latR) * Math.cos(decR) * Math.cos(haR);
+      const alt = Math.asin(clamp(sinAlt, -1, 1)) * DEG;
+      const az = Math.atan2(
+        -Math.cos(decR) * Math.sin(haR),
+        Math.sin(decR) * Math.cos(latR) - Math.cos(decR) * Math.sin(latR) * Math.cos(haR)
+      ) * DEG;
+      return { alt: alt, az: ((az % 360) + 360) % 360 };
+    }
+
+    function moonEq(ms) {
+      const jd = toJD(ms);
+      const T = (jd - 2451545) / 36525;
+      const Lp = 218.3164477 + 481267.88123421 * T;
+      const D = 297.8501921 + 445267.1114034 * T;
+      const M = 357.5291092 + 35999.0502909 * T;
+      const Mp = 134.9633964 + 477198.8675055 * T;
+      const F = 93.2720950 + 483202.0175233 * T;
+      const r = RAD;
+
+      const lambda = Lp
+        + 6.289 * Math.sin(Mp * r)
+        + 1.274 * Math.sin((2 * D - Mp) * r)
+        + 0.658 * Math.sin(2 * D * r)
+        + 0.214 * Math.sin(2 * Mp * r)
+        - 0.186 * Math.sin(M * r)
+        - 0.114 * Math.sin(2 * F * r)
+        + 0.059 * Math.sin((2 * D - 2 * Mp) * r)
+        + 0.057 * Math.sin((2 * D - M - Mp) * r)
+        + 0.053 * Math.sin((2 * D + Mp) * r)
+        + 0.046 * Math.sin((2 * D - M) * r)
+        + 0.041 * Math.sin((M - Mp) * r)
+        - 0.035 * Math.sin(D * r)
+        - 0.031 * Math.sin((M + Mp) * r)
+        - 0.015 * Math.sin((2 * F - 2 * D) * r)
+        + 0.011 * Math.sin((2 * D - 4 * Mp) * r);
+
+      const beta = 5.128 * Math.sin(F * r)
+        + 0.280 * Math.sin((Mp + F) * r)
+        + 0.277 * Math.sin((Mp - F) * r)
+        + 0.173 * Math.sin((2 * D - F) * r)
+        + 0.055 * Math.sin((2 * D - Mp + F) * r)
+        + 0.046 * Math.sin((2 * D - Mp - F) * r)
+        + 0.033 * Math.sin((2 * D + F) * r)
+        + 0.017 * Math.sin((2 * Mp + F) * r);
+
+      const lamR = (((lambda % 360) + 360) % 360) * r;
+      const betR = beta * r;
+      const eps = (23.4392911 - 0.0130042 * T) * r;
+
+      const x = Math.cos(betR) * Math.cos(lamR);
+      const y = Math.cos(betR) * Math.sin(lamR);
+      const z = Math.sin(betR);
+      const ra = ((Math.atan2(y * Math.cos(eps) - z * Math.sin(eps), x) * DEG) % 360 + 360) % 360;
+      const dec = Math.asin(y * Math.sin(eps) + z * Math.cos(eps)) * DEG;
+
+      const sun = sunEq(ms);
+      const dLam = ((lambda - sun.lambda) % 360 + 360) % 360;
+      const cosPsi = Math.cos(betR) * Math.cos(dLam * r);
+      const illum = (1 - cosPsi) / 2;
+
+      return {
+        ra: ra,
+        dec: dec,
+        illum: clamp(illum, 0, 1),
+        waxing: dLam < 180
+      };
+    }
+
+    function moonState(ms) {
+      const m = moonEq(ms);
+      const p = altAz(ms, m.ra, m.dec, state.lat, state.lon);
+      return { alt: p.alt, az: p.az, illum: m.illum, waxing: m.waxing };
+    }
+
+    /* ================= Meteorschauer-Daten (IMO 2026) ================= */
+
+    const SHOWERS = [
+      {
+        code: "QUA", peak: 283.15, zhr: 80, ra: 230, dec: 49, v: 41, r: 2.1,
+        fm: 12, fd: 28, tm: 1, td: 12, hemi: "n", parent: "2003 EH1",
+        de: "Quadrantiden", en: "Quadrantids",
+        noteDe: "Kurzes, scharfes Maximum kurz nach Neujahr; der Radiant steht für mitteleuropäische Breiten hoch am Nordhimmel.",
+        noteEn: "A short, sharp maximum just after New Year; from central European latitudes the radiant stands high in the northern sky."
+      },
+      {
+        code: "ACE", peak: 319.4, zhr: 6, ra: 211, dec: -58, v: 58, r: 2.0,
+        fm: 1, fd: 31, tm: 2, td: 20, hemi: "s", parent: null,
+        de: "Alpha-Centauriden", en: "Alpha Centaurids",
+        noteDe: "Südlicher Strom; in Mitteleuropa bleibt der Radiant tief. Gute Bedingungen gibt es südlich des Äquators.",
+        noteEn: "A southern shower; the radiant stays low in central Europe. Good conditions occur south of the equator."
+      },
+      {
+        code: "LYR", peak: 32.32, zhr: 18, ra: 271, dec: 34, v: 49, r: 2.1,
+        fm: 4, fd: 14, tm: 4, td: 30, hemi: "both", parent: "C/1861 G1 (Thatcher)",
+        de: "April-Lyriden", en: "April Lyrids",
+        noteDe: "Schnelle, teils helle Meteore; der Radiant liegt nahe Wega. Kurze Ausbrüche sind möglich.",
+        noteEn: "Fast, sometimes bright meteors; the radiant lies near Vega. Brief outbursts are possible."
+      },
+      {
+        code: "ETA", peak: 45.5, zhr: 50, ra: 338, dec: -1, v: 66, r: 2.4,
+        fm: 4, fd: 19, tm: 5, td: 28, hemi: "s", parent: "1P/Halley",
+        de: "Eta-Aquariiden", en: "Eta Aquariids",
+        noteDe: "Staub von Halleys Komet; bester Zeitpunkt ist die zweite Nachthälfte, im Süden deutlich günstiger.",
+        noteEn: "Dust from Halley's Comet; best in the second half of the night, much more favourable in the south."
+      },
+      {
+        code: "JBO", peak: 90.3, zhr: 10, ra: 221, dec: 48, v: 18, r: 2.2,
+        fm: 6, fd: 22, tm: 7, td: 2, hemi: "n", parent: "7P/Pons-Winnecke",
+        de: "Juni-Bootiden", en: "June Bootids",
+        noteDe: "Meist schwach, selten mit Ausbrüchen. Im Norden bleibt der Himmel im Juni oft die ganze Nacht dämmrig.",
+        noteEn: "Usually weak, occasionally with outbursts. In the north the June sky often stays twilight all night."
+      },
+      {
+        code: "SDA", peak: 128, zhr: 25, ra: 340, dec: -16, v: 41, r: 2.5,
+        fm: 7, fd: 12, tm: 8, td: 23, hemi: "s", parent: "96P/Machholz",
+        de: "Südliche Delta-Aquariiden", en: "Southern Delta Aquariids",
+        noteDe: "Breites Maximum mit mäßigen Raten; der Radiant steht im Wassermann.",
+        noteEn: "A broad maximum with moderate rates; the radiant lies in Aquarius."
+      },
+      {
+        code: "CAP", peak: 128, zhr: 5, ra: 307, dec: -10, v: 23, r: 2.5,
+        fm: 7, fd: 3, tm: 8, td: 15, hemi: "both", parent: "169P/NEAT",
+        de: "Alpha-Capricorniden", en: "Alpha Capricornids",
+        noteDe: "Langsame, oft helle Meteore und Feuerkugeln, aber nur wenige pro Stunde.",
+        noteEn: "Slow, often bright meteors and fireballs, but only a few per hour."
+      },
+      {
+        code: "PER", peak: 140.0, zhr: 100, ra: 48, dec: 58, v: 59, r: 2.2,
+        fm: 7, fd: 17, tm: 8, td: 24, hemi: "n", parent: "109P/Swift-Tuttle",
+        de: "Perseiden", en: "Perseids",
+        noteDe: "Der zuverlässigste Strom des Jahres: schnelle, helle Meteore mit langen Leuchtspuren.",
+        noteEn: "The most reliable shower of the year: fast, bright meteors with long trains."
+      },
+      {
+        code: "AUR", peak: 158.6, zhr: 6, ra: 91, dec: 39, v: 66, r: 2.5,
+        fm: 8, fd: 28, tm: 9, td: 5, hemi: "n", parent: "C/1911 N1 (Kiess)",
+        de: "Aurigiden", en: "Aurigids",
+        noteDe: "Schwacher Strom mit möglichen kurzen Ausbrüchen; Radiant im Fuhrmann.",
+        noteEn: "A weak shower with possible brief outbursts; radiant in Auriga."
+      },
+      {
+        code: "SPE", peak: 166.7, zhr: 8, ra: 48, dec: 40, v: 64, r: 2.5,
+        fm: 9, fd: 5, tm: 9, td: 21, hemi: "n", parent: null,
+        de: "September-Epsilon-Perseiden", en: "September Epsilon Perseids",
+        noteDe: "Schwacher Strom, aber oft mit sehr dunklem Himmel um das Maximum; Radiant nahe Perseus.",
+        noteEn: "A weak shower, but often with very dark skies around the maximum; radiant near Perseus."
+      },
+      {
+        code: "DRA", peak: 195.4, zhr: 5, ra: 262, dec: 54, v: 20, r: 2.6,
+        fm: 10, fd: 6, tm: 10, td: 10, hemi: "n", parent: "21P/Giacobini-Zinner",
+        de: "Draconiden", en: "Draconids",
+        noteDe: "Extrem langsame Meteore. Historisch sind Ausbrüche bis zu mehreren hundert Meteoren pro Stunde aufgetreten.",
+        noteEn: "Exceptionally slow meteors. Historically, outbursts of several hundred meteors per hour have occurred."
+      },
+      {
+        code: "ORI", peak: 208, zhr: 20, ra: 95, dec: 16, v: 66, r: 2.5,
+        fm: 10, fd: 2, tm: 11, td: 7, hemi: "both", parent: "1P/Halley",
+        de: "Orioniden", en: "Orionids",
+        noteDe: "Staub von Halleys Komet, schnell und oft mit Leuchtspur; der Radiant liegt nahe Beteigeuze.",
+        noteEn: "Dust from Halley's Comet, fast and often with trains; the radiant lies near Betelgeuse."
+      },
+      {
+        code: "STA", peak: 223, zhr: 7, ra: 52, dec: 15, v: 27, r: 2.3,
+        fm: 9, fd: 20, tm: 11, td: 20, hemi: "both", parent: "2P/Encke",
+        de: "Südliche Tauriden", en: "Southern Taurids",
+        noteDe: "Langsame, helle Meteore und Feuerkugeln; Teil des Tauriden-Komplexes.",
+        noteEn: "Slow, bright meteors and fireballs; part of the Taurid complex."
+      },
+      {
+        code: "NTA", peak: 230, zhr: 5, ra: 58, dec: 22, v: 29, r: 2.3,
+        fm: 10, fd: 20, tm: 12, td: 10, hemi: "both", parent: "2P/Encke",
+        de: "Nördliche Tauriden", en: "Northern Taurids",
+        noteDe: "Langsam und hell, breites Maximum über mehrere Nächte.",
+        noteEn: "Slow and bright, with a broad maximum over several nights."
+      },
+      {
+        code: "LEO", peak: 235.27, zhr: 15, ra: 152, dec: 22, v: 71, r: 2.5,
+        fm: 11, fd: 6, tm: 11, td: 30, hemi: "both", parent: "55P/Tempel-Tuttle",
+        de: "Leoniden", en: "Leonids",
+        noteDe: "Sehr schnelle Meteore; alle 33 Jahre sind stärkere Ausbrüche möglich.",
+        noteEn: "Very fast meteors; stronger outbursts are possible every 33 years."
+      },
+      {
+        code: "PHO", peak: 249.5, zhr: 3, ra: 8, dec: -27, v: 15, r: 2.8,
+        fm: 12, fd: 1, tm: 12, td: 5, hemi: "s", parent: "D/1819 W1 (Blanpain)",
+        de: "Phoeniciden", en: "Phoenicids",
+        noteDe: "Sehr langsam und nur vom Süden gut zu sehen; die Raten sind variabel.",
+        noteEn: "Very slow and only well placed from the south; rates are variable."
+      },
+      {
+        code: "PUP", peak: 255, zhr: 10, ra: 123, dec: -45, v: 44, r: 2.9,
+        fm: 12, fd: 1, tm: 12, td: 15, hemi: "s", parent: null,
+        de: "Puppiden-Veliden", en: "Puppid-Velids",
+        noteDe: "Komplex mehrerer südlicher Ströme, visuell wenig erforscht.",
+        noteEn: "A complex of several southern streams, little studied visually."
+      },
+      {
+        code: "GEM", peak: 262.2, zhr: 150, ra: 112, dec: 33, v: 35, r: 2.6,
+        fm: 12, fd: 4, tm: 12, td: 20, hemi: "both", parent: "3200 Phaethon",
+        de: "Geminiden", en: "Geminids",
+        noteDe: "Der stärkste Strom des Jahres: langsame, helle Meteore, oft mit grünlicher Färbung.",
+        noteEn: "The strongest shower of the year: slow, bright meteors, often with a greenish hue."
+      },
+      {
+        code: "URS", peak: 270.7, zhr: 10, ra: 217, dec: 76, v: 33, r: 2.8,
+        fm: 12, fd: 17, tm: 12, td: 26, hemi: "n", parent: "8P/Tuttle",
+        de: "Ursiden", en: "Ursids",
+        noteDe: "Bescheidene Raten, Radiant zirkumpolar im Kleinen Bären; Maximum kurz vor Weihnachten.",
+        noteEn: "Modest rates, radiant circumpolar in Ursa Minor; maximum shortly before Christmas."
+      }
+    ];
+
+    const LIMIT_MAG = [0, 7.8, 7.5, 7.1, 6.7, 6.4, 6.0, 5.6, 5.2, 4.7];
+
+    function showerName(sh) {
+      return currentLang === "de" ? sh.de : sh.en;
+    }
+
+    function showerNote(sh) {
+      return currentLang === "de" ? sh.noteDe : sh.noteEn;
+    }
+
+    function hemiLabel(h) {
+      if (h === "n") return L.north;
+      if (h === "s") return L.south;
+      return L.both;
+    }
+
+    function parentLabel(sh) {
+      return sh.parent || L.parentUnknown;
+    }
+
+    function activityLabel(sh) {
+      return fmtMonthDay(sh.fm, sh.fd) + " – " + fmtMonthDay(sh.tm, sh.td);
+    }
+
+    /* ================= Maximum aus der Sonnenlänge ================= */
+
+    function signedDiff(a, target) {
+      return ((a - target + 540) % 360) - 180;
+    }
+
+    function findPeak(lambda, year) {
+      const a = Date.UTC(year, 0, 1, 0, 0, 0);
+      const b = Date.UTC(year + 1, 0, 1, 0, 0, 0);
+      const step = 6 * HOUR;
+      let prevT = a;
+      let prevD = signedDiff(sunLong(a), lambda);
+      let cross = null;
+
+      for (let tt = a + step; tt <= b; tt += step) {
+        const d = signedDiff(sunLong(tt), lambda);
+        if (prevD < 0 && d >= 0) { cross = [prevT, tt]; break; }
+        prevT = tt;
+        prevD = d;
+      }
+      if (!cross) return null;
+
+      let lo = cross[0];
+      let hi = cross[1];
+      for (let i = 0; i < 40; i += 1) {
+        const mid = (lo + hi) / 2;
+        if (signedDiff(sunLong(mid), lambda) < 0) lo = mid;
+        else hi = mid;
+      }
+      return (lo + hi) / 2;
+    }
+
+    function nextPeak(sh, now) {
+      const p = localParts(now);
+      let peak = findPeak(sh.peak, p.y);
+      if (!peak || peak < now) peak = findPeak(sh.peak, p.y + 1);
+      return peak;
+    }
+
+    /* ================= Nachtanalyse ================= */
+
+    function cross(samples, key, threshold, dir) {
+      for (let i = 0; i < samples.length - 1; i += 1) {
+        const a = samples[i][key];
+        const b = samples[i + 1][key];
+        if (dir < 0 && a >= threshold && b < threshold) {
+          const f = (a - threshold) / (a - b);
+          return samples[i].t + f * (samples[i + 1].t - samples[i].t);
+        }
+        if (dir > 0 && a <= threshold && b > threshold) {
+          const f = (threshold - a) / (b - a);
+          return samples[i].t + f * (samples[i + 1].t - samples[i].t);
+        }
+      }
+      return null;
+    }
+
+    function analyzeNight(sh, y, m, d, stepMs, keep) {
+      const start = localNoon(y, m, d);
+      const end = start + DAY;
+      const samples = [];
+
+      for (let tt = start; tt <= end; tt += stepMs) {
+        const rad = altAz(tt, sh.ra, sh.dec, state.lat, state.lon);
+        const mo = moonEq(tt);
+        const moonPos = altAz(tt, mo.ra, mo.dec, state.lat, state.lon);
+        const se = sunEq(tt);
+        const sunPos = altAz(tt, se.ra, se.dec, state.lat, state.lon);
+        samples.push({
+          t: tt,
+          rad: rad.alt,
+          radAz: rad.az,
+          moonAlt: moonPos.alt,
+          moonAz: moonPos.az,
+          illum: mo.illum,
+          sun: sunPos.alt
+        });
+      }
+
+      const sunset = cross(samples, "sun", -0.833, -1);
+      const sunrise = cross(samples, "sun", -0.833, 1);
+
+      let lowEver = -90;
+      let lowTime = null;
+      samples.forEach(function (s) {
+        if (s.rad > lowEver) { lowEver = s.rad; lowTime = s.t; }
+      });
+
+      const darkRuns = [];
+      let drs = samples[0].sun < -18 ? samples[0].t : null;
+      for (let i = 1; i < samples.length; i += 1) {
+        const was = samples[i - 1].sun < -18;
+        const is = samples[i].sun < -18;
+        if (!was && is) drs = samples[i].t;
+        if (was && !is && drs !== null) {
+          darkRuns.push([drs, samples[i].t]);
+          drs = null;
+        }
+      }
+      if (drs !== null) darkRuns.push([drs, samples[samples.length - 1].t]);
+
+      let darkStart = null;
+      let darkEnd = null;
+      if (darkRuns.length) {
+        const midnight = start + 12 * HOUR;
+        darkRuns.sort(function (a, b) {
+          const da = (a[0] <= midnight && midnight <= a[1]) ? -1 : Math.abs((a[0] + a[1]) / 2 - midnight);
+          const db = (b[0] <= midnight && midnight <= b[1]) ? -1 : Math.abs((b[0] + b[1]) / 2 - midnight);
+          return da - db;
+        });
+        darkStart = darkRuns[0][0];
+        darkEnd = darkRuns[0][1];
+      }
+
+      let best = null;
+      if (darkStart !== null && darkEnd !== null) {
+        let runStart = null;
+        let count = 0;
+        let penaltySum = 0;
+        let maxAlt = -90;
+        let maxTime = null;
+
+        samples.forEach(function (s) {
+          if (s.t < darkStart || s.t >= darkEnd) return;
+          if (s.rad >= 5) {
+            if (runStart === null) {
+              runStart = s.t;
+              count = 0;
+              penaltySum = 0;
+              maxAlt = -90;
+              maxTime = null;
+            }
+            count += 1;
+            penaltySum += s.illum * clamp(s.moonAlt / 20, 0, 1);
+            if (s.rad > maxAlt) { maxAlt = s.rad; maxTime = s.t; }
+            const cand = {
+              start: runStart,
+              end: s.t,
+              minutes: count * stepMs / MIN,
+              maxAlt: maxAlt,
+              bestTime: maxTime,
+              moonPenalty: count ? penaltySum / count : 0
+            };
+            if (!best || cand.end - cand.start > best.end - best.start) best = cand;
+          } else {
+            runStart = null;
+          }
+        });
+      }
+
+      const hasDark = darkStart !== null && darkEnd !== null;
+      const n = {
+        y: y, m: m, d: d,
+        start: start,
+        end: end,
+        sunset: sunset,
+        sunrise: sunrise,
+        darkStart: darkStart,
+        darkEnd: darkEnd,
+        windowStart: best ? best.start : null,
+        windowEnd: best ? best.end : null,
+        minutes: best ? best.minutes : 0,
+        maxAlt: best ? best.maxAlt : lowEver,
+        maxAltTime: best ? best.bestTime : lowTime,
+        bestTime: best ? best.bestTime : null,
+        moonPenalty: best ? best.moonPenalty : 0,
+        moonAtBest: 0,
+        moonAltAtBest: 0,
+        moonWaxing: true,
+        reason: !hasDark ? "noDark" : (!best ? (lowEver < 0 ? "below" : "low") : null),
+        score: 0,
+        rate: 0,
+        samples: keep ? samples : null
+      };
+
+      if (best) {
+        const idx = Math.round((best.bestTime - start) / stepMs);
+        const s = samples[clamp(idx, 0, samples.length - 1)];
+        n.moonAtBest = s.illum;
+        n.moonAltAtBest = s.moonAlt;
+        n.moonWaxing = moonEq(best.bestTime).waxing;
+
+        const limit = LIMIT_MAG[effectiveBortle()] || 6;
+        const lpFactor = Math.pow(10, -0.4 * (6.5 - limit));
+        const moonFactor = 1 - s.illum * clamp(s.moonAlt / 20, 0, 1);
+        n.rate = sh.zhr * Math.sin(clamp(best.maxAlt, 0, 90) * RAD) * lpFactor * moonFactor;
+      }
+
+      n.score = scoreNight(n, sh.zhr);
+      return n;
+    }
+
+    function scoreNight(n, zhr) {
+      if (!n || !n.minutes || n.maxAlt < 5) return 0;
+      const vis = clamp(Math.sin(clamp(n.maxAlt, 0, 90) * RAD) / Math.sin(60 * RAD), 0, 1);
+      const dur = clamp(n.minutes / 300, 0, 1);
+      const moon = 1 - clamp(n.moonPenalty, 0, 1);
+      const zf = clamp(Math.log10(1 + zhr) / Math.log10(1 + 150), 0, 1);
+      const bortle = effectiveBortle();
+      const lp = Math.pow(clamp((9 - bortle) / 8, 0, 1), 0.7);
+      const base = 0.30 * vis + 0.14 * dur + 0.18 * moon + 0.38 * zf;
+      return Math.round(100 * base * (0.25 + 0.75 * lp));
+    }
+
+    function ratingIndex(score) {
+      if (!score) return 0;
+      if (score < 40) return 1;
+      if (score < 60) return 2;
+      if (score < 80) return 3;
+      return 4;
+    }
+
+    function ratingLabel(score) {
+      return L.ratings[ratingIndex(score)];
+    }
+
+    function effectiveBortle() {
+      return state.bortleOverride || state.bortle || 5;
+    }
+
+    /* ================= Ereignisse berechnen ================= */
+
+    function peakNightDate(peakMs) {
+      const p = localParts(peakMs);
+      if (p.h < 12) {
+        const prev = addDays(p.y, p.m, p.d, -1);
+        return { y: prev.y, m: prev.m, d: prev.d };
+      }
+      return { y: p.y, m: p.m, d: p.d };
+    }
+
+    function bestAround(sh, peakMs, stepMs) {
+      const base = peakNightDate(peakMs);
+      const nights = [];
+      for (let k = -1; k <= 1; k += 1) {
+        const dt = addDays(base.y, base.m, base.d, k);
+        nights.push(analyzeNight(sh, dt.y, dt.m, dt.d, stepMs, false));
+      }
+      let bestIndex = 0;
+      nights.forEach(function (n, i) {
+        if (n.score > nights[bestIndex].score
+          || (n.score === nights[bestIndex].score && n.maxAlt > nights[bestIndex].maxAlt)) {
+          bestIndex = i;
+        }
+      });
+      return { base: base, nights: nights, bestIndex: bestIndex, night: nights[bestIndex] };
+    }
+
+    function computeEvents() {
+      const bortle = effectiveBortle();
+      state.events = SHOWERS.map(function (sh) {
+        const peak = nextPeak(sh, NOW);
+        const b = bestAround(sh, peak, 15 * MIN);
+        return {
+          sh: sh,
+          peak: peak,
+          base: b.base,
+          nights: b.nights,
+          bestIndex: b.bestIndex,
+          best: b.night,
+          bortle: bortle
+        };
+      }).sort(function (a, b) { return a.peak - b.peak; });
+
+      if (!state.code || !state.events.some(function (e) { return e.sh.code === state.code; })) {
+        state.code = state.events.length ? state.events[0].sh.code : null;
+        state.offset = state.events.length ? state.events[0].bestIndex : 1;
+      }
+    }
+
+    function selectedEvent() {
+      return state.events.find(function (e) { return e.sh.code === state.code; }) || null;
+    }
+
+    function selectOffset(offset) {
+      const ev = selectedEvent();
+      if (!ev) return;
+      const idx = clamp(offset, 0, 2);
+      const base = ev.nights[idx];
+      state.offset = idx;
+      state.night = analyzeNight(ev.sh, base.y, base.m, base.d, 5 * MIN, true);
+      setSliderToBest();
+      renderAll();
+    }
+
+    function selectShower(code, scroll) {
+      state.code = code;
+      const ev = selectedEvent();
+      if (!ev) return;
+      state.offset = ev.bestIndex;
+      const base = ev.nights[state.offset];
+      state.night = analyzeNight(ev.sh, base.y, base.m, base.d, 5 * MIN, true);
+      setSliderToBest();
+      renderAll();
+      if (scroll) {
+        document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function refreshEvents() {
+      computeEvents();
+      const ev = selectedEvent();
+      if (ev) {
+        state.offset = ev.bestIndex;
+        const base = ev.nights[state.offset];
+        state.night = analyzeNight(ev.sh, base.y, base.m, base.d, 5 * MIN, true);
+        setSliderToBest();
+      }
+      renderAll();
+    }
+    /* ================= Lichtverschmutzung ================= */
+
+    const lpTiles = new Map();
+    let lpToken = 0;
+
+    function lpZone(ratio) {
+      if (ratio < 0.01) return "0";
+      if (ratio < 0.06) return "1a";
+      if (ratio < 0.11) return "1b";
+      if (ratio < 0.19) return "2a";
+      if (ratio < 0.33) return "2b";
+      if (ratio < 0.58) return "3a";
+      if (ratio < 1.0) return "3b";
+      if (ratio < 1.73) return "4a";
+      if (ratio < 3.0) return "4b";
+      if (ratio < 5.2) return "5a";
+      if (ratio < 9.0) return "5b";
+      if (ratio < 15.59) return "6a";
+      if (ratio < 27.0) return "6b";
+      if (ratio < 46.77) return "7a";
+      return "7b";
+    }
+
+    function bortleFromMpsas(mpsas) {
+      if (mpsas >= 21.7) return 1;
+      if (mpsas >= 21.5) return 2;
+      if (mpsas >= 21.3) return 3;
+      if (mpsas >= 20.4) return 4;
+      if (mpsas >= 19.1) return 5;
+      if (mpsas >= 18.5) return 6;
+      if (mpsas >= 18.0) return 7;
+      if (mpsas >= 17.5) return 8;
+      return 9;
+    }
+
+    async function fetchTile(tx, ty) {
+      const key = tx + "_" + ty;
+      if (lpTiles.has(key)) return lpTiles.get(key);
+
+      const res = await fetch("https://djlorenz.github.io/astronomy/binary_tiles/2025/binary_tile_" + tx + "_" + ty + ".dat.gz");
+      if (!res.ok) throw new Error("atlas " + res.status);
+      const buf = await res.arrayBuffer();
+
+      let data;
+      if (typeof DecompressionStream === "function") {
+        const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"));
+        data = new Int8Array(await new Response(stream).arrayBuffer());
+      } else {
+        throw new Error("no DecompressionStream");
+      }
+
+      lpTiles.set(key, data);
+      return data;
+    }
+
+    async function lookupLP(lat, lon) {
+      if (lat < -65 || lat > 75) return null;
+
+      const lonDL = ((lon + 180) % 360 + 360) % 360;
+      const latFS = lat + 65;
+      const tx = Math.floor(lonDL / 5) + 1;
+      const ty = Math.floor(latFS / 5) + 1;
+
+      const data = await fetchTile(tx, ty);
+      const ix = clamp(Math.round(120 * (lonDL - 5 * (tx - 1) + 1 / 240)), 0, 599);
+      const iy = clamp(Math.round(120 * (latFS - 5 * (ty - 1) + 1 / 240)), 0, 599);
+
+      let change = 0;
+      for (let i = 1; i < iy; i += 1) change += data[600 * i + 1];
+      for (let i = 1; i < ix; i += 1) change += data[600 * (iy - 1) + 1 + i];
+
+      const compressed = 128 * data[0] + data[1] + change;
+      const ratio = (5 / 195) * (Math.exp(0.0195 * compressed) - 1);
+      const mpsas = 22 - 5 * Math.log(1 + ratio) / Math.log(100);
+
+      return {
+        ratio: ratio,
+        mpsas: mpsas,
+        zone: lpZone(ratio),
+        bortle: bortleFromMpsas(mpsas)
+      };
+    }
+
+    async function loadLP() {
+      const token = ++lpToken;
+      const lat = state.lat;
+      const lon = state.lon;
+
+      state.lpState = "loading";
+      renderLP();
+
+      try {
+        const data = await lookupLP(lat, lon);
+        if (token !== lpToken) return;
+        state.lp = data;
+        state.bortle = data ? data.bortle : null;
+        state.lpState = "ok";
+      } catch (err) {
+        if (token !== lpToken) return;
+        state.lp = null;
+        state.bortle = null;
+        state.lpState = "error";
+      }
+
+      renderLP();
+      refreshEvents();
+    }
+
+    /* ================= Bewölkung ================= */
+
+    const cloudToken = { id: 0 };
+
+    async function loadClouds() {
+      const token = ++cloudToken.id;
+      const lat = state.lat;
+      const lon = state.lon;
+
+      state.cloudState = "loading";
+      state.clouds = null;
+      renderPlace();
+      renderChips();
+
+      try {
+        const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat.toFixed(3)
+          + "&longitude=" + lon.toFixed(3)
+          + "&hourly=cloud_cover&timeformat=unixtime&forecast_days=16&timezone=auto";
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("meteo " + res.status);
+        const json = await res.json();
+        if (token !== cloudToken.id) return;
+
+        const hours = json.hourly && json.hourly.time ? json.hourly.time : [];
+        const values = json.hourly && json.hourly.cloud_cover ? json.hourly.cloud_cover : [];
+        state.clouds = {
+          times: hours.map(function (h) { return h * 1000; }),
+          values: values
+        };
+        state.cloudState = "ok";
+      } catch (err) {
+        if (token !== cloudToken.id) return;
+        state.clouds = null;
+        state.cloudState = "error";
+      }
+
+      renderPlace();
+      renderChips();
+      renderUpcoming();
+      renderDetail();
+    }
+
+    function cloudForNight(n) {
+      if (!state.clouds || !state.clouds.times.length) return null;
+
+      let a = n.windowStart || n.darkStart || n.sunset;
+      let b = n.windowEnd || n.darkEnd || n.sunrise;
+      if (!a || !b) {
+        const base = n.start + 22 * HOUR;
+        a = base;
+        b = base + 5 * HOUR;
+      }
+
+      const times = state.clouds.times;
+      let sum = 0;
+      let count = 0;
+      for (let i = 0; i < times.length; i += 1) {
+        if (times[i] >= a - 30 * MIN && times[i] <= b + 30 * MIN) {
+          sum += state.clouds.values[i];
+          count += 1;
+        }
+      }
+      return count ? Math.round(sum / count) : null;
+    }
+
+    /* ================= Nachgrenzen & Regler ================= */
+
+    function nightBounds(n) {
+      let a = n.sunset;
+      let b = n.sunrise;
+      if (!a) a = n.darkStart ? n.darkStart - 2 * HOUR : n.start + 9 * HOUR;
+      if (!b) b = n.darkEnd ? n.darkEnd + 2 * HOUR : a + 8 * HOUR;
+      if (b <= a) b = a + 8 * HOUR;
+      return { start: a, end: b };
+    }
+
+    function setSliderToBest() {
+      const n = state.night;
+      if (!n) return;
+      const b = nightBounds(n);
+      const t = n.bestTime || n.maxAltTime || (b.start + b.end) / 2;
+      state.slider = clamp((t - b.start) / (b.end - b.start) * 100, 0, 100);
+    }
+
+    /* ================= Himmelskarte ================= */
+
+    let domeStars = null;
+
+    function renderDome() {
+      const canvas = document.getElementById("dome");
+      const stage = canvas.parentElement;
+      const size = Math.max(230, Math.min(stage.clientWidth || 340, 460));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.round(size * dpr);
+      canvas.height = Math.round(size * dpr);
+
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, size, size);
+
+      const n = state.night;
+      if (!n) return;
+
+      const ev = selectedEvent();
+      const sh = ev ? ev.sh : null;
+      const bounds = nightBounds(n);
+      const tms = bounds.start + (bounds.end - bounds.start) * clamp(state.slider, 0, 100) / 100;
+
+      const R = size * 0.42;
+      const cx = size / 2;
+      const cy = size / 2 + size * 0.01;
+
+      const lst = gmst(tms);
+      const latR = state.lat * RAD;
+      const sinLat = Math.sin(latR);
+      const cosLat = Math.cos(latR);
+
+      function proj(ra, dec) {
+        let ha = lst - ra;
+        ha = ((ha + 180) % 360 + 360) % 360 - 180;
+        const haR = ha * RAD, decR = dec * RAD;
+        const sinAlt = sinLat * Math.sin(decR) + cosLat * Math.cos(decR) * Math.cos(haR);
+        const alt = Math.asin(clamp(sinAlt, -1, 1)) * DEG;
+        const az = Math.atan2(
+          -Math.cos(decR) * Math.sin(haR),
+          Math.sin(decR) * cosLat - Math.cos(decR) * sinLat * Math.cos(haR)
+        ) * DEG;
+        const azN = ((az % 360) + 360) % 360;
+        const r = R * (90 - alt) / 90;
+        return {
+          alt: alt,
+          az: azN,
+          x: cx + r * Math.sin(azN * RAD),
+          y: cy - r * Math.cos(azN * RAD),
+          visible: alt >= 0
+        };
+      }
+
+      // Himmelshintergrund
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.clip();
+
+      const bg = ctx.createRadialGradient(cx, cy, R * 0.1, cx, cy, R);
+      bg.addColorStop(0, "rgba(20, 15, 34, 0.94)");
+      bg.addColorStop(0.7, "rgba(9, 10, 20, 0.95)");
+      bg.addColorStop(1, "rgba(5, 8, 7, 0.97)");
+      ctx.fillStyle = bg;
+      ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+
+      // Sterne
+      if (!domeStars) {
+        let seed = 41771;
+        const rnd = function () {
+          seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+          return seed / 0x7fffffff;
+        };
+        domeStars = [];
+        for (let i = 0; i < 120; i += 1) {
+          const ang = rnd() * Math.PI * 2;
+          const rad = Math.sqrt(rnd()) * R * 0.97;
+          domeStars.push({
+            x: cx + Math.cos(ang) * rad,
+            y: cy + Math.sin(ang) * rad,
+            r: 0.5 + rnd() * 1.15,
+            a: 0.16 + rnd() * 0.62
+          });
+        }
+      }
+
+      ctx.fillStyle = "#dbe9ff";
+      domeStars.forEach(function (s) {
+        ctx.globalAlpha = s.a;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+
+      // Höhenringe
+      [30, 60].forEach(function (alt) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, R * (90 - alt) / 90, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(150, 190, 255, 0.1)";
+        ctx.setLineDash([3, 5]);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+
+      // Mond
+      const moon = moonState(tms);
+      if (moon.alt > -1) {
+        const meq = moonEq(tms);
+        const mq = proj(meq.ra, meq.dec);
+        if (mq.visible) {
+          const mr = Math.max(3, size * 0.014);
+          const mg = ctx.createRadialGradient(mq.x, mq.y, 0, mq.x, mq.y, mr * 3.2);
+          mg.addColorStop(0, "rgba(210, 228, 255, 0.28)");
+          mg.addColorStop(1, "rgba(210, 228, 255, 0)");
+          ctx.fillStyle = mg;
+          ctx.beginPath();
+          ctx.arc(mq.x, mq.y, mr * 3.2, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(mq.x, mq.y, mr, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(225, 235, 255, " + (0.28 + 0.65 * moon.illum) + ")";
+          ctx.fill();
+          ctx.strokeStyle = "rgba(225, 235, 255, 0.35)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+
+      // Radiant & Meteore
+      if (sh) {
+        const rp = proj(sh.ra, sh.dec);
+        const active = rp.visible && n.windowStart !== null && n.windowEnd !== null
+          && tms >= n.windowStart - 1.5 * HOUR && tms <= n.windowEnd + 1.5 * HOUR;
+
+        if (active) {
+          ctx.save();
+          ctx.globalCompositeOperation = "lighter";
+
+          const glow = ctx.createRadialGradient(rp.x, rp.y, 0, rp.x, rp.y, size * 0.14);
+          glow.addColorStop(0, "rgba(255, 200, 120, 0.42)");
+          glow.addColorStop(0.45, "rgba(255, 160, 70, 0.16)");
+          glow.addColorStop(1, "rgba(255, 160, 70, 0)");
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(rp.x, rp.y, size * 0.14, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Meteorspuren, vom Radianten nach außen
+          let seed = 7301 + Math.round(rp.az * 7);
+          const rnd = function () {
+            seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+            return seed / 0x7fffffff;
+          };
+          for (let i = 0; i < 11; i += 1) {
+            const ang = rnd() * Math.PI * 2;
+            const start = 4 + rnd() * 12;
+            const len = 22 + rnd() * size * 0.15;
+            const x1 = rp.x + Math.cos(ang) * start;
+            const y1 = rp.y + Math.sin(ang) * start;
+            const x2 = rp.x + Math.cos(ang) * (start + len);
+            const y2 = rp.y + Math.sin(ang) * (start + len);
+            const mg = ctx.createLinearGradient(x1, y1, x2, y2);
+            mg.addColorStop(0, "rgba(255, 220, 160, 0.78)");
+            mg.addColorStop(0.55, "rgba(255, 179, 71, 0.42)");
+            mg.addColorStop(1, "rgba(255, 107, 214, 0)");
+            ctx.strokeStyle = mg;
+            ctx.lineWidth = 1.1 + rnd() * 0.9;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+          }
+          ctx.restore();
+
+          ctx.beginPath();
+          ctx.arc(rp.x, rp.y, Math.max(3, size * 0.013), 0, Math.PI * 2);
+          ctx.fillStyle = "#ffd9a3";
+          ctx.shadowColor = "rgba(255, 179, 71, 0.9)";
+          ctx.shadowBlur = 12;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          ctx.font = "9px ui-monospace, SFMono-Regular, Menlo, monospace";
+          ctx.fillStyle = "rgba(255, 225, 185, 0.85)";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(currentLang === "de" ? "Radiant" : "radiant", rp.x + 8, rp.y - 9);
+        } else {
+          // Radiant unter dem Horizont: Position am Horizont andeuten
+          const azR = rp.az * RAD;
+          const hx = cx + R * Math.sin(azR);
+          const hy = cy - R * Math.cos(azR);
+          ctx.beginPath();
+          ctx.arc(hx, hy, 3, 0, Math.PI * 2);
+          ctx.strokeStyle = "rgba(255, 179, 71, 0.45)";
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+        }
+      }
+
+      ctx.restore();
+
+      // Horizont
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(255, 179, 71, 0.4)";
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+
+      // Himmelsrichtungen
+      ctx.fillStyle = "rgba(190, 210, 225, 0.75)";
+      ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      const dirs = currentLang === "de"
+        ? [["N", 0], ["O", 90], ["S", 180], ["W", 270]]
+        : [["N", 0], ["E", 90], ["S", 180], ["W", 270]];
+      dirs.forEach(function (d) {
+        const rr = R + 12;
+        ctx.fillText(d[0], cx + rr * Math.sin(d[1] * RAD), cy - rr * Math.cos(d[1] * RAD));
+      });
+
+      // Zenit
+      ctx.beginPath();
+      ctx.arc(cx, cy, 1.6, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(200, 215, 240, 0.5)";
+      ctx.fill();
+
+      // Beschriftung
+      const rad = sh ? proj(sh.ra, sh.dec) : null;
+      const captionEl = document.getElementById("dome-caption");
+      captionEl.textContent = (sh ? showerName(sh) + " · " : "")
+        + (currentLang === "de" ? "Himmel um " : "sky at ") + fmtTime(tms);
+      document.getElementById("rad-alt").textContent = rad
+        ? (rad.alt > 0 ? Math.round(rad.alt) + "° " + compass(rad.az) : "0°")
+        : "–";
+      document.getElementById("slider-time").textContent = fmtTime(tms);
+
+      canvas.setAttribute("aria-label",
+        (currentLang === "de" ? "Himmelskarte mit Radiant" : "Sky map with radiant")
+        + (sh ? " " + showerName(sh) : "") + " " + fmtTime(tms)
+        + (rad ? " · " + (currentLang === "de" ? "Radiantenhöhe " : "radiant altitude ") + Math.round(rad.alt) + "°" : ""));
+    }
+
+    /* ================= Nachtdiagramm ================= */
+
+    let chartHover = null;
+
+    function renderChart() {
+      const canvas = document.getElementById("chart");
+      const wrap = canvas.parentElement;
+      const w = Math.max(240, wrap.clientWidth);
+      const h = Math.max(180, wrap.clientHeight);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+
+      const n = state.night;
+      if (!n || !n.samples) return;
+
+      const ev = selectedEvent();
+      const pad = { l: 36, r: 14, t: 16, b: 26 };
+      const pw = w - pad.l - pad.r;
+      const ph = h - pad.t - pad.b;
+      const bounds = nightBounds(n);
+      const a = bounds.start;
+      const b = bounds.end;
+
+      function X(t) { return pad.l + (t - a) / (b - a) * pw; }
+      function Y(alt) { return pad.t + (90 - clamp(alt, 0, 90)) / 90 * ph; }
+
+      // Dunkelheit
+      if (n.darkStart && n.darkEnd) {
+        const x1 = X(Math.max(n.darkStart, a));
+        const x2 = X(Math.min(n.darkEnd, b));
+        ctx.fillStyle = "rgba(160, 107, 255, 0.09)";
+        ctx.fillRect(x1, pad.t, Math.max(1, x2 - x1), ph);
+        ctx.fillStyle = "rgba(170, 150, 255, 0.55)";
+        ctx.font = "9px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.textAlign = "left";
+        if (x2 - x1 > 70) {
+          ctx.fillText(currentLang === "de" ? "astronomisch dunkel" : "astronomically dark", x1 + 6, pad.t + 11);
+        }
+      }
+
+      // Raster
+      ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      [0, 30, 60, 90].forEach(function (alt) {
+        const y = Y(alt);
+        ctx.beginPath();
+        ctx.moveTo(pad.l, y);
+        ctx.lineTo(w - pad.r, y);
+        ctx.strokeStyle = "rgba(140, 170, 190, 0.1)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = "rgba(150, 175, 185, 0.6)";
+        ctx.fillText(alt + "°", pad.l - 7, y);
+      });
+
+      // Zeitachse
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      for (let tt = Math.ceil(a / HOUR) * HOUR; tt <= b; tt += HOUR) {
+        const p = localParts(tt);
+        if (p.h % 2 !== 0 || p.mi !== 0) continue;
+        const x = X(tt);
+        ctx.beginPath();
+        ctx.moveTo(x, pad.t);
+        ctx.lineTo(x, pad.t + ph);
+        ctx.strokeStyle = "rgba(140, 170, 190, 0.06)";
+        ctx.stroke();
+        ctx.fillStyle = "rgba(150, 175, 185, 0.7)";
+        ctx.fillText(String(p.h).padStart(2, "0") + ":00", x, pad.t + ph + 7);
+      }
+
+      // Kurven
+      function curve(key, style, width, dash) {
+        ctx.save();
+        ctx.beginPath();
+        let started = false;
+        n.samples.forEach(function (s) {
+          if (s.t < a || s.t > b) return;
+          const x = X(s.t);
+          const y = Y(s[key]);
+          if (!started) { ctx.moveTo(x, y); started = true; }
+          else ctx.lineTo(x, y);
+        });
+        ctx.setLineDash(dash || []);
+        ctx.strokeStyle = style;
+        ctx.lineWidth = width;
+        ctx.lineJoin = "round";
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      curve("sun", "rgba(255, 224, 138, 0.55)", 1.4, [4, 4]);
+      curve("moonAlt", "rgba(207, 232, 255, 0.8)", 1.3, [6, 5]);
+
+      // Radiantenfläche + Linie
+      if (n.windowStart && n.windowEnd) {
+        const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + ph);
+        grad.addColorStop(0, "rgba(255, 179, 71, 0.34)");
+        grad.addColorStop(1, "rgba(255, 179, 71, 0.02)");
+
+        ctx.beginPath();
+        let started = false;
+        n.samples.forEach(function (s) {
+          if (s.t < n.windowStart || s.t > n.windowEnd) return;
+          const x = X(s.t);
+          const y = Y(s.rad);
+          if (!started) { ctx.moveTo(x, pad.t + ph); ctx.lineTo(x, y); started = true; }
+          else ctx.lineTo(x, y);
+        });
+        ctx.lineTo(X(n.windowEnd), pad.t + ph);
+        ctx.closePath();
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      let started = false;
+      n.samples.forEach(function (s) {
+        if (s.t < a || s.t > b) return;
+        const x = X(s.t);
+        const y = Y(s.rad);
+        if (!started) { ctx.moveTo(x, y); started = true; }
+        else ctx.lineTo(x, y);
+      });
+      const lineGrad = ctx.createLinearGradient(pad.l, 0, w - pad.r, 0);
+      lineGrad.addColorStop(0, "#ffd9a3");
+      lineGrad.addColorStop(0.6, "#ffb347");
+      lineGrad.addColorStop(1, "#ff6bd6");
+      ctx.strokeStyle = lineGrad;
+      ctx.lineWidth = 2.4;
+      ctx.shadowColor = "rgba(255, 179, 71, 0.55)";
+      ctx.shadowBlur = 12;
+      ctx.stroke();
+      ctx.restore();
+
+      // Maximumsmarke
+      if (ev && ev.peak >= a && ev.peak <= b) {
+        const px = X(ev.peak);
+        ctx.save();
+        ctx.setLineDash([2, 4]);
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.28)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(px, pad.t);
+        ctx.lineTo(px, pad.t + ph);
+        ctx.stroke();
+        ctx.restore();
+        ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+        ctx.font = "8.5px ui-monospace, SFMono-Regular, Menlo, monospace";
+        ctx.textAlign = px > w - 80 ? "right" : "left";
+        ctx.textBaseline = "top";
+        ctx.fillText(currentLang === "de" ? "Maximum" : "peak", px + (px > w - 80 ? -4 : 4), pad.t + 2);
+      }
+
+      // Fenster-Markierungen
+      if (n.windowStart && n.windowEnd) {
+        ctx.save();
+        ctx.setLineDash([3, 4]);
+        ctx.strokeStyle = "rgba(255, 179, 71, 0.5)";
+        ctx.lineWidth = 1;
+        [n.windowStart, n.windowEnd].forEach(function (tt) {
+          ctx.beginPath();
+          ctx.moveTo(X(tt), pad.t);
+          ctx.lineTo(X(tt), pad.t + ph);
+          ctx.stroke();
+        });
+        ctx.restore();
+
+        if (n.bestTime) {
+          const bx = X(n.bestTime);
+          const by = Y(n.maxAlt);
+          ctx.beginPath();
+          ctx.arc(bx, by, 4, 0, Math.PI * 2);
+          ctx.fillStyle = "#ffe9ff";
+          ctx.shadowColor = "rgba(255, 107, 214, 0.8)";
+          ctx.shadowBlur = 10;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      // Hover
+      if (chartHover !== null) {
+        const hx = clamp(chartHover, pad.l, w - pad.r);
+        const tAt = a + (hx - pad.l) / pw * (b - a);
+        let best = null;
+        let bestDist = Infinity;
+        n.samples.forEach(function (s) {
+          const d = Math.abs(s.t - tAt);
+          if (d < bestDist) { bestDist = d; best = s; }
+        });
+
+        if (best) {
+          const x = X(best.t);
+          ctx.beginPath();
+          ctx.moveTo(x, pad.t);
+          ctx.lineTo(x, pad.t + ph);
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.28)";
+          ctx.setLineDash([2, 3]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          [[best.rad, "#ffb347"], [best.moonAlt, "#cfe8ff"], [best.sun, "#ffe08a"]].forEach(function (pair) {
+            if (pair[0] < 0) return;
+            ctx.beginPath();
+            ctx.arc(x, Y(pair[0]), 3, 0, Math.PI * 2);
+            ctx.fillStyle = pair[1];
+            ctx.fill();
+          });
+
+          const lines = [
+            fmtTime(best.t),
+            (currentLang === "de" ? "Radiant " : "radiant ") + Math.round(best.rad) + "°",
+            (currentLang === "de" ? "Mond " : "Moon ") + Math.round(best.moonAlt) + "°",
+            (currentLang === "de" ? "Sonne " : "Sun ") + Math.round(best.sun) + "°"
+          ];
+
+          const bw = 136;
+          const bh = 62;
+          let bx = x + 10;
+          if (bx + bw > w - 4) bx = x - bw - 10;
+          const by = pad.t + 6;
+
+          ctx.fillStyle = "rgba(6, 12, 10, 0.95)";
+          ctx.strokeStyle = "rgba(255, 179, 71, 0.4)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(bx, by, bw, bh, 8);
+          else ctx.rect(bx, by, bw, bh);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.textAlign = "left";
+          ctx.textBaseline = "top";
+          lines.forEach(function (line, i) {
+            ctx.fillStyle = i === 0 ? "#ffffff" : "rgba(190, 210, 220, 0.85)";
+            ctx.font = (i === 0 ? "600 " : "") + "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+            ctx.fillText(line, bx + 9, by + 7 + i * 13);
+          });
+        }
+      }
+    }
+
+    /* ================= Sterne im Hintergrund ================= */
+
+    (function starfield() {
+      const canvas = document.getElementById("stars");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+
+      function draw() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        let seed = 7654321;
+        const rnd = function () {
+          seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+          return seed / 0x7fffffff;
+        };
+
+        const count = Math.min(260, Math.max(80, Math.round(w * h / 9000)));
+        for (let i = 0; i < count; i += 1) {
+          const x = rnd() * w;
+          const y = rnd() * h;
+          const r = 0.4 + rnd() * 1.2;
+          ctx.globalAlpha = 0.15 + rnd() * 0.55;
+          ctx.fillStyle = i % 11 === 0 ? "#ffe4c7" : "#cfe8ff";
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      draw();
+      let timer = null;
+      window.addEventListener("resize", function () {
+        clearTimeout(timer);
+        timer = setTimeout(draw, 200);
+      });
+    })();
+    /* ================= Darstellung ================= */
+
+    function scoreClass(score) {
+      return "q" + ratingIndex(score);
+    }
+
+    function reasonText(n) {
+      if (!n) return L.noWindow;
+      if (n.reason === "noDark") return L.noDark;
+      if (n.reason === "below") return L.radiantBelow;
+      if (n.reason === "low") return L.radiantLow;
+      if (!n.windowStart) return L.noWindow;
+      return "";
+    }
+
+    function windowText(n) {
+      if (!n || !n.windowStart || !n.windowEnd) return "–";
+      return L.windowText(fmtTime(n.windowStart), fmtTime(n.windowEnd));
+    }
+
+    function peakText(ms) {
+      return fmtDate(ms, { day: "numeric", month: "short", year: "numeric" }) + " · " + fmtTime(ms);
+    }
+
+    function nightDateText(n) {
+      return fmtDate(localNoon(n.y, n.m, n.d), { weekday: "short", day: "numeric", month: "short" });
+    }
+
+    function sampleAt(n, t) {
+      if (!n || !n.samples || !t) return null;
+      let found = null;
+      let dist = Infinity;
+      n.samples.forEach(function (s) {
+        const d = Math.abs(s.t - t);
+        if (d < dist) { dist = d; found = s; }
+      });
+      return found;
+    }
+
+    function renderPlace() {
+      document.getElementById("place-name").textContent = state.name || "–";
+      document.getElementById("place-country").textContent = state.country || "";
+
+      const ns = state.lat >= 0 ? "N" : "S";
+      const ew = state.lon >= 0 ? (currentLang === "de" ? "O" : "E") : "W";
+      document.getElementById("place-meta").textContent =
+        Math.abs(state.lat).toFixed(3) + "° " + ns + " · "
+        + Math.abs(state.lon).toFixed(3) + "° " + ew + " · " + state.tz;
+
+      const badges = [];
+      const bortle = effectiveBortle();
+      badges.push('<span class="pill bortle-' + bortle + '"><i class="fas fa-lightbulb"></i>Bortle <b>' + bortle + "</b></span>");
+
+      if (state.lp) {
+        badges.push('<span class="pill"><i class="fas fa-circle-half-stroke"></i><b>' + state.lp.mpsas.toFixed(2) + "</b> mag</span>");
+        badges.push('<span class="pill"><i class="fas fa-layer-group"></i>Zone <b>' + state.lp.zone + "</b></span>");
+      } else if (state.lpState === "loading") {
+        badges.push('<span class="pill"><i class="fas fa-spinner fa-spin"></i>Atlas …</span>');
+      }
+
+      const ev = selectedEvent();
+      if (ev) {
+        const cloud = cloudForNight(ev.best);
+        if (cloud !== null) {
+          badges.push('<span class="pill"><i class="fas fa-cloud"></i><b>' + cloud + "</b> %</span>");
+        }
+      }
+
+      document.getElementById("place-badges").innerHTML = badges.join("");
+    }
+
+    function renderChips() {
+      const el = document.getElementById("chips");
+      const ev = selectedEvent();
+      const n = state.night;
+      if (!ev || !n) {
+        el.innerHTML = "";
+        return;
+      }
+
+      const items = [
+        {
+          label: L.peak,
+          value: showerName(ev.sh),
+          sub: fmtDate(ev.peak, { day: "numeric", month: "short" }) + " · " + fmtTime(ev.peak),
+          cls: ""
+        },
+        {
+          label: L.score,
+          value: n.score > 0 ? n.score + " / 100" : "–",
+          sub: ratingLabel(n.score),
+          cls: scoreClass(n.score)
+        },
+        {
+          label: L.maxAlt,
+          value: n.score > 0 ? Math.round(n.maxAlt) + "°" : "–",
+          sub: n.bestTime ? fmtTime(n.bestTime) : reasonText(n),
+          cls: n.score > 0 ? scoreClass(n.score) : "q0"
+        },
+        {
+          label: L.rate,
+          value: n.score > 0 ? "≈ " + Math.round(n.rate) + "/h" : "–",
+          sub: "ZHR " + ev.sh.zhr,
+          cls: n.score > 0 ? scoreClass(n.score) : "q0"
+        }
+      ];
+
+      el.innerHTML = items.map(function (it) {
+        return '<div class="chip"><span class="chip-label">' + it.label + "</span>"
+          + '<span class="chip-value ' + it.cls + '">' + it.value + "</span>"
+          + '<span class="chip-sub">' + it.sub + "</span></div>";
+      }).join("");
+    }
+
+    function renderUpcoming() {
+      const grid = document.getElementById("upcoming-grid");
+      const list = state.events.slice(0, 6);
+
+      if (!list.length) {
+        grid.innerHTML = '<div class="empty-note">' + L.noWindow + "</div>";
+        return;
+      }
+
+      grid.innerHTML = "";
+      list.forEach(function (ev) {
+        const n = ev.best;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "event-card" + (ev.sh.code === state.code ? " selected" : "");
+        btn.title = showerName(ev.sh) + " · " + peakText(ev.peak);
+        btn.addEventListener("click", function () { selectShower(ev.sh.code, true); });
+
+        const meta = [];
+        meta.push('<span><i class="fas fa-clock"></i>' + fmtTime(ev.peak) + " " + L.localTime + "</span>");
+        meta.push('<span><i class="fas fa-arrow-up"></i>' + (n.score > 0 ? Math.round(n.maxAlt) + "°" : "–") + "</span>");
+        meta.push('<span><i class="fas fa-moon"></i>' + (n.score > 0 ? Math.round(n.moonAtBest * 100) + " %" : "–") + "</span>");
+
+        btn.innerHTML =
+          '<div class="event-top"><span class="event-code">' + ev.sh.code + "</span>"
+          + '<span class="event-date">' + fmtDate(ev.peak, { day: "numeric", month: "short" }) + "</span></div>"
+          + '<p class="event-name">' + showerName(ev.sh) + "</p>"
+          + '<div class="event-meta">' + meta.join("") + "</div>"
+          + '<div class="event-bar"><span class="' + scoreClass(n.score) + '" style="width:' + (n.score > 0 ? clamp(n.score, 4, 100) : 0) + '%"></span></div>';
+
+        grid.appendChild(btn);
+      });
+    }
+
+    function renderDetail() {
+      const ev = selectedEvent();
+      const n = state.night;
+      if (!ev || !n) return;
+
+      const sh = ev.sh;
+      document.getElementById("detail-title").textContent = showerName(sh);
+      document.getElementById("detail-sub").textContent =
+        sh.code + " · " + L.activity + " " + activityLabel(sh) + " · "
+        + L.peakAt + " " + fmtDate(ev.peak, { day: "numeric", month: "short", year: "numeric" })
+        + " · " + fmtTime(ev.peak);
+
+      // Nächte
+      const tabs = document.getElementById("night-tabs");
+      tabs.innerHTML = "";
+      ev.nights.forEach(function (night, i) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "night-tab" + (i === state.offset ? " active" : "");
+        btn.textContent = fmtDate(localNoon(night.y, night.m, night.d), { day: "2-digit", month: "2-digit" });
+        btn.title = nightDateText(night) + " · " + L.score + " " + night.score;
+        btn.addEventListener("click", function () { selectOffset(i); });
+        tabs.appendChild(btn);
+      });
+
+      // Kennzahlen
+      const stats = [
+        {
+          label: L.score,
+          value: n.score > 0 ? n.score + " / 100" : "–",
+          sub: ratingLabel(n.score),
+          cls: scoreClass(n.score)
+        },
+        {
+          label: L.window,
+          value: windowText(n),
+          sub: nightDateText(n),
+          cls: n.score > 0 ? "" : "q0"
+        },
+        {
+          label: L.maxAlt,
+          value: n.score > 0 ? Math.round(n.maxAlt) + "° " + compass((sampleAt(n, n.bestTime) || { radAz: 0 }).radAz) : "–",
+          sub: n.bestTime ? L.bestTime + " " + fmtTime(n.bestTime) : reasonText(n),
+          cls: n.score > 0 ? scoreClass(n.score) : "q0"
+        },
+        {
+          label: L.rate,
+          value: n.score > 0 ? "≈ " + Math.round(n.rate) : "–",
+          sub: L.perHour + " · ZHR " + sh.zhr,
+          cls: n.score > 0 ? scoreClass(n.score) : "q0"
+        }
+      ];
+
+      document.getElementById("detail-stats").innerHTML = stats.map(function (s) {
+        return '<div class="stat"><span class="stat-label">' + s.label + "</span>"
+          + '<span class="stat-value ' + s.cls + '">' + s.value + "</span>"
+          + '<span class="stat-sub">' + s.sub + "</span></div>";
+      }).join("");
+
+      // Strom-Daten
+      const facts = [
+        { label: L.zhr, value: String(sh.zhr) },
+        { label: L.velocity, value: sh.v + " km/s" },
+        { label: L.radiantPos, value: sh.ra + "° / " + (sh.dec >= 0 ? "+" : "") + sh.dec + "°" },
+        { label: L.parent, value: parentLabel(sh) }
+      ];
+
+      document.getElementById("shower-facts").innerHTML = facts.map(function (f) {
+        return '<div class="shower-fact"><span>' + f.label + "</span><b>" + f.value + "</b></div>";
+      }).join("");
+
+      // Notiz
+      let note = showerNote(sh);
+      const cloud = cloudForNight(n);
+      const moonPct = Math.round(n.moonAtBest * 100);
+
+      note += "<br><b>" + L.moonLabel + ":</b> " + moonPct + " % " + (n.moonWaxing ? L.moonWax : L.moonWane)
+        + (n.moonAltAtBest > 0
+          ? " · " + Math.round(n.moonAltAtBest) + "° " + (currentLang === "de" ? "über dem Horizont" : "above the horizon")
+          : " · " + (currentLang === "de" ? "unter dem Horizont" : "below the horizon"));
+
+      if (n.bestTime) {
+        note += " · " + L.bestTime + " " + fmtTime(n.bestTime);
+      }
+      if (cloud !== null) {
+        note += "<br><b>" + L.cloud + ":</b> " + cloud + "% " + (currentLang === "de" ? "im Zeitfenster" : "in the window");
+      }
+      if (n.score <= 0) {
+        note += "<br><b>" + L.score + ":</b> " + reasonText(n);
+      }
+
+      const forecastEnd = state.clouds && state.clouds.times.length
+        ? state.clouds.times[state.clouds.times.length - 1]
+        : null;
+      if (ev.peak > NOW + 16 * DAY) {
+        note += "<br>" + L.noForecast;
+      } else if (forecastEnd && ev.peak > forecastEnd) {
+        note += "<br>" + L.noForecast;
+      }
+
+      document.getElementById("detail-note").innerHTML = note;
+    }
+
+    function renderYear() {
+      const grid = document.getElementById("year-grid");
+      if (!state.events.length) {
+        grid.innerHTML = "";
+        return;
+      }
+
+      const first = localParts(state.events[0].peak);
+      const today = localParts(Date.now());
+      const months = [];
+
+      for (let i = 0; i < 12; i += 1) {
+        const dt = new Date(Date.UTC(first.y, first.m + i, 1));
+        months.push({ y: dt.getUTCFullYear(), m: dt.getUTCMonth() });
+      }
+
+      grid.innerHTML = "";
+      months.forEach(function (mo) {
+        const card = document.createElement("div");
+        card.className = "month-card" + (mo.y === today.y && mo.m === today.m ? " current" : "");
+
+        const title = document.createElement("p");
+        title.className = "month-name";
+        title.textContent = fmtDate(localNoon(mo.y, mo.m, 1), { month: "long", year: "numeric" });
+        card.appendChild(title);
+
+        const items = state.events.filter(function (ev) {
+          const p = localParts(ev.peak);
+          return p.y === mo.y && p.m === mo.m;
+        });
+
+        if (!items.length) {
+          const empty = document.createElement("p");
+          empty.className = "month-empty";
+          empty.textContent = currentLang === "de" ? "keine Maxima" : "no maxima";
+          card.appendChild(empty);
+        } else {
+          items.forEach(function (ev) {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "month-item" + (ev.sh.code === state.code ? " selected" : "");
+            btn.title = showerName(ev.sh) + " · " + peakText(ev.peak);
+            btn.addEventListener("click", function () { selectShower(ev.sh.code, true); });
+
+            const day = fmtDate(ev.peak, { day: "numeric", month: "short" });
+            btn.innerHTML =
+              '<span class="mi-top"><span class="mi-name">' + showerName(ev.sh) + "</span>"
+              + '<span class="mi-code">' + ev.sh.code + "</span></span>"
+              + '<span class="mi-meta">' + day + " · " + fmtTime(ev.peak)
+              + ' · <span class="t-rating ' + scoreClass(ev.best.score) + '" style="font-size:9px"><span class="dot"></span>'
+              + ev.best.score + "</span></span>";
+
+            card.appendChild(btn);
+          });
+        }
+
+        grid.appendChild(card);
+      });
+    }
+
+    function renderTable() {
+      const body = document.getElementById("shower-rows");
+      body.innerHTML = "";
+
+      state.events.forEach(function (ev) {
+        const sh = ev.sh;
+        const tr = document.createElement("tr");
+        tr.className = ev.sh.code === state.code ? "selected" : "";
+        tr.addEventListener("click", function () { selectShower(sh.code, true); });
+
+        tr.innerHTML =
+          '<td><span class="t-name">' + showerName(sh) + '<span class="t-code">' + sh.code + "</span></span></td>"
+          + "<td>" + fmtDate(ev.peak, { day: "numeric", month: "short", year: "numeric" })
+          + '<span class="t-mono" style="display:block;color:#6f8a90">' + fmtTime(ev.peak) + " " + L.localTime + "</span></td>"
+          + '<td class="t-center t-mono">' + sh.zhr + "</td>"
+          + '<td class="t-mono">' + sh.ra + "° / " + (sh.dec >= 0 ? "+" : "") + sh.dec + "°</td>"
+          + '<td class="t-center t-mono">' + sh.v + "</td>"
+          + "<td>" + (parentLabel(sh) === L.parentUnknown ? "–" : escapeHtml(parentLabel(sh))) + "</td>"
+          + '<td><span class="t-rating ' + scoreClass(ev.best.score) + '"><span class="dot"></span>'
+          + (ev.best.score > 0 ? ev.best.score : "–") + "</span></td>";
+
+        body.appendChild(tr);
+      });
+    }
+
+    function renderLP() {
+      const sel = document.getElementById("lp-override");
+      const b = state.bortle;
+      const active = effectiveBortle();
+
+      // Auswahl
+      let options = '<option value="auto">' + L.lpAuto + "</option>";
+      for (let i = 1; i <= 9; i += 1) {
+        options += '<option value="' + i + '">Bortle ' + i + " – " + L.bortleNames[i] + "</option>";
+      }
+      sel.innerHTML = options;
+      sel.value = state.bortleOverride ? String(state.bortleOverride) : "auto";
+
+      const num = document.getElementById("lp-num");
+      const title = document.getElementById("lp-title-text");
+      const sub = document.getElementById("lp-sub");
+      const desc = document.getElementById("lp-desc");
+      const status = document.getElementById("lp-status");
+
+      title.removeAttribute("data-i18n");
+      desc.removeAttribute("data-i18n");
+
+      if (state.lpState === "loading" && !state.lp) {
+        num.textContent = "–";
+        title.textContent = L.lpLoading;
+        sub.textContent = "–";
+        document.getElementById("lp-mpsas").textContent = "–";
+        document.getElementById("lp-index").textContent = "–";
+        document.getElementById("lp-zone").textContent = "–";
+        document.getElementById("bortle-marker").style.left = "50%";
+        desc.textContent = L.lpDescDefault;
+        status.textContent = L.lpLoading;
+        status.className = "lp-status";
+        return;
+      }
+
+      if (!b && state.lpState !== "ok") {
+        num.textContent = "–";
+        title.textContent = L.lpTitle;
+        sub.textContent = L.lpSub;
+        document.getElementById("lp-mpsas").textContent = "–";
+        document.getElementById("lp-index").textContent = "–";
+        document.getElementById("lp-zone").textContent = "–";
+        document.getElementById("bortle-marker").style.left = "50%";
+        desc.textContent = L.lpDescDefault;
+        status.textContent = state.lpState === "error"
+          ? (currentLang === "de" ? "Atlas nicht erreichbar – Bortle manuell wählen." : "Atlas unavailable – choose Bortle manually.")
+          : (currentLang === "de" ? "Für diese Breite liegen keine Atlasdaten vor." : "No atlas data for this latitude.");
+        status.className = "lp-status error";
+        return;
+      }
+
+      const shown = state.bortleOverride || (state.lp ? state.lp.bortle : active);
+      num.textContent = String(shown);
+      title.textContent = L.bortleNames[shown] || L.lpTitle;
+      sub.textContent = "Bortle " + shown + (state.bortleOverride
+        ? " · " + (currentLang === "de" ? "manuell" : "manual")
+        : (state.lp ? " · Zone " + state.lp.zone : ""));
+      document.getElementById("lp-mpsas").textContent = state.lp ? state.lp.mpsas.toFixed(2) + " mag" : "–";
+      document.getElementById("lp-index").textContent = state.lp ? state.lp.ratio.toFixed(2) + "×" : "–";
+      document.getElementById("lp-zone").textContent = state.lp ? state.lp.zone : "–";
+      document.getElementById("bortle-marker").style.left = ((shown - 1) / 8 * 100) + "%";
+      desc.textContent = L.bortleDescs[shown] || L.lpDescDefault;
+
+      if (state.bortleOverride) {
+        status.textContent = (currentLang === "de" ? "Manuell: Bortle " : "Manual: Bortle ")
+          + state.bortleOverride + (b ? " · " + (currentLang === "de" ? "Atlas: Bortle " : "atlas: Bortle ") + b : "");
+        status.className = "lp-status";
+      } else if (state.lp) {
+        status.textContent = "Atlas: Bortle " + b
+          + " · " + (currentLang === "de" ? "automatisch" : "automatic");
+        status.className = "lp-status";
+      } else {
+        status.textContent = currentLang === "de"
+          ? "Keine Atlasdaten – es gilt die manuelle Klasse."
+          : "No atlas data – the manual class applies.";
+        status.className = "lp-status error";
+      }
+    }
+
+    /* ================= Ortssuche ================= */
+
+    const input = document.getElementById("place-input");
+    const suggestionBox = document.getElementById("suggestions");
+    let searchTimer = null;
+    let searchSeq = 0;
+    let results = [];
+    let activeIndex = -1;
+
+    function closeSuggestions() {
+      suggestionBox.classList.remove("open");
+      input.setAttribute("aria-expanded", "false");
+      activeIndex = -1;
+    }
+
+    function showNote(text) {
+      suggestionBox.innerHTML = '<div class="search-hint">' + text + "</div>";
+      suggestionBox.classList.add("open");
+      input.setAttribute("aria-expanded", "true");
+    }
+
+    function renderSuggestions() {
+      if (!results.length) {
+        showNote(t("noResults"));
+        return;
+      }
+
+      suggestionBox.innerHTML = "";
+      results.forEach(function (r, i) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "suggestion" + (i === activeIndex ? " active" : "");
+        btn.setAttribute("role", "option");
+        btn.dataset.index = String(i);
+
+        const sub = [r.admin1, r.country].filter(Boolean).join(", ");
+        btn.innerHTML = "<strong>" + escapeHtml(r.name) + "</strong>"
+          + (sub ? "<span>" + escapeHtml(sub) + "</span>" : "");
+
+        btn.addEventListener("click", function () { selectPlace(r); });
+        suggestionBox.appendChild(btn);
+      });
+
+      suggestionBox.classList.add("open");
+      input.setAttribute("aria-expanded", "true");
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    async function doSearch(q) {
+      const id = ++searchSeq;
+      const url = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q)
+        + "&count=6&language=" + currentLang + "&format=json";
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("geo " + res.status);
+        const json = await res.json();
+        if (id !== searchSeq) return;
+        results = (json.results || []).filter(function (r) {
+          return r.latitude !== undefined && r.longitude !== undefined;
+        });
+        activeIndex = -1;
+        renderSuggestions();
+      } catch (err) {
+        if (id !== searchSeq) return;
+        showNote(t("searchError"));
+      }
+    }
+
+    input.addEventListener("input", function () {
+      const q = input.value.trim();
+      clearTimeout(searchTimer);
+      if (q.length < 2) {
+        results = [];
+        if (q.length === 1) showNote(t("searchHint"));
+        else closeSuggestions();
+        return;
+      }
+      searchTimer = setTimeout(function () { doSearch(q); }, 320);
+    });
+
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown") {
+        if (!results.length) return;
+        e.preventDefault();
+        activeIndex = (activeIndex + 1) % results.length;
+        renderSuggestions();
+      } else if (e.key === "ArrowUp") {
+        if (!results.length) return;
+        e.preventDefault();
+        activeIndex = (activeIndex - 1 + results.length) % results.length;
+        renderSuggestions();
+      } else if (e.key === "Enter") {
+        if (activeIndex >= 0 && results[activeIndex]) {
+          e.preventDefault();
+          selectPlace(results[activeIndex]);
+        } else if (results.length) {
+          e.preventDefault();
+          selectPlace(results[0]);
+        }
+      } else if (e.key === "Escape") {
+        closeSuggestions();
+      }
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!suggestionBox.contains(e.target) && e.target !== input) closeSuggestions();
+    });
+
+    function saveLocation() {
+      try {
+        localStorage.setItem("meteors.loc", JSON.stringify({
+          lat: state.lat, lon: state.lon, name: state.name,
+          country: state.country, tz: state.tz,
+          override: state.bortleOverride
+        }));
+      } catch (err) { /* ignorieren */ }
+    }
+
+    function applyLocation() {
+      rebuildFormatters();
+      state.lp = null;
+      state.bortle = null;
+      state.lpState = "idle";
+      state.clouds = null;
+      state.cloudState = "idle";
+      state.bortleOverride = null;
+
+      computeEvents();
+      const ev = selectedEvent();
+      if (ev) {
+        state.offset = ev.bestIndex;
+        const base = ev.nights[state.offset];
+        state.night = analyzeNight(ev.sh, base.y, base.m, base.d, 5 * MIN, true);
+      }
+      setSliderToBest();
+      saveLocation();
+      renderAll();
+      loadLP();
+      loadClouds();
+    }
+
+    function selectPlace(place) {
+      state.lat = place.latitude;
+      state.lon = place.longitude;
+      state.name = place.name;
+      state.country = place.country || place.admin1 || "";
+      if (place.timezone) state.tz = place.timezone;
+
+      input.value = place.name;
+      results = [];
+      closeSuggestions();
+      applyLocation();
+    }
+
+    document.getElementById("geo-btn").addEventListener("click", function () {
+      const btn = this;
+      if (!navigator.geolocation) {
+        showNote(t("geoError"));
+        return;
+      }
+
+      btn.disabled = true;
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        btn.disabled = false;
+        state.lat = pos.coords.latitude;
+        state.lon = pos.coords.longitude;
+        state.name = currentLang === "de" ? "Mein Standort" : "My location";
+        state.country = "";
+        try {
+          const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          if (tz) state.tz = tz;
+        } catch (err) { /* ignorieren */ }
+        input.value = "";
+        applyLocation();
+      }, function () {
+        btn.disabled = false;
+        showNote(t("geoError"));
+      }, { timeout: 12000, maximumAge: 60000 });
+    });
+
+    /* ================= Steuerung ================= */
+
+    document.getElementById("time-slider").addEventListener("input", function (e) {
+      state.slider = Number(e.target.value);
+      renderDome();
+    });
+
+    document.getElementById("lp-override").addEventListener("change", function (e) {
+      const value = e.target.value;
+      state.bortleOverride = value === "auto" ? null : parseInt(value, 10);
+      saveLocation();
+      refreshEvents();
+    });
+
+    const chartCanvas = document.getElementById("chart");
+    chartCanvas.addEventListener("pointermove", function (e) {
+      const rect = chartCanvas.getBoundingClientRect();
+      chartHover = e.clientX - rect.left;
+      renderChart();
+    });
+    chartCanvas.addEventListener("pointerleave", function () {
+      chartHover = null;
+      renderChart();
+    });
+
+    let resizeTimer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        renderDome();
+        renderChart();
+      }, 160);
+    });
+
+    /* ================= Rendern ================= */
+
+    function renderAll() {
+      renderPlace();
+      renderChips();
+      renderUpcoming();
+      renderDetail();
+      renderYear();
+      renderTable();
+      renderLP();
+      renderChart();
+      renderDome();
+    }
+
+    /* ================= Start ================= */
+
+    function init() {
+      rebuildFormatters();
+
+      try {
+        const saved = JSON.parse(localStorage.getItem("meteors.loc") || "null");
+        if (saved && isFinite(saved.lat) && isFinite(saved.lon) && Math.abs(saved.lat) <= 90) {
+          state.lat = saved.lat;
+          state.lon = saved.lon;
+          state.name = saved.name || state.name;
+          state.country = saved.country || "";
+          state.tz = saved.tz || state.tz;
+          if (saved.override >= 1 && saved.override <= 9) state.bortleOverride = saved.override;
+          rebuildFormatters();
+          input.value = state.name;
+        }
+      } catch (err) { /* ignorieren */ }
+
+      computeEvents();
+      const ev = selectedEvent();
+      if (ev) {
+        state.offset = ev.bestIndex;
+        const base = ev.nights[state.offset];
+        state.night = analyzeNight(ev.sh, base.y, base.m, base.d, 5 * MIN, true);
+      }
+      setSliderToBest();
+
+      setLang("de");
+      loadLP();
+      loadClouds();
+    }
+
+    init();
+  </script>
+</body>
+</html>
