@@ -1,0 +1,169 @@
+{
+  "places": [
+    {
+      "name": "Hallstatt",
+      "country": "Austria",
+      "lat": 47.5622,
+      "lon": 13.6493,
+      "year": 2015,
+      "description": "Das Postkarten-Idyll am Hallstätter See – früh am Morgen am Ufer, wenn der Nebel über dem See hängt und der Ort noch schläft.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Panoramic_view_of_Hallstatt_village_and_shoreline_from_lake.jpg/960px-Panoramic_view_of_Hallstatt_village_and_shoreline_from_lake.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Panoramic_view_of_Hallstatt_village_and_shoreline_from_lake.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Venedig",
+      "country": "Italy",
+      "lat": 45.4341,
+      "lon": 12.3388,
+      "year": 2017,
+      "description": "Über die Rialto-Brücke geschlendert, bevor die Touristenströme kamen. Canale Grande, pallidorens Licht und Gondeln im Morgennebel.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Ponte_di_Rialto_Venice_1.jpg/960px-Ponte_di_Rialto_Venice_1.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Ponte_di_Rialto_Venice_1.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Paris",
+      "country": "France",
+      "lat": 48.8584,
+      "lon": 2.2945,
+      "year": 2018,
+      "description": "Abendstimmung am Trocadéro, wenn der Eiffelturm in der blauen Stunde anfängt zu leuchten. Croissant, Metro, Champ de Mars – parfait.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/960px-Tour_Eiffel_Wikimedia_Commons.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Rom",
+      "country": "Italy",
+      "lat": 41.8902,
+      "lon": 12.4922,
+      "year": 2019,
+      "description": "Kolosseum, Forum Romanum, Gelato in der Hand – 2000 Jahre Geschichte an einem Tag durchquert.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Colosseum_in_Rome-April_2007-1-_copie_2B.jpg/960px-Colosseum_in_Rome-April_2007-1-_copie_2B.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Colosseum_in_Rome-April_2007-1-_copie_2B.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "New York",
+      "country": "United States of America",
+      "lat": 40.758,
+      "lon": -73.9855,
+      "year": 2019,
+      "description": "Times Square bei Nacht, Blick vom Empire State Building, Skyline von Brooklyn Bridge Park – die Stadt die niemals schläft.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Times_Square_Ball_from_above.jpg/960px-Times_Square_Ball_from_above.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Times_Square_Ball_from_above.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Reykjavík",
+      "country": "Iceland",
+      "lat": 64.1466,
+      "lon": -21.9426,
+      "year": 2021,
+      "description": "Bunte Häuschen, Thermalbäder und Hallgrímskirkja über der Stadt. Startpunkt für Goldene Kreis & Jagd auf die Nordlichter.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Hallgr%C3%ADmskirkja.jpeg/960px-Hallgr%C3%ADmskirkja.jpeg",
+          "source": "https://commons.wikimedia.org/wiki/File:Hallgr%C3%ADmskirkja.jpeg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Lissabon",
+      "country": "Portugal",
+      "lat": 38.6916,
+      "lon": -9.2161,
+      "year": 2022,
+      "description": "Tram 28 durch die Gassen, Pastéis de Nata am Tejo und Sonnenuntergang am Miradouro – die Torre de Belém wacht über alles.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Torre_Bel%C3%A9m_April_2009-4a.jpg/960px-Torre_Bel%C3%A9m_April_2009-4a.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Torre_Bel%C3%A9m_April_2009-4a.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Santorin",
+      "country": "Greece",
+      "lat": 36.4618,
+      "lon": 25.376,
+      "year": 2023,
+      "description": "Die weißen Kuppeln von Oia, blaue Kirchtürme und der berühmteste Sonnenuntergang der Ägäis.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/1000_Three_domes_of_Oia_in_Santorini_Photo_by_Giles_Laurent.jpg/960px-1000_Three_domes_of_Oia_in_Santorini_Photo_by_Giles_Laurent.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:1000_Three_domes_of_Oia_in_Santorini_Photo_by_Giles_Laurent.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Dubrovnik",
+      "country": "Croatia",
+      "lat": 42.641,
+      "lon": 18.108,
+      "year": 2023,
+      "description": "Rundgang auf der Stadtmauer mit Blick auf die Altstadt und das adriatische Blau – die 'Perle der Adria'.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Dubrovnik_Old_Town_1.jpg/960px-Dubrovnik_Old_Town_1.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Dubrovnik_Old_Town_1.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Tromsø",
+      "country": "Norway",
+      "lat": 69.6492,
+      "lon": 18.9553,
+      "year": 2024,
+      "description": "Polarlichter über der Eismeerkathedrale – 350 km nördlich des Polarkreises tanzt der Himmel in Grün und Violett.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Northern_lights_in_Tromso.jpg/960px-Northern_lights_in_Tromso.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Northern_lights_in_Tromso.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Banff",
+      "country": "Canada",
+      "lat": 51.3217,
+      "lon": -116.2229,
+      "year": 2025,
+      "description": "Moraine Lake im Canadian Rockies-Blau: Gletschermilch, Zehngipfelpanorama und Stille bis zum Horizont.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Moraine_Lake_17092005.jpg/960px-Moraine_Lake_17092005.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Moraine_Lake_17092005.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    }
+  ]
+}

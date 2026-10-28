@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Reisekarte | Los Finkos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <style>
+    html {
+      background: radial-gradient(1200px 800px at 50% 0%, #0a1520 0%, #050807 55%, #040604 100%);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 16px 60px;
+      color: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(28px, 6vw, 56px);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #00bfff;
+      text-shadow: 0 0 18px rgba(0, 191, 255, 0.3);
+    }
+
+    header p {
+      margin: 10px auto 0;
+      max-width: 760px;
+      color: #c9d1d9;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #00bfff;
+      background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      transition: all 0.25s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background: #00bfff;
+      color: #050807;
+      box-shadow: 0 10px 30px rgba(0, 191, 255, 0.25);
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      gap: 26px;
+    }
+
+    .panel {
+      border-radius: 18px;
+      border: 1px solid rgba(0, 191, 255, 0.25);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.1) 0%, transparent 60%), rgba(9, 14, 20, 0.9);
+      box-shadow: 0 40px 80px -60px rgba(0, 191, 255, 0.9);
+      padding: 22px 24px;
+    }
+
+    /* ---------- Statistiken ---------- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-card {
+      border-radius: 16px;
+      border: 1px solid rgba(0, 191, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.12) 0%, transparent 65%), rgba(9, 14, 20, 0.92);
+      padding: 18px 20px;
+      text-align: center;
+    }
+
+    .stat-card i {
+      color: #00bfff;
+      font-size: 20px;
+    }
+
+    .stat-value {
+      font-size: 30px;
+      font-weight: 700;
+      color: #00bfff;
+      margin: 6px 0 2px;
+      text-shadow: 0 0 12px rgba(0, 191, 255, 0.35);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #9aa5b1;
+    }
+
+    .stat-hint {
+      font-size: 12px;
+      color: #6b7785;
+      min-height: 1em;
+    }
+
+    /* ---------- Filter ---------- */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .filter-group label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #9aa5b1;
+    }
+
+    .filter-bar select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: #10181f url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300bfff' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+      border: 1px solid rgba(0, 191, 255, 0.35);
+      border-radius: 12px;
+      color: #e5f4ff;
+      font-family: inherit;
+      font-size: 16px; /* verhindert Auto-Zoom auf iOS */
+      padding: 10px 36px 10px 14px;
+      min-width: 190px;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+
+    .filter-bar select:hover,
+    .filter-bar select:focus {
+      border-color: #00bfff;
+      outline: none;
+    }
+
+    .filter-reset {
+      align-self: flex-end;
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      cursor: pointer;
+      color: #00bfff;
+      background: transparent;
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.25s ease;
+    }
+
+    .filter-reset:hover {
+      background: #00bfff;
+      color: #050807;
+    }
+
+    .filter-result {
+      flex-basis: 100%;
+      margin: 2px 2px 0;
+      color: #9aa5b1;
+      font-size: 14px;
+    }
+
+    .filter-result strong {
+      color: #00bfff;
+    }
+
+    /* ---------- Karte ---------- */
+    .map-panel {
+      padding: 12px;
+    }
+
+    #map {
+      height: clamp(420px, 65vh, 680px);
+      border-radius: 12px;
+      z-index: 1;
+    }
+
+    .leaflet-container {
+      background: #050807;
+      font-family: inherit;
+    }
+
+    .map-legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 6px 2px;
+      font-size: 13.5px;
+      color: #9aa5b1;
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #00bfff;
+      box-shadow: 0 0 8px rgba(0, 191, 255, 0.8);
+      margin-right: 7px;
+      vertical-align: middle;
+    }
+
+    .legend-country {
+      display: inline-block;
+      width: 16px;
+      height: 12px;
+      border-radius: 3px;
+      background: rgba(0, 191, 255, 0.25);
+      border: 1px solid rgba(0, 191, 255, 0.7);
+      margin-right: 7px;
+      vertical-align: middle;
+    }
+
+    /* ---------- Leaflet-Popups (dunkel) ---------- */
+    .leaflet-popup-content-wrapper {
+      background: rgba(10, 18, 26, 0.97);
+      color: #e5f4ff;
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    .leaflet-popup-tip {
+      background: rgba(10, 18, 26, 0.97);
+      border: 1px solid rgba(0, 191, 255, 0.4);
+    }
+
+    .leaflet-container a.leaflet-popup-close-button {
+      color: #7f9db4;
+    }
+
+    .leaflet-popup-content {
+      margin: 14px 16px;
+      max-width: 300px;
+    }
+
+    .tm-popup h3 {
+      margin: 0 0 2px;
+      color: #00bfff;
+      font-size: 19px;
+    }
+
+    .tm-popup-meta {
+      color: #9aa5b1;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .tm-popup-meta i {
+      color: #00bfff;
+      margin-right: 4px;
+    }
+
+    .tm-popup p {
+      margin: 0 0 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #d4dce4;
+    }
+
+    .tm-popup-gallery {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .tm-popup-gallery img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 191, 255, 0.25);
+      display: block;
+    }
+
+    .tm-popup-credit {
+      font-size: 11.5px;
+      color: #6b7785;
+    }
+
+    .tm-popup-credit a {
+      color: #00bfff;
+      text-decoration: none;
+    }
+
+    .tm-popup-credit a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------- Marker ---------- */
+    .tm-marker {
+      position: relative;
+      width: 24px;
+      height: 24px;
+    }
+
+    .tm-marker .tm-dot {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #00bfff;
+      border: 2px solid #dff5ff;
+      box-shadow: 0 0 10px rgba(0, 191, 255, 0.9), 0 0 24px rgba(0, 191, 255, 0.5);
+      z-index: 2;
+    }
+
+    .tm-marker .tm-pulse {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(0, 191, 255, 0.45);
+      animation: tm-pulse 2.2s ease-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes tm-pulse {
+      0%   { transform: scale(0.55); opacity: 0.9; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tm-marker .tm-pulse { animation: none; opacity: 0.25; }
+    }
+
+    /* Länder-Tooltip */
+    .leaflet-tooltip.tm-country-tip {
+      background: rgba(10, 18, 26, 0.95);
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      color: #e5f4ff;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .leaflet-tooltip.tm-country-tip::before { display: none; }
+
+    /* ---------- Meldungen ---------- */
+    .load-error {
+      display: none;
+      border: 1px solid rgba(255, 107, 53, 0.5);
+      background: rgba(255, 107, 53, 0.12);
+      color: #ffd9c9;
+      border-radius: 14px;
+      padding: 14px 18px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #6b7785;
+      font-size: 13.5px;
+    }
+
+    footer a {
+      color: #00bfff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 22px 10px 46px; }
+      .panel { padding: 16px 14px; }
+      .filter-bar select { flex: 1 1 100%; min-width: 0; }
+      .filter-reset { margin-left: 0; align-self: stretch; justify-content: center; }
+      .nav-link { padding: 9px 15px; font-size: 14px; }
+      #map { height: min(70vh, 560px); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Reisekarte</h1>
+    <p>Alle Orte, die die Finkos schon erkundet haben – auf einer interaktiven Weltkarte.
+       Besuchte Länder sind blau hervorgehoben, ein Klick auf einen Marker zeigt Infos &amp; Fotos.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+      <a class="nav-link" href="https://www.instagram.com/los_finkos/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> Mehr auf Instagram</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Statistiken -->
+    <section class="panel" aria-label="Statistiken">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fas fa-earth-americas"></i>
+          <div class="stat-value" id="stat-countries">–</div>
+          <div class="stat-label">Besuchte Länder</div>
+          <div class="stat-hint" id="stat-countries-hint"></div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-location-dot"></i>
+          <div class="stat-value" id="stat-places">–</div>
+          <div class="stat-label">Besuchte Orte</div>
+          <div class="stat-hint" id="stat-places-hint"></div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-calendar-days"></i>
+          <div class="stat-value" id="stat-years">–</div>
+          <div class="stat-label">Reisejahre</div>
+          <div class="stat-hint" id="stat-years-hint"></div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-camera"></i>
+          <div class="stat-value" id="stat-photos">–</div>
+          <div class="stat-label">Fotos</div>
+          <div class="stat-hint" id="stat-photos-hint"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter -->
+    <section class="panel" aria-label="Filter">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="filter-country"><i class="fas fa-earth-americas"></i> Land</label>
+          <select id="filter-country">
+            <option value="">Alle Länder</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-year"><i class="fas fa-calendar-days"></i> Reisejahr</label>
+          <select id="filter-year">
+            <option value="">Alle Jahre</option>
+          </select>
+        </div>
+        <button class="filter-reset" id="filter-reset" type="button">
+          <i class="fas fa-rotate-left"></i> Filter zurücksetzen
+        </button>
+        <p class="filter-result" id="filter-result"></p>
+      </div>
+    </section>
+
+    <!-- Karte -->
+    <section class="panel map-panel">
+      <div id="map" aria-label="Interaktive Weltkarte"></div>
+      <div class="map-legend">
+        <span><span class="legend-dot"></span>Besuchter Ort</span>
+        <span><span class="legend-country"></span>Besuchtes Land</span>
+        <span id="geo-warning" style="display:none; color:#ffd9c9;"><i class="fas fa-triangle-exclamation"></i> Ländergrenzen konnten nicht geladen werden.</span>
+      </div>
+      <div class="load-error" id="load-error" style="margin-top:12px;">
+        <i class="fas fa-triangle-exclamation"></i> <strong>places.json konnte nicht geladen werden.</strong><br>
+        Beim lokalen Test bitte einen kleinen Webserver starten (z.&nbsp;B. <code>python3 -m http.server</code>) –
+        auf GitHub Pages funktioniert es direkt.
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Karte &amp; Ländergrenzen: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap-Mitwirkende</a>,
+       <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">© CARTO</a>,
+       <a href="https://github.com/johan/world.geo.json" target="_blank" rel="noopener noreferrer">world.geo.json</a> ·
+       Karten-Bibliothek: <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer">Leaflet</a> ·
+       Fotos: <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      /* ---------- Konfiguration ---------- */
+      const GEOJSON_URLS = [
+        "https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.json",
+        "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
+      ];
+
+      // Alternative Ländernamen in places.json -> Name im GeoJSON-Datensatz
+      const COUNTRY_ALIASES = {
+        "usa": "United States of America",
+        "united states": "United States of America",
+        "uk": "United Kingdom",
+        "england": "United Kingdom",
+        "scotland": "United Kingdom",
+        "czechia": "Czech Republic",
+        "uae": "United Arab Emirates"
+      };
+
+      /* ---------- Karte ---------- */
+      const map = L.map("map", {
+        worldCopyJump: true,
+        zoomControl: true
+      });
+
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        subdomains: "abcd",
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> © <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>'
+      }).addTo(map);
+
+      /* ---------- Zustand ---------- */
+      let allPlaces = [];
+      let countryLayer = null;
+      let markerLayer = L.layerGroup().addTo(map);
+      let didInitialFit = false;
+
+      const el = {
+        country: document.getElementById("filter-country"),
+        year: document.getElementById("filter-year"),
+        reset: document.getElementById("filter-reset"),
+        result: document.getElementById("filter-result"),
+        statCountries: document.getElementById("stat-countries"),
+        statCountriesHint: document.getElementById("stat-countries-hint"),
+        statPlaces: document.getElementById("stat-places"),
+        statPlacesHint: document.getElementById("stat-places-hint"),
+        statYears: document.getElementById("stat-years"),
+        statYearsHint: document.getElementById("stat-years-hint"),
+        statPhotos: document.getElementById("stat-photos"),
+        statPhotosHint: document.getElementById("stat-photos-hint"),
+        loadError: document.getElementById("load-error"),
+        geoWarning: document.getElementById("geo-warning")
+      };
+
+      /* ---------- Hilfsfunktionen ---------- */
+      function normalizeCountry(name) {
+        const key = String(name || "").trim().toLowerCase();
+        return COUNTRY_ALIASES[key] || name.trim();
+      }
+
+      function markerIcon() {
+        return L.divIcon({
+          className: "",
+          html: '<span class="tm-marker"><span class="tm-pulse"></span><span class="tm-dot"></span></span>',
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+          popupAnchor: [0, -12]
+        });
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = String(text);
+        return div.innerHTML;
+      }
+
+      function buildPopup(place) {
+        let gallery = "";
+        (place.photos || []).forEach(function (photo) {
+          if (!photo || !photo.url) return;
+          gallery += '<img src="' + escapeHtml(photo.url) + '" alt="' + escapeHtml(place.name) + '" loading="lazy">';
+        });
+
+        let credit = "";
+        (place.photos || []).forEach(function (photo) {
+          if (!photo || !photo.url) return;
+          if (photo.source) {
+            credit += '<a href="' + escapeHtml(photo.source) + '" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a> · ';
+          } else if (photo.credit) {
+            credit += escapeHtml(photo.credit) + " · ";
+          }
+        });
+        if (credit.endsWith(" · ")) credit = credit.slice(0, -3);
+
+        return (
+          '<div class="tm-popup">' +
+            (gallery ? '<div class="tm-popup-gallery">' + gallery + "</div>" : "") +
+            "<h3>" + escapeHtml(place.name) + "</h3>" +
+            '<div class="tm-meta tm-popup-meta"><i class="fas fa-earth-americas"></i>' +
+              escapeHtml(place.country) + " · <i class=\"fas fa-calendar-days\"></i>" + escapeHtml(place.year) + "</div>" +
+            "<p>" + escapeHtml(place.description || "") + "</p>" +
+            (credit ? '<div class="tm-popup-credit">Foto: ' + credit + "</div>" : "") +
+          "</div>"
+        );
+      }
+
+      function createMarker(place) {
+        return L.marker([place.lat, place.lon], { icon: markerIcon(), title: place.name })
+          .bindPopup(buildPopup(place), { maxWidth: 320 });
+      }
+
+      /* ---------- Länder-Hervorhebung ---------- */
+      function countryStyle(feature) {
+        const geoName = feature.properties && (feature.properties.name || feature.properties.NAME);
+        const visited = currentCountries().has(normalizeCountry(geoName));
+        if (visited) {
+          return { color: "rgba(0,191,255,0.75)", weight: 1.3, fillColor: "#00bfff", fillOpacity: 0.16 };
+        }
+        return { color: "rgba(0,191,255,0.06)", weight: 0.5, fillColor: "#0a1520", fillOpacity: 0.03 };
+      }
+
+      function loadCountryBorders() {
+        let index = 0;
+        function attempt() {
+          if (index >= GEOJSON_URLS.length) {
+            el.geoWarning.style.display = "inline";
+            return;
+          }
+          fetch(GEOJSON_URLS[index++])
+            .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+            .then(function (geo) {
+              countryLayer = L.geoJSON(geo, {
+                style: countryStyle,
+                onEachFeature: function (feature, layer) {
+                  const geoName = feature.properties && feature.properties.name;
+                  layer.on("mouseover", function () { layer.setStyle({ weight: 2.2 }); });
+                  layer.on("mouseout", function () { countryLayer.resetStyle(layer); });
+                  layer.bindTooltip("🧭 " + geoName, { sticky: true, className: "tm-country-tip", direction: "top" });
+                }
+              }).addTo(map);
+              countryLayer.bringToBack();
+              refreshCountryHighlight();
+            })
+            .catch(attempt);
+        }
+        attempt();
+      }
+
+      /* ---------- Filter & Statistiken ---------- */
+      function currentCountries() {
+        const set = new Set();
+        filteredPlaces().forEach(function (p) { set.add(normalizeCountry(p.country)); });
+        return set;
+      }
+
+      function filteredPlaces() {
+        return allPlaces.filter(function (p) {
+          const countryOk = !el.country.value || normalizeCountry(p.country) === el.country.value;
+          const yearOk = !el.year.value || String(p.year) === el.year.value;
+          return countryOk && yearOk;
+        });
+      }
+
+      function refreshCountryHighlight() {
+        if (!countryLayer) return;
+        countryLayer.eachLayer(function (layer) {
+          countryLayer.resetStyle(layer);
+        });
+      }
+
+      function updateStats(visible) {
+        const countries = new Set(visible.map(function (p) { return normalizeCountry(p.country); }));
+        const years = visible.map(function (p) { return Number(p.year); }).filter(Number.isFinite);
+        const photos = visible.reduce(function (sum, p) { return sum + ((p.photos || []).length); }, 0);
+
+        el.statCountries.textContent = countries.size;
+        el.statCountriesHint.textContent = countries.size < allCountries.size ? "von " + allCountries.size + " insgesamt" : "";
+
+        el.statPlaces.textContent = visible.length;
+        el.statPlacesHint.textContent = visible.length < allPlaces.length ? "von " + allPlaces.length + " insgesamt" : "";
+
+        if (years.length) {
+          const min = Math.min.apply(null, years);
+          const max = Math.max.apply(null, years);
+          el.statYears.textContent = min === max ? min : min + " – " + max;
+          el.statYearsHint.textContent = (new Set(years)).size + " Jahr" + ((new Set(years)).size === 1 ? "" : "e");
+        } else {
+          el.statYears.textContent = "–";
+          el.statYearsHint.textContent = "";
+        }
+
+        el.statPhotos.textContent = photos;
+        el.statPhotosHint.textContent = "";
+      }
+
+      function applyFilters() {
+        const visible = filteredPlaces();
+
+        markerLayer.clearLayers();
+        visible.forEach(function (place) { markerLayer.addLayer(createMarker(place)); });
+
+        refreshCountryHighlight();
+        updateStats(visible);
+
+        el.result.innerHTML = "<strong>" + visible.length + "</strong> von " + allPlaces.length +
+          " Orten werden angezeigt · <strong>" + new Set(visible.map(function (p) { return normalizeCountry(p.country); })).size + "</strong> Länder";
+
+        if (!didInitialFit) {
+          didInitialFit = true;
+          if (allPlaces.length) {
+            map.fitBounds(L.featureGroup(markerLayer.getLayers()).getBounds().pad(0.25));
+          }
+        }
+      }
+
+      /* ---------- Filter-Optionen ---------- */
+      const allCountries = new Set();
+      function populateFilters() {
+        allPlaces.forEach(function (p) { allCountries.add(normalizeCountry(p.country)); });
+
+        Array.from(allCountries).sort(function (a, b) { return a.localeCompare(b, "de"); }).forEach(function (country) {
+          const opt = document.createElement("option");
+          opt.value = country;
+          opt.textContent = country;
+          el.country.appendChild(opt);
+        });
+
+        const years = Array.from(new Set(allPlaces.map(function (p) { return p.year; })))
+          .filter(function (y) { return y != null; })
+          .sort(function (a, b) { return b - a; });
+        years.forEach(function (year) {
+          const opt = document.createElement("option");
+          opt.value = String(year);
+          opt.textContent = year;
+          el.year.appendChild(opt);
+        });
+      }
+
+      /* ---------- Events ---------- */
+      el.country.addEventListener("change", applyFilters);
+      el.year.addEventListener("change", applyFilters);
+      el.reset.addEventListener("click", function () {
+        el.country.value = "";
+        el.year.value = "";
+        applyFilters();
+        if (allPlaces.length) {
+          map.fitBounds(L.featureGroup(markerLayer.getLayers()).getBounds().pad(0.25));
+        }
+      });
+
+      /* ---------- Start ---------- */
+      fetch("places.json")
+        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+        .then(function (data) {
+          allPlaces = (data && Array.isArray(data.places) ? data.places : []).filter(function (p) {
+            return Number.isFinite(p.lat) && Number.isFinite(p.lon);
+          });
+          populateFilters();
+          applyFilters();
+          loadCountryBorders();
+        })
+        .catch(function () {
+          el.loadError.style.display = "block";
+          el.result.innerHTML = "Keine Orte geladen.";
+        });
+    })();
+  </script>
+</body>
+</html>
