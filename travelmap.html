@@ -217,6 +217,11 @@
       font-family: inherit;
     }
 
+    /* OpenStreetMap-Kacheln per CSS-Filter ins dunkle, bläuliche Design färben */
+    .leaflet-tile-pane {
+      filter: invert(1) hue-rotate(185deg) brightness(0.95) contrast(0.9) saturate(0.7);
+    }
+
     .map-legend {
       display: flex;
       flex-wrap: wrap;
@@ -495,7 +500,6 @@
 
   <footer>
     <p>Karte &amp; Ländergrenzen: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap-Mitwirkende</a>,
-       <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">© CARTO</a>,
        <a href="https://github.com/johan/world.geo.json" target="_blank" rel="noopener noreferrer">world.geo.json</a> ·
        Karten-Bibliothek: <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer">Leaflet</a> ·
        Fotos: <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></p>
@@ -529,10 +533,11 @@
         zoomControl: true
       });
 
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-        subdomains: "abcd",
+      /* OSM-Standardkacheln (kostenlos, ohne API-Key) und per CSS-Filter
+         ins dunkle Design gefärbt. CARTO dark benötigt seit 2025 einen Key. */
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
-        attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> © <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>'
+        attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap-Mitwirkende</a>'
       }).addTo(map);
 
       /* ---------- Zustand ---------- */
