@@ -527,6 +527,12 @@
         "uae": "United Arab Emirates"
       };
 
+      // Stadtstaaten, die im GeoJSON-Datensatz zu klein/fehlerhaft sind:
+      // erhalten stattdessen einen Kreis als Länder-Highlight.
+      const CITY_STATES = {
+        "Singapore": { lat: 1.3521, lon: 103.8198, radius: 22000 }
+      };
+
       /* ---------- Karte ---------- */
       const map = L.map("map", {
         worldCopyJump: true,
@@ -621,6 +627,9 @@
       }
 
       /* ---------- Länder-Hervorhebung ---------- */
+      const geoNames = new Set(); // Länder, die im GeoJSON-Datensatz existieren
+      let cityStateLayer = null;
+
       function countryStyle(feature) {
         const geoName = feature.properties && (feature.properties.name || feature.properties.NAME);
         const visited = currentCountries().has(normalizeCountry(geoName));
@@ -640,6 +649,11 @@
           fetch(GEOJSON_URLS[index++])
             .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
             .then(function (geo) {
+              (geo.features || []).forEach(function (feature) {
+                if (feature.properties && feature.properties.name) {
+                  geoNames.add(normalizeCountry(feature.properties.name));
+                }
+              });
               countryLayer = L.geoJSON(geo, {
                 style: countryStyle,
                 onEachFeature: function (feature, layer) {
@@ -673,10 +687,34 @@
       }
 
       function refreshCountryHighlight() {
-        if (!countryLayer) return;
-        countryLayer.eachLayer(function (layer) {
-          countryLayer.resetStyle(layer);
+        if (countryLayer) {
+          countryLayer.eachLayer(function (layer) {
+            countryLayer.resetStyle(layer);
+          });
+        }
+
+        // Stadtstaaten ohne GeoJSON-Polygon als Kreis ein-/ausräumen
+        if (cityStateLayer) {
+          map.removeLayer(cityStateLayer);
+          cityStateLayer = null;
+        }
+        const visited = currentCountries();
+        const circles = [];
+        Object.keys(CITY_STATES).forEach(function (name) {
+          if (visited.has(name) && !geoNames.has(name)) {
+            const cs = CITY_STATES[name];
+            circles.push(L.circle([cs.lat, cs.lon], {
+              radius: cs.radius,
+              color: "rgba(0,191,255,0.75)",
+              weight: 1.3,
+              fillColor: "#00bfff",
+              fillOpacity: 0.16
+            }));
+          }
         });
+        if (circles.length) {
+          cityStateLayer = L.layerGroup(circles).addTo(map);
+        }
       }
 
       function updateStats(visible) {

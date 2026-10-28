@@ -5,42 +5,12 @@
       "country": "Austria",
       "lat": 47.5622,
       "lon": 13.6493,
-      "year": 2015,
-      "description": "Das Postkarten-Idyll am Hallstätter See – früh am Morgen am Ufer, wenn der Nebel über dem See hängt und der Ort noch schläft.",
+      "year": 2013,
+      "description": "Das Postkarten-Idyll am Hallstätter See – früh am Morgen, wenn der Nebel über dem Wasser hängt und der Ort noch schläft.",
       "photos": [
         {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Panoramic_view_of_Hallstatt_village_and_shoreline_from_lake.jpg/960px-Panoramic_view_of_Hallstatt_village_and_shoreline_from_lake.jpg",
-          "source": "https://commons.wikimedia.org/wiki/File:Panoramic_view_of_Hallstatt_village_and_shoreline_from_lake.jpg",
-          "credit": "Wikimedia Commons"
-        }
-      ]
-    },
-    {
-      "name": "Venedig",
-      "country": "Italy",
-      "lat": 45.4341,
-      "lon": 12.3388,
-      "year": 2017,
-      "description": "Über die Rialto-Brücke geschlendert, bevor die Touristenströme kamen. Canale Grande, pallidorens Licht und Gondeln im Morgennebel.",
-      "photos": [
-        {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Ponte_di_Rialto_Venice_1.jpg/960px-Ponte_di_Rialto_Venice_1.jpg",
-          "source": "https://commons.wikimedia.org/wiki/File:Ponte_di_Rialto_Venice_1.jpg",
-          "credit": "Wikimedia Commons"
-        }
-      ]
-    },
-    {
-      "name": "Paris",
-      "country": "France",
-      "lat": 48.8584,
-      "lon": 2.2945,
-      "year": 2018,
-      "description": "Abendstimmung am Trocadéro, wenn der Eiffelturm in der blauen Stunde anfängt zu leuchten. Croissant, Metro, Champ de Mars – parfait.",
-      "photos": [
-        {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/960px-Tour_Eiffel_Wikimedia_Commons.jpg",
-          "source": "https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons.jpg",
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Hallstatt_evangelische_Kirche_20180206.jpg/960px-Hallstatt_evangelische_Kirche_20180206.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Hallstatt_evangelische_Kirche_20180206.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
@@ -50,7 +20,7 @@
       "country": "Italy",
       "lat": 41.8902,
       "lon": 12.4922,
-      "year": 2019,
+      "year": 2014,
       "description": "Kolosseum, Forum Romanum, Gelato in der Hand – 2000 Jahre Geschichte an einem Tag durchquert.",
       "photos": [
         {
@@ -61,31 +31,106 @@
       ]
     },
     {
-      "name": "New York",
-      "country": "United States of America",
-      "lat": 40.758,
-      "lon": -73.9855,
-      "year": 2019,
-      "description": "Times Square bei Nacht, Blick vom Empire State Building, Skyline von Brooklyn Bridge Park – die Stadt die niemals schläft.",
+      "name": "Gizeh",
+      "country": "Egypt",
+      "lat": 29.9792,
+      "lon": 31.1342,
+      "year": 2015,
+      "description": "Die Pyramiden und der Große Sphinx – 4.500 Jahre alte Steine vor dem Kairoer Skyline-Hintergrund.",
       "photos": [
         {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Times_Square_Ball_from_above.jpg/960px-Times_Square_Ball_from_above.jpg",
-          "source": "https://commons.wikimedia.org/wiki/File:Times_Square_Ball_from_above.jpg",
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Great_Sphinx_%28%D8%A3%D8%A8%D9%88_%D8%A7%D9%84%D9%87%D9%88%D9%84%29.jpg/960px-Great_Sphinx_%28%D8%A3%D8%A8%D9%88_%D8%A7%D9%84%D9%87%D9%88%D9%84%29.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Great_Sphinx_(%D8%A3%D8%A8%D9%88_%D8%A7%D9%84%D9%87%D9%88%D9%84).jpg",
           "credit": "Wikimedia Commons"
         }
       ]
     },
     {
-      "name": "Reykjavík",
-      "country": "Iceland",
-      "lat": 64.1466,
-      "lon": -21.9426,
-      "year": 2021,
-      "description": "Bunte Häuschen, Thermalbäder und Hallgrímskirkja über der Stadt. Startpunkt für Goldene Kreis & Jagd auf die Nordlichter.",
+      "name": "Prag",
+      "country": "Czech Republic",
+      "lat": 50.0865,
+      "lon": 14.4114,
+      "year": 2015,
+      "description": "Blick von Petřín über die hundert Türme der Goldenen Stadt – Karlsbrücke, Burg und die Moldau im Abendlicht.",
       "photos": [
         {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Hallgr%C3%ADmskirkja.jpeg/960px-Hallgr%C3%ADmskirkja.jpeg",
-          "source": "https://commons.wikimedia.org/wiki/File:Hallgr%C3%ADmskirkja.jpeg",
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Prague_07-2016_View_from_Petrinska_Tower_img2.jpg/960px-Prague_07-2016_View_from_Petrinska_Tower_img2.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Prague_07-2016_View_from_Petrinska_Tower_img2.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Krakau",
+      "country": "Poland",
+      "lat": 50.0616,
+      "lon": 19.9373,
+      "year": 2016,
+      "description": "Rynek Główny, Tuchhallen und die Marienkirche – Polens Königstadt mit den schönsten Altstadtgassen.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Adam_Stefan_Sapieha_Monument%2C_Franciszka%C5%84ska_Street%2C_Old_Town%2C_Krakow%2C_Poland.jpg/960px-Adam_Stefan_Sapieha_Monument%2C_Franciszka%C5%84ska_Street%2C_Old_Town%2C_Krakow%2C_Poland.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Adam_Stefan_Sapieha_Monument,_Franciszka%C5%84ska_Street,_Old_Town,_Krakow,_Poland.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Marrakesch",
+      "country": "Morocco",
+      "lat": 31.624,
+      "lon": -7.999,
+      "year": 2017,
+      "description": "Das bunte Chaos der Souks, die Koutoubia-Moschee und der Jemaa el-Fnaa, wenn die Abenddämmerung die Gaukler anzieht.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Mosqu%C3%A9e_de_la_Koutoubia_-_marakesh.jpg/960px-Mosqu%C3%A9e_de_la_Koutoubia_-_marakesh.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Mosqu%C3%A9e_de_la_Koutoubia_-_marakesh.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Barcelona",
+      "country": "Spain",
+      "lat": 41.4036,
+      "lon": 2.1744,
+      "year": 2018,
+      "description": "Gaudís Sagrada Família in voller Pracht – Kathedralen-Gipfel, der seit 140 Jahren an sich selbst baut.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Sagrada_Familia_March_2015-19bw.jpg/960px-Sagrada_Familia_March_2015-19bw.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Sagrada_Familia_March_2015-19bw.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Paris",
+      "country": "France",
+      "lat": 48.8584,
+      "lon": 2.2945,
+      "year": 2018,
+      "description": "Abendstimmung am Trocadéro, wenn der Eiffelturm in der blauen Stunde zu leuchten beginnt. Croissant, Metro, Champ de Mars – parfait.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/960px-Tour_Eiffel_Wikimedia_Commons.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Sossusvlei",
+      "country": "Namibia",
+      "lat": -24.744,
+      "lon": 15.339,
+      "year": 2019,
+      "description": "Rostrote Dünen, so weit das Auge reicht – das 300 Meter hohe Dünenmeer des Namib bei Sonnenaufgang.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Sossusvlei_Dune_Rippled_cropped.jpg/960px-Sossusvlei_Dune_Rippled_cropped.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Sossusvlei_Dune_Rippled_cropped.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
@@ -95,7 +140,7 @@
       "country": "Portugal",
       "lat": 38.6916,
       "lon": -9.2161,
-      "year": 2022,
+      "year": 2019,
       "description": "Tram 28 durch die Gassen, Pastéis de Nata am Tejo und Sonnenuntergang am Miradouro – die Torre de Belém wacht über alles.",
       "photos": [
         {
@@ -106,61 +151,151 @@
       ]
     },
     {
-      "name": "Santorin",
-      "country": "Greece",
-      "lat": 36.4618,
-      "lon": 25.376,
-      "year": 2023,
-      "description": "Die weißen Kuppeln von Oia, blaue Kirchtürme und der berühmteste Sonnenuntergang der Ägäis.",
+      "name": "Bangkok",
+      "country": "Thailand",
+      "lat": 13.7437,
+      "lon": 100.4889,
+      "year": 2020,
+      "description": "Wat Arun, der Tempel der Morgenröte, glänzt über dem Chao Phraya – Streetfood, Tuk-Tuks und goldene Dächer soweit das Auge reicht.",
       "photos": [
         {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/1000_Three_domes_of_Oia_in_Santorini_Photo_by_Giles_Laurent.jpg/960px-1000_Three_domes_of_Oia_in_Santorini_Photo_by_Giles_Laurent.jpg",
-          "source": "https://commons.wikimedia.org/wiki/File:1000_Three_domes_of_Oia_in_Santorini_Photo_by_Giles_Laurent.jpg",
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Templo_Wat_Arun%2C_Bangkok%2C_Tailandia%2C_2013-08-22%2C_DD_30.jpg/960px-Templo_Wat_Arun%2C_Bangkok%2C_Tailandia%2C_2013-08-22%2C_DD_30.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Templo_Wat_Arun,_Bangkok,_Tailandia,_2013-08-22,_DD_30.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
     },
     {
-      "name": "Dubrovnik",
-      "country": "Croatia",
-      "lat": 42.641,
-      "lon": 18.108,
-      "year": 2023,
-      "description": "Rundgang auf der Stadtmauer mit Blick auf die Altstadt und das adriatische Blau – die 'Perle der Adria'.",
+      "name": "Ha-Long-Bucht",
+      "country": "Vietnam",
+      "lat": 20.9101,
+      "lon": 107.1839,
+      "year": 2020,
+      "description": "Zweitausend Kalksteininseln ragen aus dem smaragdgrünen Wasser – mit dem Boot durch das Nebellabyrinth der Bucht.",
       "photos": [
         {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Dubrovnik_Old_Town_1.jpg/960px-Dubrovnik_Old_Town_1.jpg",
-          "source": "https://commons.wikimedia.org/wiki/File:Dubrovnik_Old_Town_1.jpg",
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Halong_Bay_in_Vietnam.jpg/960px-Halong_Bay_in_Vietnam.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Halong_Bay_in_Vietnam.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
     },
     {
-      "name": "Tromsø",
-      "country": "Norway",
-      "lat": 69.6492,
-      "lon": 18.9553,
+      "name": "Angkor Wat",
+      "country": "Cambodia",
+      "lat": 13.4125,
+      "lon": 103.867,
+      "year": 2020,
+      "description": "Der größte Tempelkomplex der Welt bei Sonnenaufgang – die Spiegelung vor dem Wasser ist der berühmteste Moment Kambodschas.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Angkor_Wat_with_its_reflection_%28cropped%29.jpg/960px-Angkor_Wat_with_its_reflection_%28cropped%29.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Angkor_Wat_with_its_reflection_(cropped).jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Kuala Lumpur",
+      "country": "Malaysia",
+      "lat": 3.1578,
+      "lon": 101.7117,
+      "year": 2021,
+      "description": "Die Petronas Towers bei Nacht – 452 Meter Edelstahl, verbunden über die Skybridge, darunter das bunte Flair der Stadt.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/Petronas_Towers_at_Night_-_from_the_base_upwards.jpg/960px-Petronas_Towers_at_Night_-_from_the_base_upwards.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Petronas_Towers_at_Night_-_from_the_base_upwards.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Cala Goloritzé",
+      "country": "Italy",
+      "lat": 40.1107,
+      "lon": 9.6797,
+      "year": 2021,
+      "description": "Sardiniens Ostküste in Reinform: weißer Kieselstrand, türkisblaues Wasser und der 143 m hohe Kalkturm über der Bucht.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Cala_Goloritze_Sardegna.jpg/960px-Cala_Goloritze_Sardegna.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Cala_Goloritze_Sardegna.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Kopenhagen",
+      "country": "Denmark",
+      "lat": 55.6794,
+      "lon": 12.5683,
+      "year": 2022,
+      "description": "Die bunten Reederhäuser am Nyhavn, Radkultur und Smørrebrød – skandinavisches Lebensgefühl am besten Hafen der Stadt.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Kopenhagen_%28DK%29%2C_Nyhavn_--_2017_--_1711.jpg/960px-Kopenhagen_%28DK%29%2C_Nyhavn_--_2017_--_1711.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Kopenhagen_(DK),_Nyhavn_--_2017_--_1711.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Madeira",
+      "country": "Portugal",
+      "lat": 32.7414,
+      "lon": -16.7043,
+      "year": 2023,
+      "description": "Ponta de São Lourenço, die wilde Ostspitze der Blumeninsel – Lavafelsen, Meerblick und Wanderwege am Abgrund.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Ponta_de_S%C3%A3o_Louren%C3%A7o_north_north_east.jpg/960px-Ponta_de_S%C3%A3o_Louren%C3%A7o_north_north_east.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Ponta_de_S%C3%A3o_Louren%C3%A7o_north_north_east.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Azoren",
+      "country": "Portugal",
+      "lat": 37.7696,
+      "lon": -25.3086,
+      "year": 2023,
+      "description": "Die Kraterseen von Furnas auf São Miguel – grüne Vulkankessel, heiße Quellen und Azorene-Distanz zur Hektik der Welt.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Lago_de_Furnas%2C_isla_de_San_Miguel%2C_Azores%2C_Portugal%2C_2020-07-29%2C_DD_52-58_PAN.jpg/960px-Lago_de_Furnas%2C_isla_de_San_Miguel%2C_Azores%2C_Portugal%2C_2020-07-29%2C_DD_52-58_PAN.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Lago_de_Furnas,_isla_de_San_Miguel,_Azores,_Portugal,_2020-07-29,_DD_52-58_PAN.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Taipeh",
+      "country": "Taiwan",
+      "lat": 25.033,
+      "lon": 121.5654,
       "year": 2024,
-      "description": "Polarlichter über der Eismeerkathedrale – 350 km nördlich des Polarkreises tanzt der Himmel in Grün und Violett.",
+      "description": "Taipei 101 über der Stadt, Nachtmärkte in voller Blüte und Teefelder im Hinterland – Taiwans lebendige Hauptstadt.",
       "photos": [
         {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Northern_lights_in_Tromso.jpg/960px-Northern_lights_in_Tromso.jpg",
-          "source": "https://commons.wikimedia.org/wiki/File:Northern_lights_in_Tromso.jpg",
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Taipei_Taiwan_Taipei-101-Tower-01.jpg/960px-Taipei_Taiwan_Taipei-101-Tower-01.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Taipei_Taiwan_Taipei-101-Tower-01.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
     },
     {
-      "name": "Banff",
-      "country": "Canada",
-      "lat": 51.3217,
-      "lon": -116.2229,
+      "name": "Singapur",
+      "country": "Singapore",
+      "lat": 1.2816,
+      "lon": 103.8636,
       "year": 2025,
-      "description": "Moraine Lake im Canadian Rockies-Blau: Gletschermilch, Zehngipfelpanorama und Stille bis zum Horizont.",
+      "description": "Die Supertrees von Gardens by the Bay leuchten in der Dämmerung – Futurismus zwischen Marina Bay und Colonial-Vergangenheit.",
       "photos": [
         {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Moraine_Lake_17092005.jpg/960px-Moraine_Lake_17092005.jpg",
-          "source": "https://commons.wikimedia.org/wiki/File:Moraine_Lake_17092005.jpg",
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Supertree_Grove%2C_Gardens_by_the_Bay%2C_Singapore1.jpg/960px-Supertree_Grove%2C_Gardens_by_the_Bay%2C_Singapore1.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Supertree_Grove,_Gardens_by_the_Bay,_Singapore1.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
