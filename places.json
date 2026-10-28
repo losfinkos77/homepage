@@ -464,6 +464,26 @@
           "credit": "Wikimedia Commons"
         }
       ]
+    },
+    {
+      "name": "Teneriffa",
+      "country": "Spain",
+      "lat": 28.3023,
+      "lon": -16.6303,
+      "year": 2025,
+      "description": "Der Teide im Vulkankrater von Las Cañadas – 3.718 Meter bis zu einem der besten Sternenhimmel Europas, dazu Strände und Mandelblüte.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Teide_Canadas.jpg/960px-Teide_Canadas.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Teide_Canadas.jpg",
+          "credit": "Wikimedia Commons"
+        },
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/At_Teide_Observatory_2022_035.jpg/960px-At_Teide_Observatory_2022_035.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:At_Teide_Observatory_2022_035.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
     }
   ]
 }
