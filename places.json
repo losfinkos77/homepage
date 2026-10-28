@@ -46,6 +46,66 @@
       ]
     },
     {
+      "name": "Tal der Könige",
+      "country": "Egypt",
+      "lat": 25.7402,
+      "lon": 32.6014,
+      "year": 2015,
+      "description": "Die Felsengräber der Pharaonen im Thebanischen Gebirge – von oben Blick über das Tal, in dem Tutanchamun ausgegraben wurde.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Thebes%2C_Luxor%2C_Egypt%2C_Valley_of_the_Kings_from_above.jpg/960px-Thebes%2C_Luxor%2C_Egypt%2C_Valley_of_the_Kings_from_above.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Thebes,_Luxor,_Egypt,_Valley_of_the_Kings_from_above.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Luxor",
+      "country": "Egypt",
+      "lat": 25.7188,
+      "lon": 32.6573,
+      "year": 2015,
+      "description": "Die Säulenhalle von Karnak – 134 Hypostyl-Säulen, hierarchische Reliefs und der größte Tempelkomplex des alten Ägypten.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Templo_de_Karnak%2C_Luxor%2C_Egipto%2C_2022-04-03%2C_DD_144.jpg/960px-Templo_de_Karnak%2C_Luxor%2C_Egipto%2C_2022-04-03%2C_DD_144.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Templo_de_Karnak,_Luxor,_Egipto,_2022-04-03,_DD_144.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Kairo",
+      "country": "Egypt",
+      "lat": 30.0485,
+      "lon": 31.2336,
+      "year": 2015,
+      "description": "Das Ägyptische Museum am Tahrir-Platz – Tutanchamuns Goldmaske, Mumienhallen und 120.000 Artefakte zwischen den Pyramiden und der Nilufer-Metropole.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Facade_of_the_Egyptian_Museum%2C_Tahrir_Square%2C_Cairo%2C_Egypt1.jpg/960px-Facade_of_the_Egyptian_Museum%2C_Tahrir_Square%2C_Cairo%2C_Egypt1.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Facade_of_the_Egyptian_Museum,_Tahrir_Square,_Cairo,_Egypt1.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Colored Canyon",
+      "country": "Egypt",
+      "lat": 28.95,
+      "lon": 34.55,
+      "year": 2015,
+      "description": "Die bunten Felsschluchten der Sinai-Halbinsel – rosa, orange und violette Sandsteinwände, wandernd durch die enge Schlucht.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/Coloured_canyon_sinai2.JPG/960px-Coloured_canyon_sinai2.JPG",
+          "source": "https://commons.wikimedia.org/wiki/File:Coloured_canyon_sinai2.JPG",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
       "name": "Prag",
       "country": "Czech Republic",
       "lat": 50.0865,
