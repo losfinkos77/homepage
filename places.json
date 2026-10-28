@@ -636,6 +636,41 @@
       ]
     },
     {
+      "name": "Denpasar",
+      "country": "Indonesia",
+      "lat": 8.6705,
+      "lon": 115.2126,
+      "year": 2024,
+      "description": "Hauptstadt Balis: das Bajra-Sandhi-Monument in Form der hinduistischen Priesterglocke, umgeben von Parks und Insel-Leben.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Aerial_view_of_Bajra_Sandhi_Monument_Denpasar_Bali_Indonesia.jpg/960px-Aerial_view_of_Bajra_Sandhi_Monument_Denpasar_Bali_Indonesia.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Aerial_view_of_Bajra_Sandhi_Monument_Denpasar_Bali_Indonesia.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Bali",
+      "country": "Indonesia",
+      "lat": 8.5069,
+      "lon": 115.2625,
+      "year": 2024,
+      "description": "Insel der Götter: grüne Reisterrassen bei Ubud, der Tempel Tanah Lot im Meer und Sonne, die über Rauch und Frangipani untergeht.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Rice_terraces%2C_Bali.jpg/960px-Rice_terraces%2C_Bali.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Rice_terraces,_Bali.jpg",
+          "credit": "Wikimedia Commons"
+        },
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Tanah_Lot%2C_Bali%2C_Indonesia%2C_20220827_1008_1159.jpg/960px-Tanah_Lot%2C_Bali%2C_Indonesia%2C_20220827_1008_1159.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Tanah_Lot,_Bali,_Indonesia,_20220827_1008_1159.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
       "name": "Singapur",
       "country": "Singapore",
       "lat": 1.2816,
