@@ -441,16 +441,51 @@
       ]
     },
     {
-      "name": "Cala Goloritzé",
+      "name": "Cagliari",
       "country": "Italy",
-      "lat": 40.1107,
-      "lon": 9.6797,
+      "lat": 39.2238,
+      "lon": 9.1217,
       "year": 2021,
-      "description": "Sardiniens Ostküste in Reinform: weißer Kieselstrand, türkisblaues Wasser und der 143 m hohe Kalkturm über der Bucht.",
+      "description": "Sardiniens Hauptstadt über dem Golfo degli Angeli – Altstadtviertel Castello, Poetto-Strand und Flamingos in den Salinen von Molentargius.",
       "photos": [
         {
-          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Cala_Goloritze_Sardegna.jpg/960px-Cala_Goloritze_Sardegna.jpg",
-          "source": "https://commons.wikimedia.org/wiki/File:Cala_Goloritze_Sardegna.jpg",
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/At_Cagliari%2C_Sardinia_2019_003.jpg/960px-At_Cagliari%2C_Sardinia_2019_003.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:At_Cagliari,_Sardinia_2019_003.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Alghero",
+      "country": "Italy",
+      "lat": 40.5586,
+      "lon": 8.3193,
+      "year": 2021,
+      "description": "Die katalanisch geprägte Festungsstadt an der Riviera del Corallo – Kathedrale, Altstadtmauern und Türmchen über dem azurblauen Meer.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Alghero_-_Cathedral-023.jpg/960px-Alghero_-_Cathedral-023.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Alghero_-_Cathedral-023.jpg",
+          "credit": "Wikimedia Commons"
+        },
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/2024-10-09_Alghero_07.jpg/960px-2024-10-09_Alghero_07.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:2024-10-09_Alghero_07.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Olbia",
+      "country": "Italy",
+      "lat": 40.9234,
+      "lon": 9.4966,
+      "year": 2021,
+      "description": "Tor zur Costa Smeralda – Capo Figari, granitene Küstenlandschaft und das türkise Wasser des nordöstlichen Sardinien.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Isola_del_Figarolo_e_Capo_Figari_%28Olbia%29_-_2026-06_%28GT%29.jpg/960px-Isola_del_Figarolo_e_Capo_Figari_%28Olbia%29_-_2026-06_%28GT%29.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Isola_del_Figarolo_e_Capo_Figari_(Olbia)_-_2026-06_(GT).jpg",
           "credit": "Wikimedia Commons"
         }
       ]
