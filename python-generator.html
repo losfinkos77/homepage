@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Generator | Los Finkos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    html {
+      background: radial-gradient(1200px 800px at 50% 0%, #0a1520 0%, #050807 55%, #040604 100%);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 16px 60px;
+      color: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(28px, 6vw, 56px);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #00bfff;
+      text-shadow: 0 0 18px rgba(0, 191, 255, 0.3);
+    }
+
+    header h1 .fa-python { color: #ffd43b; text-shadow: 0 0 18px rgba(255, 212, 59, 0.3); }
+
+    header p {
+      margin: 10px auto 0;
+      max-width: 760px;
+      color: #c9d1d9;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #00bfff;
+      background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      transition: all 0.25s ease;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: #00bfff;
+      color: #050807;
+      box-shadow: 0 10px 30px rgba(0, 191, 255, 0.25);
+    }
+
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      gap: 22px;
+    }
+
+    .panel {
+      border-radius: 18px;
+      border: 1px solid rgba(0, 191, 255, 0.25);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.1) 0%, transparent 60%), rgba(9, 14, 20, 0.9);
+      box-shadow: 0 40px 80px -60px rgba(0, 191, 255, 0.9);
+      padding: 18px 20px;
+    }
+
+    .panels {
+      display: grid;
+      gap: 22px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 900px) {
+      .panels { grid-template-columns: 1fr 1fr; }
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 17px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #00bfff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-title h2 i { color: #00bfff; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .toolbar select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: #10181f url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300bfff' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+      border: 1px solid rgba(0, 191, 255, 0.35);
+      border-radius: 10px;
+      color: #e5f4ff;
+      font-family: inherit;
+      font-size: 16px;
+      padding: 8px 34px 8px 12px;
+      cursor: pointer;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      background: rgba(0, 191, 255, 0.12);
+      color: #00bfff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: #00bfff;
+      color: #050807;
+      box-shadow: 0 8px 24px rgba(0, 191, 255, 0.3);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+
+    .btn.primary {
+      background: #00bfff;
+      color: #050807;
+      border-color: #00bfff;
+      font-weight: 600;
+    }
+
+    .btn.primary:hover {
+      box-shadow: 0 0 24px rgba(0, 191, 255, 0.55);
+    }
+
+    /* ---------- Editor & Ausgabe ---------- */
+    #code {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 420px;
+      resize: vertical;
+      background: #0a0f14;
+      color: #dbeefc;
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace;
+      font-size: 14.5px;
+      line-height: 1.6;
+      tab-size: 4;
+      outline: none;
+      white-space: pre;
+    }
+
+    #code:focus {
+      border-color: #00bfff;
+      box-shadow: 0 0 18px rgba(0, 191, 255, 0.25);
+    }
+
+    #output {
+      background: #0a0f14;
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 12px;
+      padding: 14px 16px;
+      min-height: 420px;
+      max-height: 640px;
+      overflow: auto;
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace;
+      font-size: 14.5px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+    }
+
+    #output .out { color: #dbeefc; }
+    #output .err { color: #ff7b6b; }
+    #output .res { color: #7fd4ff; }
+    #output .muted { color: #6b7785; }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #9aa5b1;
+    }
+
+    .status i { color: #00bfff; }
+    .status.busy i { animation: spin 1.2s linear infinite; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .keyhint {
+      color: #6b7785;
+      font-size: 12.5px;
+    }
+
+    .keyhint kbd {
+      background: #10181f;
+      border: 1px solid rgba(0, 191, 255, 0.35);
+      border-radius: 6px;
+      padding: 1px 7px;
+      font-family: inherit;
+      font-size: 12px;
+      color: #00bfff;
+    }
+
+    /* ---------- KI-Hilfe ---------- */
+    .ai-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    #ai-question {
+      flex: 1 1 320px;
+      background: #0a0f14;
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 12px;
+      color: #dbeefc;
+      font-family: inherit;
+      font-size: 15px;
+      padding: 11px 14px;
+      outline: none;
+    }
+
+    #ai-question:focus {
+      border-color: #00bfff;
+      box-shadow: 0 0 18px rgba(0, 191, 255, 0.25);
+    }
+
+    #ai-answer {
+      margin-top: 14px;
+      background: #0a0f14;
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 12px;
+      padding: 14px 18px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #d4e7f5;
+      font-size: 14.5px;
+      line-height: 1.65;
+      display: none;
+      max-height: 420px;
+      overflow: auto;
+    }
+
+    .ai-note {
+      margin-top: 10px;
+      font-size: 12.5px;
+      color: #6b7785;
+    }
+
+    .ai-note i { color: #00bfff; }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #6b7785;
+      font-size: 13.5px;
+    }
+
+    footer a {
+      color: #00bfff;
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><i class="fa-brands fa-python"></i> Python Generator</h1>
+    <p>Links den Python-Code schreiben, rechts erscheint die Ausgabe. Das echte Python läuft komplett im
+       Browser (WebAssembly) – und bei Fragen hilft die eingebaute KI.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="panels">
+      <!-- Editor -->
+      <section class="panel">
+        <div class="panel-title">
+          <h2><i class="fas fa-code"></i> Code</h2>
+          <div class="toolbar">
+            <select id="examples" aria-label="Beispiele">
+              <option value="">📝 Beispiele …</option>
+            </select>
+            <button class="btn" id="clear-btn" type="button"><i class="fas fa-eraser"></i> Editor leeren</button>
+          </div>
+        </div>
+        <textarea id="code" spellcheck="false" aria-label="Python-Code"></textarea>
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-top:12px;">
+          <button class="btn primary" id="run-btn" type="button"><i class="fas fa-play"></i> Ausführen</button>
+          <span class="status" id="status"><i class="fas fa-circle-dot"></i> Bereit</span>
+          <span class="keyhint"><kbd>Strg</kbd>+<kbd>Enter</kbd> ausführen · <kbd>Tab</kbd> Einzug</span>
+        </div>
+      </section>
+
+      <!-- Ausgabe -->
+      <section class="panel">
+        <div class="panel-title">
+          <h2><i class="fas fa-terminal"></i> Ausgabe</h2>
+          <button class="btn" id="clear-out" type="button"><i class="fas fa-broom"></i> Leeren</button>
+        </div>
+        <pre id="output" aria-live="polite"><span class="muted">Die Ausgabe erscheint hier …</span></pre>
+      </section>
+    </div>
+
+    <!-- KI-Hilfe -->
+    <section class="panel">
+      <div class="panel-title">
+        <h2><i class="fas fa-robot"></i> KI-Hilfe</h2>
+      </div>
+      <div class="ai-row">
+        <input id="ai-question" type="text" placeholder="z. B. Warum funktioniert mein Code nicht? Oder: Erkläre mir Schleifen …">
+        <button class="btn" id="ai-btn" type="button"><i class="fas fa-paper-plane"></i> KI fragen</button>
+      </div>
+      <div id="ai-answer" aria-live="polite"></div>
+      <p class="ai-note"><i class="fas fa-circle-info"></i>
+        Die KI sieht deinen aktuellen Code und deine Frage. Kostenloser Dienst (pollinations.ai) – ohne Login,
+        bitte keine privaten Daten einfügen. Antworten können Fehler enthalten.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Python-Laufzeit: <a href="https://pyodide.org/" target="_blank" rel="noopener noreferrer">Pyodide (WebAssembly)</a> –
+       läuft vollständig offline im Browser · KI-Hilfe: <a href="https://pollinations.ai" target="_blank" rel="noopener noreferrer">pollinations.ai</a> (kostenlos)</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      const el = {
+        code: document.getElementById("code"),
+        output: document.getElementById("output"),
+        status: document.getElementById("status"),
+        run: document.getElementById("run-btn"),
+        clearOut: document.getElementById("clear-out"),
+        clearEditor: document.getElementById("clear-btn"),
+        examples: document.getElementById("examples"),
+        aiQuestion: document.getElementById("ai-question"),
+        aiBtn: document.getElementById("ai-btn"),
+        aiAnswer: document.getElementById("ai-answer")
+      };
+
+      let pyodide = null;
+      let pyodideLoading = null;
+
+      /* ---------- Beispiele ---------- */
+      const EXAMPLES = {
+        "Hallo Welt": 'print("Hallo Los Finkos! 👋")\nprint("Python läuft im Browser.")',
+        "Schleifen": 'for i in range(1, 11):\n    print(f"{i} × 7 = {i * 7}")',
+        "Liste & Statistik": 'temperatures = [18.2, 21.5, 19.8, 24.1, 23.4, 20.9]\n\nprint("Messwerte:", temperatures)\nprint("Mittelwert:", round(sum(temperatures) / len(temperatures), 2))\nprint("Maximum:", max(temperatures))\nprint("Minimum:", min(temperatures))',
+        "Fibonacci": 'def fibonacci(n):\n    a, b = 0, 1\n    result = []\n    for _ in range(n):\n        result.append(a)\n        a, b = b, a + b\n    return result\n\nprint(fibonacci(15))',
+        "Primzahlen": 'def primes(limit):\n    sieve = [True] * (limit + 1)\n    sieve[0:2] = [False, False]\n    for n in range(2, int(limit ** 0.5) + 1):\n        if sieve[n]:\n            for m in range(n * n, limit + 1, n):\n                sieve[m] = False\n    return [n for n, is_prime in enumerate(sieve) if is_prime]\n\nprint("Primzahlen bis 100:", primes(100))',
+        "Dictionary & Formatierung": 'reisen = {\n    "Ägypten": 2015,\n    "Italien": 2014,\n    "Vietnam": 2020,\n    "Bali": 2024,\n}\n\nfor land, jahr in sorted(reisen.items(), key=lambda x: x[1]):\n    print(f"{jahr}: {land}")'
+      };
+
+      Object.keys(EXAMPLES).forEach(function (name) {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        el.examples.appendChild(opt);
+      });
+
+      el.examples.addEventListener("change", function () {
+        if (el.examples.value && EXAMPLES[el.examples.value]) {
+          el.code.value = EXAMPLES[el.examples.value];
+          if (!el.code.value.trim()) return;
+        }
+      });
+
+      /* ---------- Ausgabe ---------- */
+      function setOutput(html) {
+        el.output.innerHTML = html;
+      }
+
+      function appendOutput(cls, text) {
+        const span = document.createElement("span");
+        span.className = cls;
+        span.textContent = text;
+        el.output.appendChild(span);
+        el.output.scrollTop = el.output.scrollHeight;
+      }
+
+      function setStatus(text, busy) {
+        el.status.innerHTML = "<i class=\"fas " + (busy ? "fa-spinner" : "fa-circle-dot") + "\"></i> " + text;
+        el.status.classList.toggle("busy", !!busy);
+      }
+
+      /* ---------- Pyodide ---------- */
+      function loadRuntime() {
+        if (pyodide) return Promise.resolve(pyodide);
+        if (pyodideLoading) return pyodideLoading;
+        setStatus("Lade Python-Laufzeit (beim ersten Mal ~10 MB) …", true);
+        pyodideLoading = window.loadPyodide({
+          indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/"
+        }).then(function (py) {
+          pyodide = py;
+          py.runPython(
+            "import sys, io\n" +
+            "sys.stdout = io.StringIO()\n" +
+            "sys.stderr = sys.stdout\n"
+          );
+          setStatus("Python bereit", false);
+          return py;
+        }).catch(function (err) {
+          setStatus("Python-Laufzeit konnte nicht geladen werden", false);
+          appendOutput("err", "\n❌ Pyodide konnte nicht geladen werden: " + err.message + "\n");
+          throw err;
+        });
+        return pyodideLoading;
+      }
+
+      async function runCode() {
+        const code = el.code.value;
+        if (!code.trim()) {
+          setOutput('<span class="err">Kein Code zum Ausführen.</span>');
+          return;
+        }
+
+        el.run.disabled = true;
+        setStatus("Führt aus …", true);
+        setOutput("");
+
+        try {
+          const py = await loadRuntime();
+          // Ausgabepuffer leeren
+          py.runPython("sys.stdout.seek(0)\nsys.stdout.truncate(0)");
+
+          const result = await py.runPythonAsync(code);
+
+          const captured = py.runPython("sys.stdout.getvalue()");
+          if (captured) appendOutput("out", captured);
+          if (result !== undefined && result !== null) {
+            appendOutput("res", "\n→ " + String(result) + "\n");
+          }
+          if (!captured && (result === undefined || result === null)) {
+            appendOutput("muted", "(keine Ausgabe – verwende print(), um etwas anzuzeigen)");
+          }
+
+          setStatus("Fertig ✓", false);
+        } catch (err) {
+          appendOutput("err", "❌ " + (err.message || String(err)) + "\n");
+          setStatus("Fehler – siehe Ausgabe", false);
+        } finally {
+          el.run.disabled = false;
+        }
+      }
+
+      /* ---------- KI-Hilfe ---------- */
+      async function askAi() {
+        const question = el.aiQuestion.value.trim();
+        if (!question) {
+          el.aiAnswer.style.display = "block";
+          el.aiAnswer.textContent = "Bitte stelle zuerst eine Frage. 🙂";
+          return;
+        }
+
+        el.aiBtn.disabled = true;
+        el.aiAnswer.style.display = "block";
+        el.aiAnswer.textContent = "🤖 Die KI denkt nach …";
+
+        const messages = [{
+          role: "system",
+          content: "Du bist ein freundlicher, präziser Python-Tutor. Antworte auf Deutsch, kurz und klar. Nutze bei Code-Beispielen Markdown-Codeblöcke mit python-Tags."
+        }, {
+          role: "user",
+          content: "Mein aktueller Code im Editor:\n\n```python\n" + el.code.value + "\n```\n\nMeine Frage: " + question
+        }];
+
+        try {
+          const res = await fetch("https://text.pollinations.ai/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: messages, model: "openai" })
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const text = await res.text();
+          el.aiAnswer.textContent = text.trim() || "(leere Antwort)";
+        } catch (err) {
+          el.aiAnswer.textContent = "❌ Die KI ist gerade nicht erreichbar (" + err.message + "). Bitte später erneut versuchen.";
+        } finally {
+          el.aiBtn.disabled = false;
+        }
+      }
+
+      /* ---------- Events ---------- */
+      el.run.addEventListener("click", runCode);
+      el.clearOut.addEventListener("click", function () {
+        setOutput('<span class="muted">Die Ausgabe erscheint hier …</span>');
+      });
+      el.clearEditor.addEventListener("click", function () {
+        el.code.value = "";
+        el.code.focus();
+      });
+      el.aiBtn.addEventListener("click", askAi);
+      el.aiQuestion.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") askAi();
+      });
+
+      el.code.addEventListener("keydown", function (e) {
+        if (e.key === "Tab") {
+          e.preventDefault();
+          const start = el.code.selectionStart;
+          const end = el.code.selectionEnd;
+          el.code.value = el.code.value.slice(0, start) + "    " + el.code.value.slice(end);
+          el.code.selectionStart = el.code.selectionEnd = start + 4;
+        }
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          runCode();
+        }
+      });
+
+      /* ---------- Start ---------- */
+      el.code.value = EXAMPLES["Hallo Welt"];
+    })();
+  </script>
+</body>
+</html>
