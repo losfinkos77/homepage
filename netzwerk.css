@@ -27,7 +27,7 @@ header h1 {
   text-shadow: 0 0 18px rgba(0, 191, 255, 0.3);
 }
 
-header h1 .fa-network-wired { color: #3aff8c; text-shadow: 0 0 18px rgba(58, 255, 140, 0.35); }
+header h1 .fa-network-wired { color: #00bfff; text-shadow: 0 0 18px rgba(0, 191, 255, 0.4); }
 
 header p { margin: 10px auto 0; max-width: 800px; color: #c9d1d9; }
 
