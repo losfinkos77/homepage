@@ -151,6 +151,26 @@
       ]
     },
     {
+      "name": "Bled",
+      "country": "Slovenia",
+      "lat": 46.3625,
+      "lon": 14.0935,
+      "year": 2018,
+      "description": "Die Inselkirche mitten im See, die Burg hoch darüber und die Julischen Alpen im Hintergrund – Sloweniens Postkartenmotiv.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Bled_Island_%26_Bled_Castle_%281%29.jpg/960px-Bled_Island_%26_Bled_Castle_%281%29.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Bled_Island_%26_Bled_Castle_(1).jpg",
+          "credit": "Wikimedia Commons"
+        },
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/Panorama_Bled_01.jpg/960px-Panorama_Bled_01.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Panorama_Bled_01.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
       "name": "Sossusvlei",
       "country": "Namibia",
       "lat": -24.744,
@@ -191,6 +211,21 @@
         {
           "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/960px-Hagia_Sophia_Mars_2013.jpg",
           "source": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_Mars_2013.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Santorin",
+      "country": "Greece",
+      "lat": 36.4618,
+      "lon": 25.376,
+      "year": 2019,
+      "description": "Die weißen Kuppeln von Oia, blaue Kirchtürme und der berühmteste Sonnenuntergang der Ägäis.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/1000_Three_domes_of_Oia_in_Santorini_Photo_by_Giles_Laurent.jpg/960px-1000_Three_domes_of_Oia_in_Santorini_Photo_by_Giles_Laurent.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:1000_Three_domes_of_Oia_in_Santorini_Photo_by_Giles_Laurent.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
@@ -316,6 +351,26 @@
         {
           "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Sunset_in_the_Old_Town_-_Bucharest%2C_Romania_-_Travel_photography_%2835031271856%29.jpg/960px-Sunset_in_the_Old_Town_-_Bucharest%2C_Romania_-_Travel_photography_%2835031271856%29.jpg",
           "source": "https://commons.wikimedia.org/wiki/File:Sunset_in_the_Old_Town_-_Bucharest,_Romania_-_Travel_photography_(35031271856).jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Zermatt",
+      "country": "Switzerland",
+      "lat": 46.0207,
+      "lon": 7.7491,
+      "year": 2022,
+      "description": "Das Matterhorn in voller Pracht – Bergdörfer, Alpenpanoramen und die klare Höhenluft der Schweizer Alpen.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/CH.VS.Zermatt_2021-10-17_Matterhorn_8726.jpg/960px-CH.VS.Zermatt_2021-10-17_Matterhorn_8726.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:CH.VS.Zermatt_2021-10-17_Matterhorn_8726.jpg",
+          "credit": "Wikimedia Commons"
+        },
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/00_0020_Grindelwald_-_Wetterhorn.jpg/960px-00_0020_Grindelwald_-_Wetterhorn.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:00_0020_Grindelwald_-_Wetterhorn.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
