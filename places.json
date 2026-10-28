@@ -306,6 +306,21 @@
       ]
     },
     {
+      "name": "Koh Samui",
+      "country": "Thailand",
+      "lat": 9.5072,
+      "lon": 100.0127,
+      "year": 2020,
+      "description": "Der Lipa Noi Beach bei Sonnenuntergang – Kokospalmen, lange Sandstrände und die Inselutopie des Golfs von Thailand.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Koh_Samui_Lipa_Noi2.jpg/960px-Koh_Samui_Lipa_Noi2.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Koh_Samui_Lipa_Noi2.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
       "name": "Ha-Long-Bucht",
       "country": "Vietnam",
       "lat": 20.9101,
@@ -321,6 +336,66 @@
       ]
     },
     {
+      "name": "Sapa",
+      "country": "Vietnam",
+      "lat": 22.3364,
+      "lon": 103.8412,
+      "year": 2020,
+      "description": "Die Reisterrassen der Hochländer um Sapa – grüne Stufen bis zum Horizont, Nebelschwaden und Dörfer der Hmong.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Rice_terraces_in_Sapa%2C_Vietnam.jpg/960px-Rice_terraces_in_Sapa%2C_Vietnam.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Rice_terraces_in_Sapa,_Vietnam.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Ha Giang",
+      "country": "Vietnam",
+      "lat": 22.8275,
+      "lon": 104.9766,
+      "year": 2020,
+      "description": "Die Ha-Giang-Schleife im äußersten Norden Vietnams – Reisfelder, Ma-Pi-Leng-Pass und Karstberge an der chinesischen Grenze.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2f/Ha_Giang_rizieres_bis.jpg/960px-Ha_Giang_rizieres_bis.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Ha_Giang_rizieres_bis.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Ban Gioc",
+      "country": "Vietnam",
+      "lat": 22.8464,
+      "lon": 106.7258,
+      "year": 2020,
+      "description": "Der Ban-Gioc-Wasserfall an der chinesischen Grenze – dreistufig stürzt das Wasser über die Kalksteinfelsen, umgeben von Reisfeldern.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Ban_Gioc_-_Detian_Falls2.jpg/960px-Ban_Gioc_-_Detian_Falls2.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Ban_Gioc_-_Detian_Falls2.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Ho Chi Minh",
+      "country": "Vietnam",
+      "lat": 10.7769,
+      "lon": 106.701,
+      "year": 2020,
+      "description": "Skyline am Saigon-Fluss – die Metropole zwischen kolonialem Erbe, Motorradströmen und modernen Hochhäusern.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/R%C3%ADo_Saig%C3%B3n%2C_Ciudad_Ho_Chi_Minh%2C_Vietnam%2C_2013-08-14%2C_DD_29.JPG/960px-R%C3%ADo_Saig%C3%B3n%2C_Ciudad_Ho_Chi_Minh%2C_Vietnam%2C_2013-08-14%2C_DD_29.JPG",
+          "source": "https://commons.wikimedia.org/wiki/File:R%C3%ADo_Saig%C3%B3n,_Ciudad_Ho_Chi_Minh,_Vietnam,_2013-08-14,_DD_29.JPG",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
       "name": "Angkor Wat",
       "country": "Cambodia",
       "lat": 13.4125,
@@ -331,6 +406,21 @@
         {
           "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Angkor_Wat_with_its_reflection_%28cropped%29.jpg/960px-Angkor_Wat_with_its_reflection_%28cropped%29.jpg",
           "source": "https://commons.wikimedia.org/wiki/File:Angkor_Wat_with_its_reflection_(cropped).jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Phnom Penh",
+      "country": "Cambodia",
+      "lat": 11.5564,
+      "lon": 104.9282,
+      "year": 2020,
+      "description": "Der Königspalast am Mekong – goldene Dächer, der Silberpagoden-Komplex und die lebendige Hauptstadt Kambodschas.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/2016_Phnom_Penh%2C_Pa%C5%82ac_Kr%C3%B3lewski%2C_Preah_Tineang_Phhochani_%2814%29.jpg/960px-2016_Phnom_Penh%2C_Pa%C5%82ac_Kr%C3%B3lewski%2C_Preah_Tineang_Phhochani_%2814%29.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:2016_Phnom_Penh,_Pa%C5%82ac_Kr%C3%B3lewski,_Preah_Tineang_Phhochani_(14).jpg",
           "credit": "Wikimedia Commons"
         }
       ]
@@ -491,6 +581,21 @@
         {
           "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Taipei_Taiwan_Taipei-101-Tower-01.jpg/960px-Taipei_Taiwan_Taipei-101-Tower-01.jpg",
           "source": "https://commons.wikimedia.org/wiki/File:Taipei_Taiwan_Taipei-101-Tower-01.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Zypern",
+      "country": "Cyprus",
+      "lat": 34.7717,
+      "lon": 32.4228,
+      "year": 2024,
+      "description": "Paphos an der Südküste – antike Theater, Königsgräber und die Geburtsstätte der Aphrodite zwischen Felsen und türkisblauem Wasser.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9d/Markideio_Theatre%2C_Paphos%2C_Cyprus_-_cropped.jpg/960px-Markideio_Theatre%2C_Paphos%2C_Cyprus_-_cropped.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Markideio_Theatre,_Paphos,_Cyprus_-_cropped.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
