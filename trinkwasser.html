@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Trinkwasser weltweit | Los Finkos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <style>
+    html {
+      background: radial-gradient(1200px 800px at 50% 0%, #0a1520 0%, #050807 55%, #040604 100%);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 16px 60px;
+      color: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    header { text-align: center; margin-bottom: 26px; }
+
+    header h1 {
+      margin: 0; font-size: clamp(28px, 6vw, 56px); letter-spacing: 3px;
+      text-transform: uppercase; color: #00bfff; text-shadow: 0 0 18px rgba(0, 191, 255, 0.3);
+    }
+
+    header p { margin: 10px auto 0; max-width: 780px; color: #c9d1d9; }
+
+    .nav-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+
+    .nav-link {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+      border-radius: 999px; text-decoration: none; color: #00bfff;
+      background: rgba(0, 191, 255, 0.12); border: 1px solid rgba(0, 191, 255, 0.4);
+      transition: all 0.25s ease; font-weight: 500;
+    }
+
+    .nav-link:hover { background: #00bfff; color: #050807; box-shadow: 0 10px 30px rgba(0, 191, 255, 0.25); }
+
+    main { max-width: 1240px; margin: 0 auto; display: grid; gap: 24px; }
+
+    .panel {
+      border-radius: 18px; border: 1px solid rgba(0, 191, 255, 0.25);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.1) 0%, transparent 60%), rgba(9, 14, 20, 0.9);
+      box-shadow: 0 40px 80px -60px rgba(0, 191, 255, 0.9);
+      padding: 20px 22px;
+    }
+
+    /* ---------- Statistiken ---------- */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; }
+
+    .stat-card {
+      border-radius: 16px; border: 1px solid rgba(0, 191, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.12) 0%, transparent 65%), rgba(9, 14, 20, 0.92);
+      padding: 16px 18px; text-align: center;
+    }
+
+    .stat-card i { color: #00bfff; font-size: 20px; }
+
+    .stat-value {
+      font-size: 28px; font-weight: 700; color: #00bfff; margin: 4px 0 2px;
+      text-shadow: 0 0 12px rgba(0, 191, 255, 0.35);
+    }
+
+    .stat-label { font-size: 12.5px; text-transform: uppercase; letter-spacing: 1.5px; color: #9aa5b1; }
+    .stat-hint { font-size: 12px; color: #6b7785; min-height: 1em; }
+
+    /* ---------- Filterleiste ---------- */
+    .filter-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; }
+
+    .filter-group { display: flex; flex-direction: column; gap: 5px; }
+
+    .filter-group label {
+      font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: #9aa5b1;
+    }
+
+    .filter-bar select {
+      appearance: none; -webkit-appearance: none;
+      background: #10181f url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300bfff' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+      border: 1px solid rgba(0, 191, 255, 0.35); border-radius: 12px;
+      color: #e5f4ff; font-family: inherit; font-size: 16px;
+      padding: 10px 36px 10px 14px; min-width: 210px; cursor: pointer;
+    }
+
+    .filter-bar select:focus { border-color: #00bfff; outline: none; }
+
+    /* ---------- Karte ---------- */
+    .map-panel { padding: 12px; }
+
+    #map {
+      height: clamp(420px, 62vh, 660px);
+      border-radius: 12px; z-index: 1;
+    }
+
+    .leaflet-container { background: #050807; font-family: inherit; }
+
+    .leaflet-tile-pane {
+      filter: invert(1) hue-rotate(185deg) brightness(0.95) contrast(0.9) saturate(0.7);
+    }
+
+    .map-legend {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+      padding: 12px 6px 2px; font-size: 13.5px; color: #9aa5b1;
+    }
+
+    .legend-scale {
+      display: inline-flex; border-radius: 8px; overflow: hidden;
+      border: 1px solid rgba(0, 191, 255, 0.35);
+    }
+
+    .legend-scale span { width: 42px; height: 14px; display: inline-block; }
+
+    /* ---------- Leaflet-Popups ---------- */
+    .leaflet-popup-content-wrapper {
+      background: rgba(10, 18, 26, 0.97); color: #e5f4ff;
+      border: 1px solid rgba(0, 191, 255, 0.4); border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    .leaflet-popup-tip { background: rgba(10, 18, 26, 0.97); border: 1px solid rgba(0, 191, 255, 0.4); }
+    .leaflet-container a.leaflet-popup-close-button { color: #7f9db4; }
+    .leaflet-popup-content { margin: 12px 16px; max-width: 260px; }
+
+    .tm-popup h3 { margin: 0 0 2px; color: #00bfff; font-size: 18px; }
+    .tm-popup .meta { color: #9aa5b1; font-size: 12.5px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .tm-popup .bar {
+      height: 10px; border-radius: 999px; background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.3); overflow: hidden; margin: 6px 0;
+    }
+    .tm-popup .bar span { display: block; height: 100%; }
+
+    .leaflet-tooltip.tm-tip {
+      background: rgba(10, 18, 26, 0.95); border: 1px solid rgba(0, 191, 255, 0.4);
+      color: #e5f4ff; border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+    .leaflet-tooltip.tm-tip::before { display: none; }
+
+    /* ---------- Details & Listen ---------- */
+    .detail-grid { display: grid; gap: 18px; grid-template-columns: 1fr; }
+    @media (min-width: 860px) { .detail-grid { grid-template-columns: 2fr 1fr; } }
+
+    .detail-card {
+      border-radius: 14px; border: 1px solid rgba(0, 191, 255, 0.35);
+      background: rgba(0, 191, 255, 0.08); padding: 16px 20px;
+    }
+
+    .detail-card h3 { margin: 0 0 4px; color: #00bfff; font-size: 22px; }
+
+    .bar-row { margin: 10px 0 2px; }
+
+    .bar-row .lbl { display: flex; justify-content: space-between; font-size: 13.5px; color: #c9d1d9; }
+
+    .bar-row .bar {
+      height: 12px; border-radius: 999px; background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.3); overflow: hidden;
+    }
+
+    .bar-row .bar span { display: block; height: 100%; transition: width 0.8s ease; }
+
+    .rank-list { list-style: none; margin: 0; padding: 0; }
+    .rank-list li {
+      display: flex; justify-content: space-between; gap: 10px;
+      padding: 7px 10px; border-radius: 10px;
+      border: 1px solid rgba(0, 191, 255, 0.15); margin-bottom: 6px;
+      font-size: 14px; color: #c9d1d9; cursor: pointer;
+    }
+    .rank-list li:hover { border-color: #00bfff; background: rgba(0, 191, 255, 0.08); }
+    .rank-list li b { color: #00bfff; }
+
+    footer { text-align: center; margin-top: 40px; color: #6b7785; font-size: 13.5px; }
+    footer a { color: #00bfff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      body { padding: 22px 10px 46px; }
+      .panel { padding: 16px 14px; }
+      .filter-bar select { min-width: 0; flex: 1 1 100%; }
+      #map { height: min(70vh, 540px); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Trinkwasser weltweit</h1>
+    <p>Wie gut ist der Zugang zu sauberem Trinkwasser? Länderkarte mit den WHO/UNICEF-Daten (JMP):
+       Anteil der Bevölkerung mit mindestens grundlegenden Trinkwasserleistungen – und „safely managed" davon.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+      <a class="nav-link" href="travelmap.html"><i class="fas fa-plane"></i> Reisekarte</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Statistiken -->
+    <section class="panel" aria-label="Statistiken">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fas fa-earth-americas"></i>
+          <div class="stat-value" id="stat-countries">–</div>
+          <div class="stat-label">Länder erfasst</div>
+          <div class="stat-hint" id="stat-countries-hint"></div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-droplet"></i>
+          <div class="stat-value" id="stat-avg">–</div>
+          <div class="stat-label">Weltweit Ø Zugang</div>
+          <div class="stat-hint">Grundlegender Zugang (%)</div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-circle-check"></i>
+          <div class="stat-value" id="stat-good">–</div>
+          <div class="stat-label">Länder ≥ 99 %</div>
+          <div class="stat-hint">praktisch Vollversorgung</div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-triangle-exclamation"></i>
+          <div class="stat-value" id="stat-critical">–</div>
+          <div class="stat-label">Länder &lt; 50 %</div>
+          <div class="stat-hint">kritisch versorgt</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter -->
+    <section class="panel" aria-label="Filter">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="filter-access">Zugang filtern</label>
+          <select id="filter-access">
+            <option value="">Alle Länder</option>
+            <option value="99">≥ 99 % (Vollversorgung)</option>
+            <option value="90-99">90 – 99 %</option>
+            <option value="70-90">70 – 90 %</option>
+            <option value="50-70">50 – 70 %</option>
+            <option value="lt50">&lt; 50 % (kritisch)</option>
+            <option value="nodata">Ohne Daten</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="search-country">Land suchen</label>
+          <select id="search-country">
+            <option value="">Land auswählen …</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Karte -->
+    <section class="panel map-panel">
+      <div id="map" aria-label="Trinkwasser-Karte"></div>
+      <div class="map-legend">
+        <span>Zugang zu grundlegendem Trinkwasser:</span>
+        <span class="legend-scale">
+          <span style="background:#b3402a;" title="0 %"></span>
+          <span style="background:#d97b35;" title="25 %"></span>
+          <span style="background:#e8c339;" title="50 %"></span>
+          <span style="background:#8fbf4d;" title="75 %"></span>
+          <span style="background:#00c9a7;" title="90 %"></span>
+          <span style="background:#00e5ff;" title="100 %"></span>
+        </span>
+        <span>0 % → 100 %</span>
+        <span id="filter-hint" style="color:#00bfff;"></span>
+      </div>
+      <div class="load-error" id="load-error" style="display:none; margin-top:12px; border:1px solid rgba(255,107,53,.5); background:rgba(255,107,53,.12); color:#ffd9c9; border-radius:14px; padding:12px 16px;">
+        <i class="fas fa-triangle-exclamation"></i> <strong>water.json konnte nicht geladen werden.</strong>
+        Beim lokalen Test bitte einen Webserver starten (z. B. <code>python3 -m http.server</code>).
+      </div>
+    </section>
+
+    <!-- Details & Ranglisten -->
+    <section class="panel">
+      <div class="detail-grid">
+        <div class="detail-card" id="detail-card">
+          <h3 id="detail-name">Land anklicken …</h3>
+          <p style="margin:0; color:#9aa5b1; font-size:14px;" id="detail-sub">Wähle ein Land auf der Karte, in der Suche oder in den Ranglisten.</p>
+          <div id="detail-content"></div>
+        </div>
+        <div>
+          <h3 style="color:#00bfff; margin:0 0 8px; font-size:16px;"><i class="fas fa-trophy"></i> Am besten versorgt</h3>
+          <ul class="rank-list" id="rank-top"></ul>
+          <h3 style="color:#ff7b6b; margin:16px 0 8px; font-size:16px;"><i class="fas fa-triangle-exclamation"></i> Am wenigsten versorgt</h3>
+          <ul class="rank-list" id="rank-bottom"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Daten: WHO/UNICEF Joint Monitoring Programme (JMP) via
+       <a href="https://data.worldbank.org/indicator/SH.H2O.BASW.ZS" target="_blank" rel="noopener noreferrer">Weltbank</a>
+       (jeweils letztes verfügbares Jahr) · Karte: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap</a> ·
+       <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer">Leaflet</a></p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      const GEO_URLS = [
+        "https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.json",
+        "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
+      ];
+
+      const map = L.map("map", { worldCopyJump: true, zoomControl: true });
+      map.setView([24, 0], 2);
+
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>'
+      }).addTo(map);
+
+      let data = {};        // iso3 -> Eintrag
+      let geoLayer = null;
+      let selectedIso = null;
+
+      const el = {
+        filter: document.getElementById("filter-access"),
+        search: document.getElementById("search-country"),
+        filterHint: document.getElementById("filter-hint"),
+        detailName: document.getElementById("detail-name"),
+        detailSub: document.getElementById("detail-sub"),
+        detailContent: document.getElementById("detail-content"),
+        loadError: document.getElementById("load-error")
+      };
+
+      /* ---------- Farben ---------- */
+      function colorFor(pct) {
+        if (pct == null) return "#2a3440";
+        const stops = [
+          [0, [179, 64, 42]], [25, [217, 123, 53]], [50, [232, 195, 57]],
+          [75, [143, 191, 77]], [90, [0, 201, 167]], [100, [0, 229, 255]]
+        ];
+        let lo = stops[0], hi = stops[stops.length - 1];
+        for (let i = 0; i < stops.length - 1; i++) {
+          if (pct >= stops[i][0] && pct <= stops[i + 1][0]) { lo = stops[i]; hi = stops[i + 1]; break; }
+        }
+        const t = hi[0] === lo[0] ? 0 : (pct - lo[0]) / (hi[0] - lo[0]);
+        const c = lo[1].map(function (v, i) { return Math.round(v + t * (hi[1][i] - v)); });
+        return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
+      }
+
+      function inFilter(entry) {
+        const f = el.filter.value;
+        if (!f) return true;
+        const pct = entry ? entry.basic : null;
+        if (f === "nodata") return pct == null;
+        if (pct == null) return false;
+        if (f === "99") return pct >= 99;
+        if (f === "90-99") return pct >= 90 && pct < 99;
+        if (f === "70-90") return pct >= 70 && pct < 90;
+        if (f === "50-70") return pct >= 50 && pct < 70;
+        if (f === "lt50") return pct < 50;
+        return true;
+      }
+
+      function countryStyle(feature) {
+        const entry = data[feature.id];
+        const pct = entry ? entry.basic : null;
+        const active = inFilter(entry);
+        return {
+          color: feature.id === selectedIso ? "#ffffff" : "rgba(0,191,255,0.4)",
+          weight: feature.id === selectedIso ? 2.4 : 0.8,
+          fillColor: colorFor(pct),
+          fillOpacity: pct == null ? 0.12 : (active ? 0.75 : 0.1),
+          opacity: 1
+        };
+      }
+
+      function refreshLayer() {
+        if (!geoLayer) return;
+        geoLayer.eachLayer(function (layer) {
+          geoLayer.resetStyle(layer);
+        });
+      }
+
+      /* ---------- Details ---------- */
+      function showDetails(iso3) {
+        selectedIso = iso3;
+        const entry = data[iso3];
+        const name = entry ? entry.name : (iso3 || "—");
+
+        el.detailName.textContent = name;
+        if (!entry || (entry.basic == null && entry.managed == null)) {
+          el.detailSub.textContent = "Keine JMP-Daten für dieses Land in der Weltbank-Datenbank.";
+          el.detailContent.innerHTML = "";
+          refreshLayer();
+          return;
+        }
+
+        el.detailSub.textContent = entry.basic != null
+          ? "Datenstand: " + entry.basicYear + (entry.managedYear && entry.managed != null ? " / " + entry.managedYear : "")
+          : "Datenstand: " + (entry.managedYear || "");
+
+        function bar(label, pct, year, color) {
+          if (pct == null) return "";
+          return '<div class="bar-row"><div class="lbl"><span>' + label + '</span><span><b style="color:#00bfff;">' +
+            pct.toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %</b> <span style=\"color:#6b7785;\">(" + year + ")</span></span></div>" +
+            '<div class="bar"><span style="width:' + pct + '%; background:' + color + ';"></span></div></div>';
+        }
+
+        const basicColor = colorFor(entry.basic);
+        let html = bar("Grundlegender Trinkwasser-Zugang", entry.basic, entry.basicYear, basicColor);
+        html += bar("Davon „safely managed“", entry.managed, entry.managedYear, colorFor(entry.managed));
+
+        if (entry.basic != null) {
+          const status = entry.basic >= 99 ? "🏆 Praktisch Vollversorgung"
+            : entry.basic >= 90 ? "✅ Sehr gute Versorgung"
+            : entry.basic >= 70 ? "👍 Solide Versorgung"
+            : entry.basic >= 50 ? "⚠️ Verbesserungsbedürftig"
+            : "🚨 Kritisch versorgt";
+          html += '<p style="margin:10px 0 0; font-size:14.5px;">' + status + "</p>";
+        }
+
+        el.detailContent.innerHTML = html;
+        refreshLayer();
+      }
+
+      /* ---------- Ranglisten & Stats ---------- */
+      function buildLists() {
+        const withBasic = Object.values(data).filter(function (e) { return e.basic != null; });
+        const top = withBasic.slice().sort(function (a, b) { return b.basic - a.basic; }).slice(0, 5);
+        const bottom = withBasic.slice().sort(function (a, b) { return a.basic - b.basic; }).slice(0, 5);
+
+        function fill(listEl, items) {
+          listEl.innerHTML = "";
+          items.forEach(function (e) {
+            const li = document.createElement("li");
+            li.innerHTML = "<span>" + e.name + "</span><b>" + e.basic.toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %</b>";
+            li.addEventListener("click", function () { focusCountry(e.iso3); });
+            listEl.appendChild(li);
+          });
+        }
+
+        fill(document.getElementById("rank-top"), top);
+        fill(document.getElementById("rank-bottom"), bottom);
+
+        const avg = withBasic.reduce(function (s, e) { return s + e.basic; }, 0) / withBasic.length;
+        document.getElementById("stat-countries").textContent = Object.keys(data).length;
+        document.getElementById("stat-avg").textContent = avg.toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %";
+        document.getElementById("stat-good").textContent = withBasic.filter(function (e) { return e.basic >= 99; }).length;
+        document.getElementById("stat-critical").textContent = withBasic.filter(function (e) { return e.basic < 50; }).length;
+      }
+
+      function focusCountry(iso3) {
+        selectedIso = iso3;
+        showDetails(iso3);
+        el.search.value = iso3;
+        if (geoLayer) {
+          const target = geoLayer.getLayers().find(function (l) {
+            return l.feature.id === iso3;
+          });
+          if (target && target.getBounds) map.fitBounds(target.getBounds().pad(1.2), { maxZoom: 6 });
+        }
+        refreshLayer();
+      }
+
+      /* ---------- GeoJSON laden ---------- */
+      function loadGeo() {
+        let index = 0;
+        (function attempt() {
+          if (index >= GEO_URLS.length) return;
+          fetch(GEO_URLS[index++])
+            .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+            .then(function (geo) {
+              geoLayer = L.geoJSON(geo, {
+                style: countryStyle,
+                onEachFeature: function (feature, layer) {
+                  const entry = data[feature.id];
+                  const name = entry ? entry.name : (feature.properties.name || feature.id);
+                  const pct = entry && entry.basic != null
+                    ? entry.basic.toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " % (" + entry.basicYear + ")"
+                    : "keine Daten";
+                  layer.bindTooltip("<b>" + name + "</b><br>Zugang: " + pct, { sticky: true, className: "tm-tip", direction: "top" });
+                  layer.on("click", function () {
+                    showDetails(feature.id);
+                    el.search.value = feature.id;
+                  });
+                  layer.on("mouseover", function () { layer.setStyle({ weight: 2.2 }); });
+                  layer.on("mouseout", function () { geoLayer.resetStyle(layer); });
+                }
+              }).addTo(map);
+              refreshLayer();
+            })
+            .catch(attempt);
+        })();
+      }
+
+      /* ---------- Events ---------- */
+      el.filter.addEventListener("change", function () {
+        const f = el.filter.value;
+        el.filterHint.textContent = f ? "Filter aktiv: nicht passende Länder ausgeblendet" : "";
+        refreshLayer();
+      });
+
+      el.search.addEventListener("change", function () {
+        if (el.search.value) focusCountry(el.search.value);
+      });
+
+      /* ---------- Start ---------- */
+      fetch("water.json")
+        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+        .then(function (json) {
+          (json.countries || []).forEach(function (c) { data[c.iso3] = c; });
+
+          const opts = Object.values(data).sort(function (a, b) { return a.name.localeCompare(b.name, "de"); });
+          opts.forEach(function (e) {
+            const opt = document.createElement("option");
+            opt.value = e.iso3;
+            opt.textContent = e.name;
+            el.search.appendChild(opt);
+          });
+
+          buildLists();
+          loadGeo();
+        })
+        .catch(function () { el.loadError.style.display = "block"; });
+    })();
+  </script>
+</body>
+</html>

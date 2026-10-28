@@ -1,0 +1,1717 @@
+{
+ "source": "WHO/UNICEF JMP via Weltbank (SH.H2O.BASW.ZS, SH.H2O.SMDW.ZS) – jeweils letztes verfügbares Jahr",
+ "countries": [
+  {
+   "iso3": "AFG",
+   "name": "Afghanistan",
+   "basic": 80.8,
+   "basicYear": 2024,
+   "managed": 30.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ALB",
+   "name": "Albania",
+   "basic": 95.1,
+   "basicYear": 2024,
+   "managed": 70.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "DZA",
+   "name": "Algeria",
+   "basic": 92.4,
+   "basicYear": 2024,
+   "managed": 69.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ASM",
+   "name": "American Samoa",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 90.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "AND",
+   "name": "Andorra",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 90.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "AGO",
+   "name": "Angola",
+   "basic": 68.0,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "ATG",
+   "name": "Antigua and Barbuda",
+   "basic": 98.9,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "ARG",
+   "name": "Argentina",
+   "basic": 99.0,
+   "basicYear": 2016,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "ARM",
+   "name": "Armenia",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": 82.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ABW",
+   "name": "Aruba",
+   "basic": 96.7,
+   "basicYear": 2016,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "AUS",
+   "name": "Australia",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "AUT",
+   "name": "Austria",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 98.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "AZE",
+   "name": "Azerbaijan",
+   "basic": 97.7,
+   "basicYear": 2024,
+   "managed": 57.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BHS",
+   "name": "Bahamas, The",
+   "basic": 98.9,
+   "basicYear": 2019,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "BHR",
+   "name": "Bahrain",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": 98.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BGD",
+   "name": "Bangladesh",
+   "basic": 98.8,
+   "basicYear": 2024,
+   "managed": 59.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BRB",
+   "name": "Barbados",
+   "basic": 99.2,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "BLR",
+   "name": "Belarus",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": 93.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BEL",
+   "name": "Belgium",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 99.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BLZ",
+   "name": "Belize",
+   "basic": 94.8,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "BEN",
+   "name": "Benin",
+   "basic": 69.6,
+   "basicYear": 2024,
+   "managed": 17.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BMU",
+   "name": "Bermuda",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "BTN",
+   "name": "Bhutan",
+   "basic": 99.5,
+   "basicYear": 2024,
+   "managed": 65.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BOL",
+   "name": "Bolivia",
+   "basic": 93.4,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "BIH",
+   "name": "Bosnia and Herzegovina",
+   "basic": 96.1,
+   "basicYear": 2024,
+   "managed": 86.4,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BWA",
+   "name": "Botswana",
+   "basic": 91.8,
+   "basicYear": 2024,
+   "managed": 63.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BRA",
+   "name": "Brazil",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 88.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "VGB",
+   "name": "British Virgin Islands",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "BRN",
+   "name": "Brunei Darussalam",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "BGR",
+   "name": "Bulgaria",
+   "basic": 99.2,
+   "basicYear": 2024,
+   "managed": 96.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "BFA",
+   "name": "Burkina Faso",
+   "basic": 50.0,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "BDI",
+   "name": "Burundi",
+   "basic": 65.9,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "CPV",
+   "name": "Cabo Verde",
+   "basic": 92.3,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "KHM",
+   "name": "Cambodia",
+   "basic": 82.8,
+   "basicYear": 2024,
+   "managed": 30.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "CMR",
+   "name": "Cameroon",
+   "basic": 71.4,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "CAN",
+   "name": "Canada",
+   "basic": 98.3,
+   "basicYear": 2024,
+   "managed": 96.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "CYM",
+   "name": "Cayman Islands",
+   "basic": 95.5,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "CAF",
+   "name": "Central African Republic",
+   "basic": 36.5,
+   "basicYear": 2024,
+   "managed": 6.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "TCD",
+   "name": "Chad",
+   "basic": 52.2,
+   "basicYear": 2024,
+   "managed": 6.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "CHL",
+   "name": "Chile",
+   "basic": 99.1,
+   "basicYear": 2024,
+   "managed": 97.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "CHN",
+   "name": "China",
+   "basic": 96.1,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "COL",
+   "name": "Colombia",
+   "basic": 97.1,
+   "basicYear": 2024,
+   "managed": 74.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "COM",
+   "name": "Comoros",
+   "basic": 85.1,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "COD",
+   "name": "Congo, Dem. Rep.",
+   "basic": 35.7,
+   "basicYear": 2024,
+   "managed": 11.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "COG",
+   "name": "Congo, Rep.",
+   "basic": 73.5,
+   "basicYear": 2021,
+   "managed": 45.9,
+   "managedYear": 2021
+  },
+  {
+   "iso3": "CRI",
+   "name": "Costa Rica",
+   "basic": 99.8,
+   "basicYear": 2024,
+   "managed": 80.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "CIV",
+   "name": "Cote d'Ivoire",
+   "basic": 77.2,
+   "basicYear": 2024,
+   "managed": 36.4,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "HRV",
+   "name": "Croatia",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": 87.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "CUB",
+   "name": "Cuba",
+   "basic": 95.1,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "CUW",
+   "name": "Curacao",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "CYP",
+   "name": "Cyprus",
+   "basic": 99.7,
+   "basicYear": 2024,
+   "managed": 99.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "CZE",
+   "name": "Czechia",
+   "basic": 98.7,
+   "basicYear": 2024,
+   "managed": 98.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "DNK",
+   "name": "Denmark",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 99.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "DJI",
+   "name": "Djibouti",
+   "basic": 79.7,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "DMA",
+   "name": "Dominica",
+   "basic": 97.0,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "DOM",
+   "name": "Dominican Republic",
+   "basic": 97.5,
+   "basicYear": 2024,
+   "managed": 45.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ECU",
+   "name": "Ecuador",
+   "basic": 92.1,
+   "basicYear": 2024,
+   "managed": 69.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "EGY",
+   "name": "Egypt, Arab Rep.",
+   "basic": 97.3,
+   "basicYear": 2024,
+   "managed": 78.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SLV",
+   "name": "El Salvador",
+   "basic": 91.6,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "GNQ",
+   "name": "Equatorial Guinea",
+   "basic": 64.7,
+   "basicYear": 2017,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "ERI",
+   "name": "Eritrea",
+   "basic": 51.8,
+   "basicYear": 2016,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "EST",
+   "name": "Estonia",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 98.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SWZ",
+   "name": "Eswatini",
+   "basic": 80.4,
+   "basicYear": 2024,
+   "managed": 38.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ETH",
+   "name": "Ethiopia",
+   "basic": 55.6,
+   "basicYear": 2024,
+   "managed": 13.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "FRO",
+   "name": "Faroe Islands",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "FJI",
+   "name": "Fiji",
+   "basic": 95.6,
+   "basicYear": 2024,
+   "managed": 42.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "FIN",
+   "name": "Finland",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 99.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "FRA",
+   "name": "France",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 99.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PYF",
+   "name": "French Polynesia",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 90.4,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GAB",
+   "name": "Gabon",
+   "basic": 88.6,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "GMB",
+   "name": "Gambia, The",
+   "basic": 87.1,
+   "basicYear": 2024,
+   "managed": 48.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GEO",
+   "name": "Georgia",
+   "basic": 97.3,
+   "basicYear": 2024,
+   "managed": 70.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "DEU",
+   "name": "Germany",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 99.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GHA",
+   "name": "Ghana",
+   "basic": 89.9,
+   "basicYear": 2024,
+   "managed": 42.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GIB",
+   "name": "Gibraltar",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GRC",
+   "name": "Greece",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 96.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GRL",
+   "name": "Greenland",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "GRD",
+   "name": "Grenada",
+   "basic": 95.6,
+   "basicYear": 2017,
+   "managed": 89.9,
+   "managedYear": 2017
+  },
+  {
+   "iso3": "GUM",
+   "name": "Guam",
+   "basic": 99.5,
+   "basicYear": 2024,
+   "managed": 94.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GTM",
+   "name": "Guatemala",
+   "basic": 93.2,
+   "basicYear": 2024,
+   "managed": 48.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GIN",
+   "name": "Guinea",
+   "basic": 74.2,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "GNB",
+   "name": "Guinea-Bissau",
+   "basic": 61.8,
+   "basicYear": 2024,
+   "managed": 24.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GUY",
+   "name": "Guyana",
+   "basic": 95.6,
+   "basicYear": 2024,
+   "managed": 67.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "HTI",
+   "name": "Haiti",
+   "basic": 73.3,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "HND",
+   "name": "Honduras",
+   "basic": 95.7,
+   "basicYear": 2024,
+   "managed": 65.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "HKG",
+   "name": "Hong Kong SAR, China",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "HUN",
+   "name": "Hungary",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ISL",
+   "name": "Iceland",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "IND",
+   "name": "India",
+   "basic": 95.7,
+   "basicYear": 2024,
+   "managed": 76.4,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "IDN",
+   "name": "Indonesia",
+   "basic": 89.0,
+   "basicYear": 2024,
+   "managed": 30.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "IRN",
+   "name": "Iran, Islamic Rep.",
+   "basic": 97.9,
+   "basicYear": 2024,
+   "managed": 94.4,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "IRQ",
+   "name": "Iraq",
+   "basic": 98.4,
+   "basicYear": 2024,
+   "managed": 59.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "IRL",
+   "name": "Ireland",
+   "basic": 97.1,
+   "basicYear": 2024,
+   "managed": 96.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "IMN",
+   "name": "Isle of Man",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 99.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ISR",
+   "name": "Israel",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 99.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ITA",
+   "name": "Italy",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": 96.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "JAM",
+   "name": "Jamaica",
+   "basic": 87.6,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "JPN",
+   "name": "Japan",
+   "basic": 99.2,
+   "basicYear": 2024,
+   "managed": 98.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "JOR",
+   "name": "Jordan",
+   "basic": 99.3,
+   "basicYear": 2024,
+   "managed": 89.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "KAZ",
+   "name": "Kazakhstan",
+   "basic": 97.8,
+   "basicYear": 2024,
+   "managed": 91.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "KEN",
+   "name": "Kenya",
+   "basic": 65.6,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "KIR",
+   "name": "Kiribati",
+   "basic": 79.1,
+   "basicYear": 2024,
+   "managed": 15.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PRK",
+   "name": "Korea, Dem. People's Rep.",
+   "basic": 93.9,
+   "basicYear": 2023,
+   "managed": 66.6,
+   "managedYear": 2023
+  },
+  {
+   "iso3": "KOR",
+   "name": "Korea, Rep.",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 99.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "KWT",
+   "name": "Kuwait",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "KGZ",
+   "name": "Kyrgyz Republic",
+   "basic": 94.9,
+   "basicYear": 2024,
+   "managed": 73.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "LAO",
+   "name": "Lao PDR",
+   "basic": 95.9,
+   "basicYear": 2024,
+   "managed": 35.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "LVA",
+   "name": "Latvia",
+   "basic": 98.8,
+   "basicYear": 2024,
+   "managed": 97.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "LBN",
+   "name": "Lebanon",
+   "basic": 92.6,
+   "basicYear": 2024,
+   "managed": 47.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "LSO",
+   "name": "Lesotho",
+   "basic": 78.1,
+   "basicYear": 2024,
+   "managed": 31.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "LBR",
+   "name": "Liberia",
+   "basic": 78.8,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "LBY",
+   "name": "Libya",
+   "basic": 96.4,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "LIE",
+   "name": "Liechtenstein",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "LTU",
+   "name": "Lithuania",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": 96.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "LUX",
+   "name": "Luxembourg",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 99.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MAC",
+   "name": "Macao SAR, China",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MDG",
+   "name": "Madagascar",
+   "basic": 55.3,
+   "basicYear": 2024,
+   "managed": 22.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MWI",
+   "name": "Malawi",
+   "basic": 73.1,
+   "basicYear": 2024,
+   "managed": 18.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MYS",
+   "name": "Malaysia",
+   "basic": 97.9,
+   "basicYear": 2024,
+   "managed": 94.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MDV",
+   "name": "Maldives",
+   "basic": 99.8,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "MLI",
+   "name": "Mali",
+   "basic": 86.4,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "MLT",
+   "name": "Malta",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 99.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MHL",
+   "name": "Marshall Islands",
+   "basic": 87.4,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "MRT",
+   "name": "Mauritania",
+   "basic": 77.3,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "MUS",
+   "name": "Mauritius",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "MEX",
+   "name": "Mexico",
+   "basic": 99.5,
+   "basicYear": 2024,
+   "managed": 43.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "FSM",
+   "name": "Micronesia, Fed. Sts.",
+   "basic": 89.9,
+   "basicYear": 2020,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "MDA",
+   "name": "Moldova",
+   "basic": 92.7,
+   "basicYear": 2024,
+   "managed": 75.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MCO",
+   "name": "Monaco",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MNG",
+   "name": "Mongolia",
+   "basic": 86.1,
+   "basicYear": 2024,
+   "managed": 43.4,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MNE",
+   "name": "Montenegro",
+   "basic": 99.3,
+   "basicYear": 2024,
+   "managed": 85.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MAR",
+   "name": "Morocco",
+   "basic": 92.2,
+   "basicYear": 2024,
+   "managed": 80.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MOZ",
+   "name": "Mozambique",
+   "basic": 66.6,
+   "basicYear": 2024,
+   "managed": 27.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MMR",
+   "name": "Myanmar",
+   "basic": 85.7,
+   "basicYear": 2024,
+   "managed": 59.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "NAM",
+   "name": "Namibia",
+   "basic": 86.5,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "NRU",
+   "name": "Naoero",
+   "basic": 97.8,
+   "basicYear": 2024,
+   "managed": 18.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "NPL",
+   "name": "Nepal",
+   "basic": 93.6,
+   "basicYear": 2024,
+   "managed": 16.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "NLD",
+   "name": "Netherlands",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "NCL",
+   "name": "New Caledonia",
+   "basic": 99.5,
+   "basicYear": 2024,
+   "managed": 96.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "NZL",
+   "name": "New Zealand",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "NER",
+   "name": "Niger",
+   "basic": 53.4,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "NGA",
+   "name": "Nigeria",
+   "basic": 82.2,
+   "basicYear": 2024,
+   "managed": 29.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MKD",
+   "name": "North Macedonia",
+   "basic": 98.2,
+   "basicYear": 2024,
+   "managed": 80.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "MNP",
+   "name": "Northern Mariana Islands",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 81.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "NOR",
+   "name": "Norway",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 99.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "OMN",
+   "name": "Oman",
+   "basic": 92.7,
+   "basicYear": 2024,
+   "managed": 91.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PAK",
+   "name": "Pakistan",
+   "basic": 90.7,
+   "basicYear": 2024,
+   "managed": 45.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PLW",
+   "name": "Palau",
+   "basic": 99.5,
+   "basicYear": 2024,
+   "managed": 90.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PAN",
+   "name": "Panama",
+   "basic": 95.3,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "PNG",
+   "name": "Papua New Guinea",
+   "basic": 53.3,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "PRY",
+   "name": "Paraguay",
+   "basic": 99.6,
+   "basicYear": 2024,
+   "managed": 64.4,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PER",
+   "name": "Peru",
+   "basic": 95.6,
+   "basicYear": 2024,
+   "managed": 49.4,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PHL",
+   "name": "Philippines",
+   "basic": 95.9,
+   "basicYear": 2024,
+   "managed": 48.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "POL",
+   "name": "Poland",
+   "basic": 90.1,
+   "basicYear": 2024,
+   "managed": 88.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PRT",
+   "name": "Portugal",
+   "basic": 99.3,
+   "basicYear": 2024,
+   "managed": 95.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PRI",
+   "name": "Puerto Rico (US)",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 98.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "QAT",
+   "name": "Qatar",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 95.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ROU",
+   "name": "Romania",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 82.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "RUS",
+   "name": "Russian Federation",
+   "basic": 96.9,
+   "basicYear": 2024,
+   "managed": 76.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "RWA",
+   "name": "Rwanda",
+   "basic": 61.4,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "WSM",
+   "name": "Samoa",
+   "basic": 99.4,
+   "basicYear": 2024,
+   "managed": 62.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SMR",
+   "name": "San Marino",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 100.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "STP",
+   "name": "Sao Tome and Principe",
+   "basic": 78.0,
+   "basicYear": 2024,
+   "managed": 36.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SAU",
+   "name": "Saudi Arabia",
+   "basic": 99.0,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "SEN",
+   "name": "Senegal",
+   "basic": 88.0,
+   "basicYear": 2024,
+   "managed": 27.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SRB",
+   "name": "Serbia",
+   "basic": 95.4,
+   "basicYear": 2024,
+   "managed": 75.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SYC",
+   "name": "Seychelles",
+   "basic": 97.7,
+   "basicYear": 2024,
+   "managed": 64.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SLE",
+   "name": "Sierra Leone",
+   "basic": 68.1,
+   "basicYear": 2024,
+   "managed": 10.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SGP",
+   "name": "Singapore",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 100,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SXM",
+   "name": "Sint Maarten (Dutch part)",
+   "basic": 99.3,
+   "basicYear": 2017,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "SVK",
+   "name": "Slovak Republic",
+   "basic": 99.8,
+   "basicYear": 2024,
+   "managed": 99.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SVN",
+   "name": "Slovenia",
+   "basic": 99.6,
+   "basicYear": 2024,
+   "managed": 99.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SLB",
+   "name": "Solomon Islands",
+   "basic": 71.6,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "SOM",
+   "name": "Somalia, Fed. Rep.",
+   "basic": 75.3,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "ZAF",
+   "name": "South Africa",
+   "basic": 90.2,
+   "basicYear": 2024,
+   "managed": 68.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SSD",
+   "name": "South Sudan",
+   "basic": 39.7,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "ESP",
+   "name": "Spain",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": 99.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "LKA",
+   "name": "Sri Lanka",
+   "basic": 90.2,
+   "basicYear": 2024,
+   "managed": 46.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "KNA",
+   "name": "St. Kitts and Nevis",
+   "basic": 98.6,
+   "basicYear": 2017,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "LCA",
+   "name": "St. Lucia",
+   "basic": 98.1,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "MAF",
+   "name": "St. Martin (French part)",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": 96.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "VCT",
+   "name": "St. Vincent and the Grenadines",
+   "basic": 97.7,
+   "basicYear": 2018,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "SDN",
+   "name": "Sudan",
+   "basic": 64.9,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "SUR",
+   "name": "Suriname",
+   "basic": 98.0,
+   "basicYear": 2024,
+   "managed": 55.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SWE",
+   "name": "Sweden",
+   "basic": 99.8,
+   "basicYear": 2024,
+   "managed": 99.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "CHE",
+   "name": "Switzerland",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 96.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "SYR",
+   "name": "Syrian Arab Republic",
+   "basic": 94.1,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "TJK",
+   "name": "Tajikistan",
+   "basic": 89.2,
+   "basicYear": 2024,
+   "managed": 65.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "TZA",
+   "name": "Tanzania",
+   "basic": 64.6,
+   "basicYear": 2024,
+   "managed": 31.3,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "THA",
+   "name": "Thailand",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "TLS",
+   "name": "Timor-Leste",
+   "basic": 87.3,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "TGO",
+   "name": "Togo",
+   "basic": 64.8,
+   "basicYear": 2024,
+   "managed": 20.5,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "TON",
+   "name": "Tonga",
+   "basic": 98.9,
+   "basicYear": 2024,
+   "managed": 29.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "TTO",
+   "name": "Trinidad and Tobago",
+   "basic": 99.3,
+   "basicYear": 2024,
+   "managed": 69.4,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "TUN",
+   "name": "Tunisia",
+   "basic": 96.7,
+   "basicYear": 2024,
+   "managed": 65.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "TUR",
+   "name": "Turkiye",
+   "basic": 96.0,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "TKM",
+   "name": "Turkmenistan",
+   "basic": 99.9,
+   "basicYear": 2024,
+   "managed": 94.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "TCA",
+   "name": "Turks and Caicos Islands",
+   "basic": 98.8,
+   "basicYear": 2024,
+   "managed": 47.0,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "TUV",
+   "name": "Tuvalu",
+   "basic": 98.7,
+   "basicYear": 2024,
+   "managed": 8.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "UGA",
+   "name": "Uganda",
+   "basic": 63.0,
+   "basicYear": 2024,
+   "managed": 18.1,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "UKR",
+   "name": "Ukraine",
+   "basic": 93.5,
+   "basicYear": 2024,
+   "managed": 87.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "ARE",
+   "name": "United Arab Emirates",
+   "basic": 100,
+   "basicYear": 2024,
+   "managed": 98.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "GBR",
+   "name": "United Kingdom",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 99.8,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "USA",
+   "name": "United States",
+   "basic": 100.0,
+   "basicYear": 2024,
+   "managed": 97.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "URY",
+   "name": "Uruguay",
+   "basic": 99.6,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "UZB",
+   "name": "Uzbekistan",
+   "basic": 97.3,
+   "basicYear": 2024,
+   "managed": 81.9,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "VUT",
+   "name": "Vanuatu",
+   "basic": 87.1,
+   "basicYear": 2024,
+   "managed": 19.2,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "VEN",
+   "name": "Venezuela, RB",
+   "basic": 93.3,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "VNM",
+   "name": "Viet Nam",
+   "basic": 98.8,
+   "basicYear": 2024,
+   "managed": 58.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "VIR",
+   "name": "Virgin Islands (U.S.)",
+   "basic": 99.5,
+   "basicYear": 2024,
+   "managed": 98.7,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "PSE",
+   "name": "West Bank and Gaza",
+   "basic": 98.8,
+   "basicYear": 2024,
+   "managed": 80.6,
+   "managedYear": 2024
+  },
+  {
+   "iso3": "YEM",
+   "name": "Yemen, Rep.",
+   "basic": 75.0,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "ZMB",
+   "name": "Zambia",
+   "basic": 73.4,
+   "basicYear": 2024,
+   "managed": null,
+   "managedYear": null
+  },
+  {
+   "iso3": "ZWE",
+   "name": "Zimbabwe",
+   "basic": 67.2,
+   "basicYear": 2024,
+   "managed": 25.5,
+   "managedYear": 2024
+  }
+ ]
+}
