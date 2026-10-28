@@ -527,10 +527,11 @@
         "uae": "United Arab Emirates"
       };
 
-      // Stadtstaaten, die im GeoJSON-Datensatz zu klein/fehlerhaft sind:
+      // Kleine Staaten/Inselstaaten ohne eigenes Polygon im GeoJSON-Datensatz:
       // erhalten stattdessen einen Kreis als Länder-Highlight.
       const CITY_STATES = {
-        "Singapore": { lat: 1.3521, lon: 103.8198, radius: 22000 }
+        "Singapore": { lat: 1.3521, lon: 103.8198, radius: 22000 },
+        "Maldives": { lat: 4.1755, lon: 73.5093, radius: 35000 }
       };
 
       /* ---------- Karte ---------- */

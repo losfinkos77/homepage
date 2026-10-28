@@ -76,6 +76,21 @@
       ]
     },
     {
+      "name": "Berlin",
+      "country": "Germany",
+      "lat": 52.5163,
+      "lon": 13.3777,
+      "year": 2016,
+      "description": "Das Brandenburger Tor bei Nacht – Berliner Geschichte zwischen Pariser Platz, East Side Gallery und Nachtleben.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Brandenburger_Tor_nachts.jpg/960px-Brandenburger_Tor_nachts.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Brandenburger_Tor_nachts.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
       "name": "Marrakesch",
       "country": "Morocco",
       "lat": 31.624,
@@ -86,6 +101,21 @@
         {
           "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Mosqu%C3%A9e_de_la_Koutoubia_-_marakesh.jpg/960px-Mosqu%C3%A9e_de_la_Koutoubia_-_marakesh.jpg",
           "source": "https://commons.wikimedia.org/wiki/File:Mosqu%C3%A9e_de_la_Koutoubia_-_marakesh.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Dubrovnik",
+      "country": "Croatia",
+      "lat": 42.641,
+      "lon": 18.108,
+      "year": 2017,
+      "description": "Rundgang auf der Stadtmauer mit Blick auf die roten Dächer der Altstadt und das Adriablau – die 'Perle der Adria'.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Dubrovnik_Old_Town_1.jpg/960px-Dubrovnik_Old_Town_1.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Dubrovnik_Old_Town_1.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
@@ -146,6 +176,21 @@
         {
           "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Torre_Bel%C3%A9m_April_2009-4a.jpg/960px-Torre_Bel%C3%A9m_April_2009-4a.jpg",
           "source": "https://commons.wikimedia.org/wiki/File:Torre_Bel%C3%A9m_April_2009-4a.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Istanbul",
+      "country": "Turkey",
+      "lat": 41.0086,
+      "lon": 28.9802,
+      "year": 2019,
+      "description": "Zwischen Europa und Asien: Hagia Sophia, Blaue Moschee und die Fähren über den Bosporus – zwei Kontinente in einer Stadt.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/960px-Hagia_Sophia_Mars_2013.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_Mars_2013.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
@@ -241,6 +286,21 @@
       ]
     },
     {
+      "name": "Bukarest",
+      "country": "Romania",
+      "lat": 44.4379,
+      "lon": 26.0946,
+      "year": 2022,
+      "description": "Sonnenuntergang über der Altstadt – Belle-Époque-Fassaden entlang der Boulevards des 'Kleinen Paris' und der monumentale Palast des Parlaments.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Sunset_in_the_Old_Town_-_Bucharest%2C_Romania_-_Travel_photography_%2835031271856%29.jpg/960px-Sunset_in_the_Old_Town_-_Bucharest%2C_Romania_-_Travel_photography_%2835031271856%29.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Sunset_in_the_Old_Town_-_Bucharest,_Romania_-_Travel_photography_(35031271856).jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
       "name": "Madeira",
       "country": "Portugal",
       "lat": 32.7414,
@@ -271,6 +331,21 @@
       ]
     },
     {
+      "name": "Malediven",
+      "country": "Maldives",
+      "lat": 4.1755,
+      "lon": 73.5093,
+      "year": 2024,
+      "description": "Koralleninseln im Indischen Ozean: türkise Lagunen, Wasserbungalows und Sonnenuntergänge, die den Horizont in Flammen setzen.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e2/Eriyadu_Island._View_from_the_south._Maldives.jpg/960px-Eriyadu_Island._View_from_the_south._Maldives.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Eriyadu_Island._View_from_the_south._Maldives.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
       "name": "Taipeh",
       "country": "Taiwan",
       "lat": 25.033,
@@ -296,6 +371,21 @@
         {
           "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Supertree_Grove%2C_Gardens_by_the_Bay%2C_Singapore1.jpg/960px-Supertree_Grove%2C_Gardens_by_the_Bay%2C_Singapore1.jpg",
           "source": "https://commons.wikimedia.org/wiki/File:Supertree_Grove,_Gardens_by_the_Bay,_Singapore1.jpg",
+          "credit": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "name": "Las Palmas de Gran Canaria",
+      "country": "Spain",
+      "lat": 28.1381,
+      "lon": -15.4337,
+      "year": 2025,
+      "description": "Die Playa de las Canteras mit ihrem natürlichen Lava-Wellenbrecher – ganzjährig Frühling im Atlantik, dazu Vegueta-Altstadt.",
+      "photos": [
+        {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Playa_de_las_Canteras%2C_Las_Palmas_de_Gran_Canaria_-_51605256627.jpg/960px-Playa_de_las_Canteras%2C_Las_Palmas_de_Gran_Canaria_-_51605256627.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Playa_de_las_Canteras,_Las_Palmas_de_Gran_Canaria_-_51605256627.jpg",
           "credit": "Wikimedia Commons"
         }
       ]
