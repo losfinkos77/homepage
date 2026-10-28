@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Funktechnik | Los Finkos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    html {
+      background: radial-gradient(1200px 800px at 50% 0%, #0a1520 0%, #050807 55%, #040604 100%);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 16px 60px;
+      color: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    header { text-align: center; margin-bottom: 22px; }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(28px, 6vw, 56px);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #00bfff;
+      text-shadow: 0 0 18px rgba(0, 191, 255, 0.3);
+    }
+
+    header p { margin: 10px auto 0; max-width: 760px; color: #c9d1d9; }
+
+    .nav-row {
+      display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px;
+    }
+
+    .nav-link {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+      border-radius: 999px; text-decoration: none; color: #00bfff;
+      background: rgba(0, 191, 255, 0.12); border: 1px solid rgba(0, 191, 255, 0.4);
+      transition: all 0.25s ease; font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background: #00bfff; color: #050807; box-shadow: 0 10px 30px rgba(0, 191, 255, 0.25);
+    }
+
+    .nav-link.active { background: #00bfff; color: #050807; }
+
+    .legal-note {
+      max-width: 1240px; margin: 0 auto 24px;
+      border-radius: 14px; border: 1px solid rgba(255, 193, 7, 0.45);
+      background: rgba(255, 193, 7, 0.08); color: #ffe9b0;
+      padding: 12px 18px; font-size: 14px;
+    }
+
+    .module-nav {
+      position: sticky; top: 0; z-index: 40;
+      display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+      padding: 10px 12px; margin: 0 auto 26px; max-width: 1240px;
+      background: rgba(5, 8, 7, 0.85); backdrop-filter: blur(8px);
+      border-radius: 0 0 18px 18px; border: 1px solid rgba(0, 191, 255, 0.15);
+    }
+
+    .module-nav a {
+      display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
+      border-radius: 999px; text-decoration: none; color: #9aa5b1;
+      border: 1px solid rgba(0, 191, 255, 0.25); font-size: 13.5px; transition: all 0.2s ease;
+    }
+
+    .module-nav a:hover { color: #00bfff; border-color: #00bfff; background: rgba(0, 191, 255, 0.08); }
+
+    main { max-width: 1240px; margin: 0 auto; display: grid; gap: 26px; }
+
+    .panel {
+      border-radius: 18px; border: 1px solid rgba(0, 191, 255, 0.25);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.1) 0%, transparent 60%), rgba(9, 14, 20, 0.9);
+      box-shadow: 0 40px 80px -60px rgba(0, 191, 255, 0.9);
+      padding: 22px 24px; scroll-margin-top: 70px;
+    }
+
+    .panel h2 {
+      margin: 0 0 6px; font-size: clamp(19px, 3vw, 26px);
+      display: flex; align-items: center; gap: 12px; color: #00bfff;
+    }
+
+    .panel > p.lead { margin: 0 0 18px; color: #9aa5b1; font-size: 15px; }
+
+    .field { margin-bottom: 14px; }
+
+    .field label {
+      display: block; font-size: 12.5px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: #9aa5b1; margin-bottom: 5px;
+    }
+
+    .field input[type="number"], .field select {
+      width: 100%; box-sizing: border-box; background: #10181f;
+      border: 1px solid rgba(0, 191, 255, 0.35); border-radius: 12px;
+      color: #e5f4ff; font-family: inherit; font-size: 16px; padding: 10px 14px;
+      outline: none; transition: border-color 0.2s ease;
+    }
+
+    .field select {
+      appearance: none; -webkit-appearance: none;
+      background: #10181f url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300bfff' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+      cursor: pointer;
+    }
+
+    .field input:focus, .field select:focus { border-color: #00bfff; box-shadow: 0 0 14px rgba(0, 191, 255, 0.25); }
+
+    .field .hint { font-size: 12.5px; color: #6b7785; margin-top: 4px; }
+
+    .calc-grid { display: grid; gap: 20px; grid-template-columns: 1fr; }
+
+    @media (min-width: 860px) { .calc-grid { grid-template-columns: 1fr 1fr; } }
+
+    .result-card {
+      border-radius: 14px; border: 1px solid rgba(0, 191, 255, 0.45);
+      background: rgba(0, 191, 255, 0.1); padding: 16px 20px; text-align: center;
+    }
+
+    .result-card .value {
+      font-size: 32px; font-weight: 700; color: #00bfff;
+      text-shadow: 0 0 14px rgba(0, 191, 255, 0.4); word-break: break-word;
+    }
+
+    .result-card .sub { color: #9aa5b1; font-size: 14px; margin-top: 4px; }
+    .result-card .formula { color: #7fd4ff; font-family: Consolas, monospace; font-size: 15px; margin-top: 8px; }
+
+    .warn {
+      margin-top: 12px; border-radius: 12px; border: 1px solid rgba(255, 107, 53, 0.5);
+      background: rgba(255, 107, 53, 0.12); color: #ffd9c9; padding: 10px 14px;
+      font-size: 14px; display: none;
+    }
+
+    canvas {
+      display: block; width: 100%; height: 260px;
+      background: #0a0f14; border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 12px; margin-bottom: 12px;
+    }
+
+    canvas.tall { height: 340px; }
+
+    .canvas-caption { font-size: 13px; color: #6b7785; margin-top: -4px; margin-bottom: 12px; text-align: center; }
+
+    .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+
+    .slider-row label { font-size: 13px; color: #9aa5b1; min-width: 150px; }
+
+    .slider-row input[type="range"] {
+      flex: 1; min-width: 140px; accent-color: #00bfff;
+    }
+
+    .slider-row .val { color: #00bfff; font-family: Consolas, monospace; min-width: 90px; text-align: right; }
+
+    table {
+      width: 100%; border-collapse: collapse; font-size: 14.5px; margin-top: 6px;
+    }
+
+    th, td {
+      padding: 9px 12px; text-align: left; border-bottom: 1px solid rgba(0, 191, 255, 0.15);
+    }
+
+    th { color: #00bfff; text-transform: uppercase; font-size: 12.5px; letter-spacing: 1px; }
+
+    tr:hover td { background: rgba(0, 191, 255, 0.05); }
+
+    td.hl { color: #00bfff; font-weight: 600; }
+
+    .concept-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;
+    }
+
+    .concept-card {
+      border-radius: 16px; border: 1px solid rgba(0, 191, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.12) 0%, transparent 65%), rgba(9, 14, 20, 0.92);
+      padding: 18px 20px;
+    }
+
+    .concept-card i { color: #00bfff; font-size: 22px; }
+    .concept-card h3 { margin: 8px 0 2px; font-size: 18px; color: #00bfff; }
+    .concept-card .unit { display: inline-block; font-size: 12.5px; text-transform: uppercase; letter-spacing: 1.5px; color: #9aa5b1; margin-bottom: 8px; }
+    .concept-card p { margin: 0; color: #c9d1d9; font-size: 14.5px; }
+
+    .mini-canvas-grid {
+      display: grid; gap: 16px; grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 860px) { .mini-canvas-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+    .mini-canvas-grid canvas { height: 190px; }
+
+    .quiz-question {
+      border-radius: 14px; border: 1px solid rgba(0, 191, 255, 0.2);
+      background: rgba(10, 15, 20, 0.75); padding: 16px 18px; margin-bottom: 14px;
+    }
+
+    .quiz-question h3 { margin: 0 0 10px; font-size: 16px; color: #e5f4ff; display: flex; gap: 10px; }
+    .quiz-question h3 .qnum { color: #00bfff; flex: 0 0 auto; }
+
+    .quiz-option {
+      display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+      border-radius: 10px; border: 1px solid rgba(0, 191, 255, 0.15);
+      margin-bottom: 7px; cursor: pointer; transition: all 0.15s ease; font-size: 14.5px;
+    }
+
+    .quiz-option:hover { border-color: rgba(0, 191, 255, 0.5); background: rgba(0, 191, 255, 0.06); }
+    .quiz-option input { accent-color: #00bfff; width: 16px; height: 16px; }
+    .quiz-option.correct { border-color: #2ecc71; background: rgba(46, 204, 113, 0.12); color: #b8f5d3; }
+    .quiz-option.wrong { border-color: #ff6b35; background: rgba(255, 107, 53, 0.12); color: #ffd9c9; }
+    .quiz-option.locked { cursor: default; }
+
+    .quiz-explain {
+      display: none; margin-top: 6px; font-size: 13.5px; color: #9aa5b1;
+      border-left: 3px solid rgba(0, 191, 255, 0.4); padding-left: 10px;
+    }
+
+    .quiz-result { margin-top: 16px; text-align: center; display: none; }
+    .quiz-result .score { font-size: 44px; font-weight: 700; color: #00bfff; text-shadow: 0 0 16px rgba(0, 191, 255, 0.4); }
+    .quiz-result .grade { color: #c9d1d9; margin-top: 4px; }
+
+    .quiz-bar {
+      height: 14px; border-radius: 999px; background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.35); overflow: hidden; margin: 14px auto 0; max-width: 420px;
+    }
+
+    .quiz-bar span {
+      display: block; height: 100%; width: 0;
+      background: linear-gradient(90deg, #0077aa, #00bfff);
+      box-shadow: 0 0 16px rgba(0, 191, 255, 0.6); transition: width 0.8s ease;
+    }
+
+    .quiz-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+
+    footer { text-align: center; margin-top: 40px; color: #6b7785; font-size: 13.5px; }
+    footer a { color: #00bfff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      body { padding: 22px 10px 46px; }
+      .panel { padding: 16px 14px; }
+      .module-nav a { padding: 6px 11px; font-size: 12.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Funktechnik</h1>
+    <p>Elektromagnetische Wellen verstehen: von Frequenz und Wellenlänge über Modulation und Antennen
+       bis zu dBm-Rechnungen und Koax-Verlusten – mit interaktiven Rechnern und Animationen.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Startseite</a>
+      <a class="nav-link" href="elektronik.html"><i class="fas fa-microchip"></i> Elektronik</a>
+      <a class="nav-link active" href="funk.html"><i class="fas fa-tower-broadcast"></i> Funktechnik</a>
+      <a class="nav-link" href="sdr.html"><i class="fas fa-satellite-dish"></i> SDR</a>
+    </div>
+  </header>
+
+  <div class="legal-note">
+    <i class="fas fa-scale-balanced"></i> <strong>Rechtlicher Hinweis:</strong> Alles auf dieser Seite ist rein
+    theoretisch und simuliert. <strong>Empfang</strong> aller freigegebenen Frequenzen ist in Österreich/Deutschland
+    grundsätzlich erlaubt. <strong>Senden</strong> ohne Amateurfunk-Lizenz oder Zuteilung ist verboten –
+    es werden hier keine Sendungen ausgelöst und keine Sende-Anleitungen gegeben.
+  </div>
+
+  <nav class="module-nav" aria-label="Module Funktechnik">
+    <a href="#wellen"><i class="fas fa-water"></i> EM-Wellen</a>
+    <a href="#lambda"><i class="fas fa-ruler"></i> λ-Rechner</a>
+    <a href="#bereiche"><i class="fas fa-table-list"></i> Frequenzbereiche</a>
+    <a href="#modulation"><i class="fas fa-wave-square"></i> Modulation</a>
+    <a href="#antennen"><i class="fas fa-broadcast-tower"></i> Antennen</a>
+    <a href="#antennenrechner"><i class="fas fa-ruler-combined"></i> Antennenrechner</a>
+    <a href="#db"><i class="fas fa-chart-line"></i> dB &amp; dBm</a>
+    <a href="#koax"><i class="fas fa-plug"></i> Koax-Kabel</a>
+    <a href="#quiz"><i class="fas fa-graduation-cap"></i> Quiz</a>
+  </nav>
+
+  <main>
+
+    <!-- ==================== EM-WELLEN ==================== -->
+    <section class="panel" id="wellen">
+      <h2><i class="fas fa-water"></i> Was sind elektromagnetische Wellen?</h2>
+      <p class="lead">Funkwellen sind elektromagnetische Schwingungen – elektrisches und magnetisches Feld, die sich
+         gemeinsam mit Lichtgeschwindigkeit durch den Raum bewegen. Kein Medium nötig (das funktioniert auch im Vakuum).</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <i class="fas fa-atom"></i>
+          <h3>Das Feld-Paar</h3>
+          <span class="unit">E-Feld ⟂ H-Feld</span>
+          <p>Ein elektrisches Feld (E) und ein magnetisches Feld (H) schwingen senkrecht zueinander und senkrecht zur Ausbreitungsrichtung.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-gauge-high"></i>
+          <h3>Frequenz f</h3>
+          <span class="unit">Einheit: Hertz (Hz)</span>
+          <p>Wie oft die Welle pro Sekunde schwingt. 1 MHz = 1 Million Schwingungen pro Sekunde.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-ruler-horizontal"></i>
+          <h3>Wellenlänge λ</h3>
+          <span class="unit">Einheit: Meter (m)</span>
+          <p>Der Abstand zweier Wellenberge. Bei Funkwellen gilt: λ = c / f mit c ≈ 300.000 km/s.</p>
+        </div>
+      </div>
+
+      <canvas id="wave-canvas" class="tall"></canvas>
+      <div class="canvas-caption">Sich ausbreitende Funkwelle – Frequenz und Amplitude interaktiv einstellen</div>
+
+      <div class="slider-row">
+        <label>Frequenz (Anzeige)</label>
+        <input type="range" id="wave-freq" min="1" max="10" step="0.5" value="3">
+        <span class="val" id="wave-freq-val">3,0</span>
+      </div>
+      <div class="slider-row">
+        <label>Amplitude</label>
+        <input type="range" id="wave-amp" min="10" max="100" step="1" value="70">
+        <span class="val" id="wave-amp-val">70 %</span>
+      </div>
+    </section>
+
+    <!-- ==================== WELLENLÄNGENRECHNER ==================== -->
+    <section class="panel" id="lambda">
+      <h2><i class="fas fa-ruler"></i> Interaktiver Wellenlängenrechner</h2>
+      <p class="lead">λ = c / f · Die Lichtgeschwindigkeit c ≈ 299.792.458 m/s – gerundet rechnen Funkamateure mit 300 / f(MHz) = λ(m).</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="lambda-freq">Frequenz (MHz)</label>
+            <input type="number" id="lambda-freq" step="any" min="0" value="145.5">
+            <div class="hint">z. B. 100 (UKW-Mitte), 145,5 (2 m Band), 433,92 (ISM), 2437 (WLAN)</div>
+          </div>
+          <div class="field">
+            <label for="lambda-vf">Verkürzungsfaktor (Material)</label>
+            <select id="lambda-vf">
+              <option value="1">1,00 – freie Wellen (theoretisch)</option>
+              <option value="0.97" selected>0,97 – Drahtantenne (typisch)</option>
+              <option value="0.95">0,95 – Kupferdraht isoliert</option>
+              <option value="0.66">0,66 – Koax-Kabel (RG-58)</option>
+              <option value="0.83">0,83 – Koax-Kabel (Schaum-Polyethylen)</option>
+            </select>
+            <div class="hint">Wellen im Material laufen langsamer – Antennen werden dadurch kürzer.</div>
+          </div>
+        </div>
+        <div>
+          <div class="result-card">
+            <div class="value" id="lambda-result">–</div>
+            <div class="sub">Wellenlänge λ in freiem Raum</div>
+          </div>
+          <div class="result-card" style="margin-top: 14px; border-color: rgba(0, 191, 255, 0.3);">
+            <div class="value" id="lambda-half" style="font-size: 24px;">–</div>
+            <div class="sub">λ/2 (Halbwelle) im Material</div>
+          </div>
+          <div class="result-card" style="margin-top: 14px; border-color: rgba(0, 191, 255, 0.3);">
+            <div class="value" id="lambda-quarter" style="font-size: 24px;">–</div>
+            <div class="sub">λ/4 (Viertelwelle) im Material</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FREQUENZBEREICHE ==================== -->
+    <section class="panel" id="bereiche">
+      <h2><i class="fas fa-table-list"></i> Frequenzbereiche von LF bis SHF</h2>
+      <p class="lead">Das elektromagnetische Spektrum wird in Bänder eingeteilt. Kursive Zeilen = wichtige Nutzer.</p>
+
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr><th>Bereich</th><th>Frequenz</th><th>Wellenlänge</th><th>Typische Nutzung</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="hl">LF (Längstwelle)</td><td>30 – 300 kHz</td><td>10 – 1 km</td><td>Zeitsender (DCF77), Navigation</td></tr>
+            <tr><td class="hl">MF (Mittelwelle)</td><td>300 kHz – 3 MHz</td><td>1 km – 100 m</td><td>AM-Rundfunk 531–1602 kHz, Tag/Nacht-Reichweite</td></tr>
+            <tr><td class="hl">HF (Kurzwelle)</td><td>3 – 30 MHz</td><td>100 – 10 m</td><td>Weltweiter Amateurfunk, Wettersender, über Ionosphäre-Sprung</td></tr>
+            <tr><td class="hl">VHF (Ultrakurzwelle)</td><td>30 – 300 MHz</td><td>10 – 1 m</td><td>UKW-Radio 87,5–108 MHz, 2 m Amateurband 144–146 MHz, Feuerwehr/BOS</td></tr>
+            <tr><td class="hl">UHF (Dezimeterwelle)</td><td>300 MHz – 3 GHz</td><td>1 m – 10 cm</td><td>70 cm Band 430–440 MHz, 433 MHz ISM (Funksteckdosen), GPS, Mobilfunk, WLAN 2,4 GHz</td></tr>
+            <tr><td class="hl">SHF (Zentimeterwelle)</td><td>3 – 30 GHz</td><td>10 – 1 cm</td><td>WLAN 5 GHz, Satelliten-TV 10,7–12,7 GHz, Radar, Punkt-zu-Punkt-Links</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== MODULATION ==================== -->
+    <section class="panel" id="modulation">
+      <h2><i class="fas fa-wave-square"></i> AM-, FM- und digitale Modulation</h2>
+      <p class="lead">Modulation = eine niederfrequente Information (z. B. Sprache) wird auf eine hochfrequente Trägerwelle „aufgepackt".</p>
+
+      <div class="slider-row">
+        <label>Audio-Signal (Niederfrequenz)</label>
+        <input type="range" id="mod-audio" min="1" max="8" step="0.5" value="3">
+        <span class="val" id="mod-audio-val">3,0</span>
+      </div>
+      <div class="slider-row">
+        <label>Modulationsgrad / Deviation</label>
+        <input type="range" id="mod-depth" min="10" max="100" step="5" value="70">
+        <span class="val" id="mod-depth-val">70 %</span>
+      </div>
+
+      <div class="mini-canvas-grid">
+        <div>
+          <canvas id="am-canvas"></canvas>
+          <div class="canvas-caption">AM – Amplitudenmodulation: Information in der Hüllkurve (Hüllkurve gestrichelt)</div>
+        </div>
+        <div>
+          <canvas id="fm-canvas"></canvas>
+          <div class="canvas-caption">FM – Frequenzmodulation: Amplitude konstant, Frequenz pendelt (Liniendiagramm = Information)</div>
+        </div>
+        <div>
+          <canvas id="dig-canvas"></canvas>
+          <div class="canvas-caption">Digital – OOK (On-Off-Keying): 1 = Träger an, 0 = aus (Bitfolge 10110010)</div>
+        </div>
+      </div>
+
+      <p style="color:#9aa5b1; font-size:14.5px; margin:14px 0 0;">
+        <strong style="color:#00bfff;">AM</strong> ist einfach, aber störanfällig (Blitz, Motor). <strong style="color:#00bfff;">FM</strong> ist
+        stabiler und klingt sauber – deshalb nutzt UKW es. <strong style="color:#00bfff;">Digital</strong>-Verfahren (FSK, OOK, DMR)
+        übertragen Daten in Bits und dominieren heute.
+      </p>
+    </section>
+
+    <!-- ==================== ANTENNEN ==================== -->
+    <section class="panel" id="antennen">
+      <h2><i class="fas fa-broadcast-tower"></i> Antennenarten und ihre Eigenschaften</h2>
+      <p class="lead">Die Antenne wandelt elektrischen Strom in Wellen um (und umgekehrt). Form bestimmt Richtwirkung und Gewinn.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <i class="fas fa-traffic-light"></i>
+          <h3>Viertelwellen-Stab (Groundplane)</h3>
+          <span class="unit">λ/4 · ca. +2 dBi · Rundstrahlend</span>
+          <p>Kompakt, omnidirektional horizontal. Standard für Mobile- und Basisantennen. Braucht leitfähige Gegenstelle (Auto, Erdplane).</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-arrows-left-right"></i>
+          <h3>Halbwellendipol</h3>
+          <span class="unit">λ/2 · ca. +2,15 dBi · Rundstrahlend quer</span>
+          <p>Die Referenzantenne: zwei λ/4-Schenkel in Reihe. Speisepunkt in der Mitte, Impedanz ≈ 73 Ω.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-location-arrow"></i>
+          <h3>Yagi-Antenne</h3>
+          <span class="unit">Richtantenne · 6–20 dBi</span>
+          <p>Elemente vor einem Reflektor bündeln die Energie in eine Richtung – ideal für Fernempfang und Punktverbindungen.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-circle-notch"></i>
+          <h3>Loop / Magnetantenne</h3>
+          <span class="unit">Kompakt · schmalbandig</span>
+          <p>Runde oder eckige Schleife, funktioniert auch auf engem Raum. Kleine Bandbreite, braucht Abstimmeinheit.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-mobile-screen"></i>
+          <h3>Rubber-Duck (Teleskop/Strippe)</h3>
+          <span class="unit">Handfunkgerät · −2 bis 0 dBi</span>
+          <p>Verkürzte λ/4-Antenne mit Spule. Bequem, aber weniger Gewinn als eine echte λ/4-Antenne.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-satellite"></i>
+          <h3>Parabolantenne</h3>
+          <span class="unit">SHF · 20–40+ dBi</span>
+          <p>Spiegel bündelt auf einen Brennpunkt – für Satellitenempfang und Richtfunk. Sehr hohe Richtwirkung.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ANTENNENRECHNER ==================== -->
+    <section class="panel" id="antennenrechner">
+      <h2><i class="fas fa-ruler-combined"></i> Viertelwellen- &amp; Halbwellendipol-Rechner</h2>
+      <p class="lead">Berechnet die mechanischen Längen für eine λ/4-Stabantenne und einen λ/2-Dipol – inklusive Verkürzungsfaktor.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="ant-freq">Frequenz (MHz)</label>
+            <input type="number" id="ant-freq" step="any" min="0" value="145.5">
+            <div class="hint">2 m Band: 144–146 · UKW: 87,5–108 · 70 cm: 430–440</div>
+          </div>
+          <div class="field">
+            <label for="ant-vf">Verkürzungsfaktor</label>
+            <select id="ant-vf">
+              <option value="0.97" selected>0,97 – Draht (typisch)</option>
+              <option value="0.95">0,95 – isolierter Draht</option>
+              <option value="1">1,00 – theoretisch</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="result-card">
+            <div class="value" id="ant-quarter">–</div>
+            <div class="sub">λ/4-Schenkel (Stabantenne / Dipol-Schenkel)</div>
+            <div class="formula" id="ant-quarter-formula"></div>
+          </div>
+          <div class="result-card" style="margin-top: 14px; border-color: rgba(0, 191, 255, 0.3);">
+            <div class="value" id="ant-half" style="font-size: 24px;">–</div>
+            <div class="sub">λ/2-Dipol Gesamtlänge (beide Schenkel)</div>
+            <div class="formula" id="ant-half-formula"></div>
+          </div>
+          <div class="result-card" style="margin-top: 14px; border-color: rgba(0, 191, 255, 0.3);">
+            <div class="value" id="ant-wave" style="font-size: 24px;">–</div>
+            <div class="sub">Wellenlänge im Draht</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== DB & DBM ==================== -->
+    <section class="panel" id="db">
+      <h2><i class="fas fa-chart-line"></i> dB, dBm und Signalverstärkung</h2>
+      <p class="lead">dB ist logarithmisch: +3 dB = doppelt so viel Leistung, +10 dB = 10-fach, −3 dB = halbe Leistung.
+         dBm ist eine absolute Leistung bezogen auf 1 Milliwatt.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="dbm-input">Leistung</label>
+            <input type="number" id="dbm-input" step="any" min="0" value="100">
+          </div>
+          <div class="field">
+            <label for="dbm-unit">Einheit</label>
+            <select id="dbm-unit">
+              <option value="mw" selected>Milliwatt (mW) → dBm</option>
+              <option value="dbm">dBm → Milliwatt (mW)</option>
+              <option value="w">Watt (W) → dBm</option>
+            </select>
+          </div>
+          <div class="result-card">
+            <div class="value" id="dbm-result">–</div>
+            <div class="sub" id="dbm-result-label">Umrechnung</div>
+          </div>
+        </div>
+        <div>
+          <div class="field">
+            <label for="gain-in">Eingangsleistung (dBm)</label>
+            <input type="number" id="gain-in" step="any" value="-20">
+          </div>
+          <div class="field">
+            <label for="gain-db">Verstärkung / Dämpfung (dB)</label>
+            <input type="number" id="gain-db" step="any" value="15">
+            <div class="hint">negativ = Dämpfung (z. B. Kabelverlust)</div>
+          </div>
+          <div class="result-card">
+            <div class="value" id="gain-result">–</div>
+            <div class="sub">Ausgangsleistung</div>
+            <div class="formula" id="gain-formula"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto; margin-top: 16px;">
+        <table>
+          <thead><tr><th>dBm</th><th>Leistung</th><th>Bedeutung</th></tr></thead>
+          <tbody>
+            <tr><td>+30 dBm</td><td>1 W</td><td>Starke Handfunkgeräte-Sendeleistung</td></tr>
+            <tr><td>+20 dBm</td><td>100 mW</td><td>Typisch WLAN / Handfunk</td></tr>
+            <tr><td>+10 dBm</td><td>10 mW</td><td>Schwaches Sendesignal</td></tr>
+            <tr><td>0 dBm</td><td>1 mW</td><td>Referenzpunkt</td></tr>
+            <tr><td>−50 dBm</td><td>10 nW</td><td>Sehr starkes Empfangssignal</td></tr>
+            <tr><td>−100 dBm</td><td>0,1 pW</td><td>An der Empfangs-Grenze (Noise Floor)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== KOAX ==================== -->
+    <section class="panel" id="koax">
+      <h2><i class="fas fa-plug"></i> Koaxialkabel und Signalverluste</h2>
+      <p class="lead">Jedes Kabel dämpft: umso mehr, je länger und je höher die Frequenz. Dicke Kabel verlieren weniger.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="coax-type">Kabeltyp</label>
+            <select id="coax-type">
+              <option value="rg58">RG-58 (dünn, ~5 mm) – große Verluste</option>
+              <option value="h155">Aircell 5 / H-155 (~5 mm) – besser</option>
+              <option value="rg213">RG-213 (dick, ~10 mm) – gut</option>
+              <option value="lmr400" selected>LMR-400 (~10 mm) – sehr gut</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="coax-freq">Frequenz (MHz)</label>
+            <input type="number" id="coax-freq" step="any" min="1" value="145">
+            <div class="hint">Verlustwerte werden zwischen 100/400/1000 MHz interpoliert</div>
+          </div>
+          <div class="field">
+            <label for="coax-len">Kabellänge (Meter)</label>
+            <input type="number" id="coax-len" step="any" min="0" value="15">
+          </div>
+        </div>
+        <div>
+          <div class="result-card">
+            <div class="value" id="coax-loss">–</div>
+            <div class="sub">Kabeldämpfung gesamt</div>
+            <div class="formula" id="coax-formula"></div>
+          </div>
+          <div class="result-card" style="margin-top: 14px; border-color: rgba(0, 191, 255, 0.3);">
+            <div class="value" id="coax-eff" style="font-size: 24px;">–</div>
+            <div class="sub">Ankommenende Leistung (bei 100 % am Kabeleingang)</div>
+          </div>
+          <div class="warn" id="coax-warn"><i class="fas fa-triangle-exclamation"></i> <span></span></div>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto; margin-top: 16px;">
+        <table>
+          <thead><tr><th>Kabel</th><th>@ 100 MHz (dB/100 m)</th><th>@ 400 MHz</th><th>@ 1000 MHz</th><th>Kommentar</th></tr></thead>
+          <tbody>
+            <tr><td class="hl">RG-58</td><td>4,5</td><td>9,4</td><td>16,0</td><td>Klein, flexibel, nur kurze Längen</td></tr>
+            <tr><td class="hl">Aircell 5 / H-155</td><td>2,4</td><td>5,1</td><td>8,4</td><td>Guter Kompromiss</td></tr>
+            <tr><td class="hl">RG-213</td><td>2,5</td><td>5,2</td><td>8,7</td><td>Klassiker, robust</td></tr>
+            <tr><td class="hl">LMR-400</td><td>2,2</td><td>4,5</td><td>7,3</td><td>Sehr gut, aber steif</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:#6b7785; font-size:12.5px; margin-top:10px;">Typische Richtwerte aus Datenblättern – genauere Werte stehen im jeweiligen Datenblatt des Herstellers.</p>
+    </section>
+
+    <!-- ==================== QUIZ ==================== -->
+    <section class="panel" id="quiz">
+      <h2><i class="fas fa-graduation-cap"></i> Funktechnik-Quiz</h2>
+      <p class="lead">10 Fragen zu den Modulen auf dieser Seite.</p>
+      <div id="quiz-container"></div>
+
+      <div class="quiz-result" id="quiz-result">
+        <div class="score" id="quiz-score">–</div>
+        <div class="grade" id="quiz-grade"></div>
+        <div class="quiz-bar"><span id="quiz-bar-fill"></span></div>
+      </div>
+
+      <div class="quiz-actions">
+        <button class="btn" id="quiz-submit" type="button" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; border-radius:12px; border:1px solid #00bfff; background:#00bfff; color:#050807; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer;"><i class="fas fa-check"></i> Auswerten</button>
+        <button class="btn" id="quiz-restart" type="button" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; border-radius:12px; border:1px solid rgba(0,191,255,.4); background:transparent; color:#00bfff; font-family:inherit; font-size:15px; cursor:pointer;"><i class="fas fa-rotate-left"></i> Neu starten</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Alle Simulationen sind rein theoretisch · <a href="elektronik.html">Elektronik-Grundwissen</a> ·
+       <a href="sdr.html">Software Defined Radio</a> · <a href="index.html">Startseite</a></p>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const fmt = function (n, digits) {
+        return n.toLocaleString("de-DE", { maximumFractionDigits: digits == null ? 3 : digits });
+      };
+
+      function setupCanvas(id) {
+        const canvas = document.getElementById(id);
+        const ctx = canvas.getContext("2d");
+        function fit() {
+          const rect = canvas.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = Math.max(50, Math.floor(rect.width * dpr));
+          canvas.height = Math.max(50, Math.floor(rect.height * dpr));
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          return { w: rect.width, h: rect.height };
+        }
+        return { canvas: canvas, ctx: ctx, fit: fit };
+      }
+
+      /* =====================================================
+         EM-WELLEN-ANIMATION
+         ===================================================== */
+      const waveCv = setupCanvas("wave-canvas");
+      const waveFreq = document.getElementById("wave-freq");
+      const waveAmp = document.getElementById("wave-amp");
+      const waveFreqVal = document.getElementById("wave-freq-val");
+      const waveAmpVal = document.getElementById("wave-amp-val");
+
+      let wavePhase = 0;
+
+      function waveLabel() {
+        waveFreqVal.textContent = fmt(Number(waveFreq.value), 1);
+        waveAmpVal.textContent = waveAmp.value + " %";
+      }
+
+      function drawWaveFrame() {
+        const size = waveCv.fit();
+        const ctx = waveCv.ctx;
+        const freq = Number(waveFreq.value);
+        const amp = Number(waveAmp.value) / 100;
+
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+
+        // Raster
+        ctx.strokeStyle = "rgba(0,191,255,0.08)";
+        ctx.lineWidth = 1;
+        for (let gx = 0; gx < size.w; gx += 40) {
+          ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, size.h); ctx.stroke();
+        }
+        for (let gy = 0; gy < size.h; gy += 40) {
+          ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(size.w, gy); ctx.stroke();
+        }
+
+        const mid = size.h / 2;
+        const cycles = freq * 2; // Wellen pro Breite
+        const waveLen = size.w / cycles;
+
+        // E-Feld (blau)
+        ctx.beginPath();
+        ctx.strokeStyle = "#00bfff";
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = "rgba(0,191,255,0.6)";
+        ctx.shadowBlur = 8;
+        for (let x = 0; x <= size.w; x += 2) {
+          const y = mid - Math.sin((x / waveLen) * Math.PI * 2 + wavePhase) * amp * (mid - 20);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Wellenberge markieren (λ Abstand)
+        ctx.fillStyle = "rgba(0,191,255,0.55)";
+        ctx.font = "12px Consolas, monospace";
+        for (let k = 0; k < cycles; k++) {
+          const peakX = (k + 0.75) * waveLen - (wavePhase / (Math.PI * 2)) * waveLen;
+          const px = ((peakX % size.w) + size.w) % size.w;
+          ctx.fillText("λ", px, mid - amp * (mid - 20) - 10);
+        }
+
+        // H-Feld (gestrichelt, 90° versetzt)
+        ctx.beginPath();
+        ctx.setLineDash([5, 6]);
+        ctx.strokeStyle = "rgba(255,212,59,0.75)";
+        ctx.lineWidth = 1.8;
+        for (let x = 0; x <= size.w; x += 2) {
+          const y = mid - Math.cos((x / waveLen) * Math.PI * 2 + wavePhase) * amp * (mid - 20);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        wavePhase += 0.08 + freq * 0.01;
+        window.requestAnimationFrame(drawWaveFrame);
+      }
+
+      waveFreq.addEventListener("input", waveLabel);
+      waveAmp.addEventListener("input", waveLabel);
+      waveLabel();
+      window.requestAnimationFrame(drawWaveFrame);
+      window.addEventListener("resize", waveLabel);
+
+      /* =====================================================
+         WELLENLÄNGENRECHNER
+         ===================================================== */
+      const C = 299792458; // m/s
+      const lambdaFreq = document.getElementById("lambda-freq");
+      const lambdaVf = document.getElementById("lambda-vf");
+
+      function lambdaUpdate() {
+        const f = parseFloat(lambdaFreq.value.replace(",", ".")) * 1e6; // Hz
+        const vf = parseFloat(lambdaVf.value);
+        const out = {
+          result: document.getElementById("lambda-result"),
+          half: document.getElementById("lambda-half"),
+          quarter: document.getElementById("lambda-quarter")
+        };
+        if (!(f > 0)) {
+          out.result.textContent = out.half.textContent = out.quarter.textContent = "–";
+          return;
+        }
+        const lambdaFree = C / f;
+        const lambdaMat = lambdaFree * vf;
+        out.result.textContent = fmt(lambdaFree, 3) + " m";
+        out.half.textContent = fmt(lambdaMat / 2 * 100, 1) + " cm";
+        out.quarter.textContent = fmt(lambdaMat / 4 * 100, 1) + " cm";
+      }
+
+      lambdaFreq.addEventListener("input", lambdaUpdate);
+      lambdaVf.addEventListener("change", lambdaUpdate);
+
+      /* =====================================================
+         MODULATIONS-ANIMATIONEN
+         ===================================================== */
+      const amCv = setupCanvas("am-canvas");
+      const fmCv = setupCanvas("fm-canvas");
+      const digCv = setupCanvas("dig-canvas");
+      const modAudio = document.getElementById("mod-audio");
+      const modDepth = document.getElementById("mod-depth");
+      const modAudioVal = document.getElementById("mod-audio-val");
+      const modDepthVal = document.getElementById("mod-depth-val");
+      let modPhase = 0;
+
+      function modLabel() {
+        modAudioVal.textContent = fmt(Number(modAudio.value), 1);
+        modDepthVal.textContent = modDepth.value + " %";
+      }
+
+      function drawOscBase(ctx, size) {
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+        ctx.strokeStyle = "rgba(0,191,255,0.08)";
+        for (let gx = 0; gx < size.w; gx += 30) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, size.h); ctx.stroke(); }
+        for (let gy = 0; gy < size.h; gy += 30) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(size.w, gy); ctx.stroke(); }
+      }
+
+      function drawModulation() {
+        const audioFreq = Number(modAudio.value);
+        const depth = Number(modDepth.value) / 100;
+        const carrierFreq = 10; // Träger-Zyklen über die Breite
+        modPhase += 0.12;
+
+        // ---- AM ----
+        let s = amCv.fit();
+        let ctx = amCv.ctx;
+        drawOscBase(ctx, s);
+        const midA = s.h / 2;
+        const maxA = midA - 14;
+        ctx.strokeStyle = "rgba(255,212,59,0.8)";
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let x = 0; x <= s.w; x += 2) {
+          const env = 1 + depth * Math.sin((x / s.w) * Math.PI * 2 * audioFreq - modPhase);
+          const y = midA - env * maxA * 0.85;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = "#00bfff";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        for (let x = 0; x <= s.w; x += 1) {
+          const env = (1 + depth * Math.sin((x / s.w) * Math.PI * 2 * audioFreq - modPhase)) * 0.85;
+          const y = midA - Math.sin((x / s.w) * Math.PI * 2 * carrierFreq + modPhase * 3) * env * maxA;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // ---- FM ----
+        s = fmCv.fit();
+        ctx = fmCv.ctx;
+        drawOscBase(ctx, s);
+        const midF = s.h / 2;
+        const maxF = midF - 14;
+        ctx.strokeStyle = "#00bfff";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        for (let x = 0; x <= s.w; x += 1) {
+          const mod = Math.sin((x / s.w) * Math.PI * 2 * audioFreq - modPhase);
+          const instFreq = carrierFreq + depth * audioFreq * mod * 0.35;
+          const phase = (x / s.w) * Math.PI * 2 * carrierFreq + modPhase * 3 + depth * 3 * Math.sin((x / s.w) * Math.PI * 2 * audioFreq - modPhase);
+          const y = midF - Math.sin(phase) * maxF;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        // Information (Audio) als Referenzlinie
+        ctx.strokeStyle = "rgba(255,212,59,0.8)";
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let x = 0; x <= s.w; x += 2) {
+          const y = midF - Math.sin((x / s.w) * Math.PI * 2 * audioFreq - modPhase) * maxF * 0.8;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // ---- Digital (OOK) ----
+        s = digCv.fit();
+        ctx = digCv.ctx;
+        drawOscBase(ctx, s);
+        const midD = s.h / 2;
+        const maxD = midD - 14;
+        const bits = [1, 0, 1, 1, 0, 0, 1, 0];
+        const bitW = s.w / bits.length;
+        ctx.strokeStyle = "rgba(255,212,59,0.8)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        let yy = midD + maxD * 0.6;
+        ctx.moveTo(0, yy);
+        bits.forEach(function (b, i) {
+          const level = b === 1 ? midD - maxD * 0.6 : midD + maxD * 0.6;
+          ctx.lineTo(i * bitW, level);
+          ctx.lineTo((i + 1) * bitW, level);
+        });
+        ctx.stroke();
+        ctx.strokeStyle = "#00bfff";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        let first = true;
+        bits.forEach(function (b, i) {
+          for (let x = i * bitW; x <= (i + 1) * bitW; x += 1) {
+            const carrier = Math.sin((x / bitW) * Math.PI * 2 * 3 + modPhase * 3);
+            const env = b === 1 ? 1 : 0.04;
+            const y = midD - carrier * maxD * env;
+            if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y);
+          }
+        });
+        ctx.stroke();
+
+        modPhase += 0.06 + audioFreq * 0.005;
+        window.requestAnimationFrame(drawModulation);
+      }
+
+      modAudio.addEventListener("input", modLabel);
+      modDepth.addEventListener("input", modLabel);
+      modLabel();
+      window.requestAnimationFrame(drawModulation);
+
+      /* =====================================================
+         ANTENNENRECHNER
+         ===================================================== */
+      const antFreq = document.getElementById("ant-freq");
+      const antVf = document.getElementById("ant-vf");
+
+      function antUpdate() {
+        const f = parseFloat(antFreq.value.replace(",", "."));
+        const vf = parseFloat(antVf.value);
+        if (!(f > 0)) {
+          document.getElementById("ant-quarter").textContent = "–";
+          document.getElementById("ant-half").textContent = "–";
+          document.getElementById("ant-wave").textContent = "–";
+          return;
+        }
+        const lambdaFree = 299.792458 / f; // m
+        const lambdaWire = lambdaFree * vf;
+        const quarter = lambdaWire / 4;
+        const half = lambdaWire / 2;
+
+        document.getElementById("ant-quarter").textContent = fmt(quarter * 100, 1) + " cm";
+        document.getElementById("ant-quarter-formula").textContent = "λ/4 = " + fmt(lambdaFree) + " m × " + vf + " / 4";
+        document.getElementById("ant-half").textContent = fmt(half * 100, 1) + " cm";
+        document.getElementById("ant-half-formula").textContent = "λ/2 = " + fmt(lambdaFree) + " m × " + vf + " / 2";
+        document.getElementById("ant-wave").textContent = fmt(lambdaWire, 3) + " m";
+      }
+
+      antFreq.addEventListener("input", antUpdate);
+      antVf.addEventListener("change", antUpdate);
+
+      /* =====================================================
+         DB / DBM
+         ===================================================== */
+      const dbmInput = document.getElementById("dbm-input");
+      const dbmUnit = document.getElementById("dbm-unit");
+
+      function dbmUpdate() {
+        const v = parseFloat(dbmInput.value.replace(",", "."));
+        const unit = dbmUnit.value;
+        const result = document.getElementById("dbm-result");
+        const label = document.getElementById("dbm-result-label");
+        if (!Number.isFinite(v) || v < 0) { result.textContent = "–"; label.textContent = "Umrechnung"; return; }
+
+        if (unit === "mw") {
+          result.textContent = (v <= 0 ? "-∞" : fmt(10 * Math.log10(v), 2)) + " dBm";
+          label.textContent = fmt(v, 3) + " mW in dBm";
+        } else if (unit === "dbm") {
+          result.textContent = fmt(Math.pow(10, v / 10), 4) + " mW";
+          label.textContent = v + " dBm in Milliwatt";
+        } else {
+          result.textContent = (v <= 0 ? "-∞" : fmt(10 * Math.log10(v * 1000), 2)) + " dBm";
+          label.textContent = fmt(v, 4) + " W in dBm";
+        }
+      }
+
+      dbmInput.addEventListener("input", dbmUpdate);
+      dbmUnit.addEventListener("change", dbmUpdate);
+
+      const gainIn = document.getElementById("gain-in");
+      const gainDb = document.getElementById("gain-db");
+
+      function gainUpdate() {
+        const pIn = parseFloat(gainIn.value.replace(",", "."));
+        const g = parseFloat(gainDb.value.replace(",", "."));
+        const result = document.getElementById("gain-result");
+        const formula = document.getElementById("gain-formula");
+        if (!Number.isFinite(pIn) || !Number.isFinite(g)) { result.textContent = "–"; formula.textContent = ""; return; }
+        const pOut = pIn + g;
+        result.textContent = fmt(pOut, 2) + " dBm";
+        formula.textContent = "Pout = " + fmt(pIn, 1) + " dBm + " + fmt(g, 1) + " dB = " + fmt(pOut, 2) + " dBm (" + fmt(Math.pow(10, pOut / 10), 5) + " mW)";
+      }
+
+      gainIn.addEventListener("input", gainUpdate);
+      gainDb.addEventListener("input", gainUpdate);
+
+      /* =====================================================
+         KOAX-VERLUSTE
+         ===================================================== */
+      const COAX = {
+        rg58: { name: "RG-58", l100: 4.5, l400: 9.4, l1000: 16.0 },
+        h155: { name: "Aircell 5 / H-155", l100: 2.4, l400: 5.1, l1000: 8.4 },
+        rg213: { name: "RG-213", l100: 2.5, l400: 5.2, l1000: 8.7 },
+        lmr400: { name: "LMR-400", l100: 2.2, l400: 4.5, l1000: 7.3 }
+      };
+
+      const coaxType = document.getElementById("coax-type");
+      const coaxFreq = document.getElementById("coax-freq");
+      const coaxLen = document.getElementById("coax-len");
+
+      function coaxLossAt(cable, fMHz) {
+        if (fMHz <= 100) return cable.l100;
+        if (fMHz <= 400) {
+          const t = (Math.log(fMHz) - Math.log(100)) / (Math.log(400) - Math.log(100));
+          return cable.l100 + t * (cable.l400 - cable.l100);
+        }
+        if (fMHz <= 1000) {
+          const t = (Math.log(fMHz) - Math.log(400)) / (Math.log(1000) - Math.log(400));
+          return cable.l400 + t * (cable.l1000 - cable.l400);
+        }
+        // über 1 GHz: Trend aus dem letzten Segment fortsetzen
+        const t = Math.log(fMHz / 1000) / Math.log(1000 / 400);
+        return cable.l1000 + t * (cable.l1000 - cable.l400);
+      }
+
+      function coaxUpdate() {
+        const cable = COAX[coaxType.value];
+        const f = parseFloat(coaxFreq.value.replace(",", "."));
+        const len = parseFloat(coaxLen.value.replace(",", "."));
+        const lossEl = document.getElementById("coax-loss");
+        const formula = document.getElementById("coax-formula");
+        const eff = document.getElementById("coax-eff");
+        const warn = document.getElementById("coax-warn");
+        warn.style.display = "none";
+
+        if (!(f > 0) || !(len >= 0)) {
+          lossEl.textContent = "–"; formula.textContent = ""; eff.textContent = "–"; return;
+        }
+
+        const per100 = coaxLossAt(cable, f);
+        const total = per100 / 100 * len;
+        lossEl.textContent = fmt(total, 2) + " dB";
+        formula.textContent = cable.name + ": " + fmt(per100, 2) + " dB/100 m × " + fmt(len, 1) + " m";
+
+        const percent = Math.pow(10, -total / 10) * 100;
+        eff.textContent = fmt(percent, 1) + " %";
+        if (total > 6) {
+          warn.style.display = "block";
+          warn.querySelector("span").textContent = "Über 6 dB Verlust: mehr als die Hälfte der Leistung geht im Kabel verloren. Kürzeres/dickeres Kabel oder höherliegende Frequenz-Optimierung prüfen.";
+        }
+      }
+
+      [coaxType, coaxFreq, coaxLen].forEach(function (el) {
+        el.addEventListener("input", coaxUpdate);
+        el.addEventListener("change", coaxUpdate);
+      });
+
+      /* =====================================================
+         QUIZ
+         ===================================================== */
+      const QUIZ = [
+        { q: "Wie lautet die Formel für die Wellenlänge?", options: ["λ = f / c", "λ = c / f", "λ = c × f", "λ = f × t"], answer: 1, explain: "λ = c / f – mit c ≈ 300.000 km/s. Beispiel: 100 MHz → 3 m." },
+        { q: "In welcher Einheit wird Frequenz gemessen?", options: ["Volt", "Hertz", "Ampere", "Ohm"], answer: 1, explain: "Frequenz f misst man in Hertz (Hz) – Schwingungen pro Sekunde." },
+        { q: "In welchem Bereich sendet UKW-Radio?", options: ["531–1602 kHz", "87,5–108 MHz", "430–440 MHz", "2,4 GHz"], answer: 1, explain: "UKW (VHF) liegt bei 87,5–108 MHz." },
+        { q: "Was bedeutet die Einheit dBm?", options: ["Verstärkung eines Verstärkers", "Leistung bezogen auf 1 Milliwatt", "Spannung bezogen auf 1 mV", "Entfernungsmaß"], answer: 1, explain: "0 dBm = 1 mW. +30 dBm = 1 W, −30 dBm = 1 µW." },
+        { q: "Wie viel Milliwatt sind 20 dBm?", options: ["20 mW", "100 mW", "10 mW", "200 mW"], answer: 1, explain: "20 dBm = 10^(20/10) mW = 100 mW." },
+        { q: "Wie lang ist ungefähr ein λ/4-Stab für 145 MHz?", options: ["~49 cm", "~1 m", "~2 m", "~15 cm"], answer: 0, explain: "λ/4 ≈ 71,3 / 145 ≈ 0,49 m (mit Verkürzungsfaktor)." },
+        { q: "Was wird bei AM moduliert?", options: ["Die Frequenz des Trägers", "Die Amplitude des Trägers", "Die Phase des Trägers", "Die Polarisation"], answer: 1, explain: "AM = Amplitudenmodulation: die Hüllkurve trägt die Information." },
+        { q: "Wovon hängt die Dämpfung eines Koax-Kabels ab?", options: ["Nur von der Länge", "Nur von der Frequenz", "Von Länge UND Frequenz", "Nur vom Stecker"], answer: 2, explain: "Verluste steigen mit Länge und Frequenz – doppelte Länge = doppelte dB." },
+        { q: "Welche Impedanz hat ein freier Halbwellendipol ungefähr?", options: ["50 Ω", "73 Ω", "300 Ω", "0 Ω"], answer: 1, explain: "Ein λ/2-Dipol hat etwa 73 Ω – deshalb passt er gut zu 75-Ω-Kabeln, mit Anpassung auch zu 50 Ω." },
+        { q: "Welches Band ist das 2 m Amateurfunk-Band?", options: ["3,5–3,8 MHz", "50–52 MHz", "144–146 MHz", "430–440 MHz"], answer: 2, explain: "Das 2 m Band liegt bei 144–146 MHz (Wellenlänge ≈ 2 m)." }
+      ];
+
+      const quizContainer = document.getElementById("quiz-container");
+      const quizResult = document.getElementById("quiz-result");
+      const quizScore = document.getElementById("quiz-score");
+      const quizGrade = document.getElementById("quiz-grade");
+      const quizBar = document.getElementById("quiz-bar-fill");
+      let quizLocked = false;
+
+      function buildQuiz() {
+        quizLocked = false;
+        quizResult.style.display = "none";
+        quizBar.style.width = "0";
+        quizContainer.innerHTML = "";
+
+        QUIZ.forEach(function (item, qIndex) {
+          const block = document.createElement("div");
+          block.className = "quiz-question";
+          block.innerHTML = '<h3><span class="qnum">' + (qIndex + 1) + '.</span> ' + item.q + "</h3>";
+
+          item.options.forEach(function (option, oIndex) {
+            const label = document.createElement("label");
+            label.className = "quiz-option";
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "quiz-" + qIndex;
+            input.value = String(oIndex);
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(option));
+            block.appendChild(label);
+          });
+
+          const explain = document.createElement("div");
+          explain.className = "quiz-explain";
+          block.appendChild(explain);
+          quizContainer.appendChild(block);
+        });
+      }
+
+      function gradeText(percent) {
+        if (percent === 100) return "🏆 Funkprofi!";
+        if (percent >= 80) return "⭐ Sehr gut – fast alles sitzt!";
+        if (percent >= 60) return "👍 Gut – Module oben nochmal anschauen hilft.";
+        if (percent >= 40) return "📖 Geht so – die Grundlagen wiederholen.";
+        return "📡 Noch viel zu lernen – starte bei den EM-Wellen!";
+      }
+
+      function quizEvaluate() {
+        if (quizLocked) return;
+        quizLocked = true;
+
+        let correct = 0;
+        QUIZ.forEach(function (item, qIndex) {
+          const block = quizContainer.children[qIndex];
+          const chosen = block.querySelector("input:checked");
+          const chosenIndex = chosen ? Number(chosen.value) : -1;
+          if (chosenIndex === item.answer) correct++;
+
+          Array.prototype.forEach.call(block.querySelectorAll(".quiz-option"), function (label, oIndex) {
+            label.classList.add("locked");
+            if (oIndex === item.answer) label.classList.add("correct");
+            if (oIndex === chosenIndex && chosenIndex !== item.answer) label.classList.add("wrong");
+            label.querySelector("input").disabled = true;
+          });
+
+          const explain = block.querySelector(".quiz-explain");
+          explain.style.display = "block";
+          explain.innerHTML = chosenIndex === item.answer
+            ? "✅ Richtig! " + item.explain
+            : (chosen ? "❌ Leider falsch. " : "⚪ Keine Antwort. ") + item.explain;
+        });
+
+        const percent = Math.round((correct / QUIZ.length) * 100);
+        quizScore.textContent = correct + " / " + QUIZ.length + " (" + percent + " %)";
+        quizGrade.textContent = gradeText(percent);
+        quizResult.style.display = "block";
+        quizBar.style.width = percent + "%";
+      }
+
+      document.getElementById("quiz-submit").addEventListener("click", quizEvaluate);
+      document.getElementById("quiz-restart").addEventListener("click", buildQuiz);
+
+      /* ---------- Start ---------- */
+      lambdaUpdate();
+      antUpdate();
+      dbmUpdate();
+      gainUpdate();
+      coaxUpdate();
+      buildQuiz();
+    })();
+  </script>
+</body>
+</html>

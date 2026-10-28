@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Software Defined Radio | Los Finkos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    html {
+      background: radial-gradient(1200px 800px at 50% 0%, #0a1520 0%, #050807 55%, #040604 100%);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 16px 60px;
+      color: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    header { text-align: center; margin-bottom: 22px; }
+
+    header h1 {
+      margin: 0; font-size: clamp(26px, 5.4vw, 52px); letter-spacing: 3px;
+      text-transform: uppercase; color: #00bfff; text-shadow: 0 0 18px rgba(0, 191, 255, 0.3);
+    }
+
+    header p { margin: 10px auto 0; max-width: 780px; color: #c9d1d9; }
+
+    .nav-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+
+    .nav-link {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+      border-radius: 999px; text-decoration: none; color: #00bfff;
+      background: rgba(0, 191, 255, 0.12); border: 1px solid rgba(0, 191, 255, 0.4);
+      transition: all 0.25s ease; font-weight: 500;
+    }
+
+    .nav-link:hover { background: #00bfff; color: #050807; box-shadow: 0 10px 30px rgba(0, 191, 255, 0.25); }
+    .nav-link.active { background: #00bfff; color: #050807; }
+
+    .legal-note {
+      max-width: 1240px; margin: 0 auto 24px; border-radius: 14px;
+      border: 1px solid rgba(255, 193, 7, 0.45); background: rgba(255, 193, 7, 0.08);
+      color: #ffe9b0; padding: 12px 18px; font-size: 14px;
+    }
+
+    .module-nav {
+      position: sticky; top: 0; z-index: 40;
+      display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+      padding: 10px 12px; margin: 0 auto 26px; max-width: 1240px;
+      background: rgba(5, 8, 7, 0.85); backdrop-filter: blur(8px);
+      border-radius: 0 0 18px 18px; border: 1px solid rgba(0, 191, 255, 0.15);
+    }
+
+    .module-nav a {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+      border-radius: 999px; text-decoration: none; color: #9aa5b1;
+      border: 1px solid rgba(0, 191, 255, 0.25); font-size: 12.5px; transition: all 0.2s ease;
+    }
+
+    .module-nav a:hover { color: #00bfff; border-color: #00bfff; background: rgba(0, 191, 255, 0.08); }
+
+    main { max-width: 1240px; margin: 0 auto; display: grid; gap: 26px; }
+
+    .panel {
+      border-radius: 18px; border: 1px solid rgba(0, 191, 255, 0.25);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.1) 0%, transparent 60%), rgba(9, 14, 20, 0.9);
+      box-shadow: 0 40px 80px -60px rgba(0, 191, 255, 0.9);
+      padding: 22px 24px; scroll-margin-top: 70px;
+    }
+
+    .panel h2 {
+      margin: 0 0 6px; font-size: clamp(19px, 3vw, 26px);
+      display: flex; align-items: center; gap: 12px; color: #00bfff;
+    }
+
+    .panel > p.lead { margin: 0 0 18px; color: #9aa5b1; font-size: 15px; }
+
+    .field { margin-bottom: 14px; }
+
+    .field label {
+      display: block; font-size: 12.5px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: #9aa5b1; margin-bottom: 5px;
+    }
+
+    .field input[type="number"], .field select, .field input[type="file"] {
+      width: 100%; box-sizing: border-box; background: #10181f;
+      border: 1px solid rgba(0, 191, 255, 0.35); border-radius: 12px;
+      color: #e5f4ff; font-family: inherit; font-size: 15px; padding: 10px 14px; outline: none;
+    }
+
+    .field select {
+      appearance: none; -webkit-appearance: none; cursor: pointer;
+      background: #10181f url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300bfff' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+    }
+
+    .field input:focus, .field select:focus { border-color: #00bfff; box-shadow: 0 0 14px rgba(0, 191, 255, 0.25); }
+    .field .hint { font-size: 12.5px; color: #6b7785; margin-top: 4px; }
+
+    .calc-grid { display: grid; gap: 20px; grid-template-columns: 1fr; }
+    @media (min-width: 860px) { .calc-grid { grid-template-columns: 1fr 1fr; } }
+
+    .result-card {
+      border-radius: 14px; border: 1px solid rgba(0, 191, 255, 0.45);
+      background: rgba(0, 191, 255, 0.1); padding: 16px 20px; text-align: center;
+    }
+
+    .result-card .value {
+      font-size: 32px; font-weight: 700; color: #00bfff;
+      text-shadow: 0 0 14px rgba(0, 191, 255, 0.4); word-break: break-word;
+    }
+
+    .result-card .sub { color: #9aa5b1; font-size: 14px; margin-top: 4px; }
+    .result-card .formula { color: #7fd4ff; font-family: Consolas, monospace; font-size: 15px; margin-top: 8px; }
+
+    .warn {
+      margin-top: 12px; border-radius: 12px; border: 1px solid rgba(255, 107, 53, 0.5);
+      background: rgba(255, 107, 53, 0.12); color: #ffd9c9; padding: 10px 14px; font-size: 14px; display: none;
+    }
+
+    canvas {
+      display: block; width: 100%; height: 280px;
+      background: #0a0f14; border: 1px solid rgba(0, 191, 255, 0.3);
+      border-radius: 12px; margin-bottom: 12px;
+    }
+
+    canvas.tall { height: 380px; }
+    canvas.small { height: 200px; }
+
+    .canvas-caption { font-size: 13px; color: #6b7785; margin-top: -4px; margin-bottom: 14px; text-align: center; }
+
+    .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .slider-row label { font-size: 13px; color: #9aa5b1; min-width: 160px; }
+    .slider-row input[type="range"] { flex: 1; min-width: 130px; accent-color: #00bfff; }
+    .slider-row .val { color: #00bfff; font-family: Consolas, monospace; min-width: 95px; text-align: right; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin-top: 6px; }
+    th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid rgba(0, 191, 255, 0.15); }
+    th { color: #00bfff; text-transform: uppercase; font-size: 12.5px; letter-spacing: 1px; }
+    tr:hover td { background: rgba(0, 191, 255, 0.05); }
+    td.hl { color: #00bfff; font-weight: 600; }
+
+    .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+
+    .concept-card {
+      border-radius: 16px; border: 1px solid rgba(0, 191, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.12) 0%, transparent 65%), rgba(9, 14, 20, 0.92);
+      padding: 18px 20px;
+    }
+
+    .concept-card i { color: #00bfff; font-size: 22px; }
+    .concept-card h3 { margin: 8px 0 2px; font-size: 18px; color: #00bfff; }
+    .concept-card .unit { display: inline-block; font-size: 12.5px; text-transform: uppercase; letter-spacing: 1.5px; color: #9aa5b1; margin-bottom: 8px; }
+    .concept-card p { margin: 0; color: #c9d1d9; font-size: 14.5px; }
+
+    .chain {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: stretch; margin-top: 8px;
+    }
+
+    .chain .step {
+      flex: 1 1 130px; text-align: center; border-radius: 14px; padding: 14px 10px;
+      border: 1px solid rgba(0, 191, 255, 0.3); background: rgba(10, 15, 20, 0.8);
+      font-size: 13px; color: #c9d1d9;
+    }
+
+    .chain .step i { display: block; font-size: 20px; color: #00bfff; margin-bottom: 6px; }
+    .chain .arrow { align-self: center; color: #00bfff; font-size: 18px; }
+
+    .quiz-question {
+      border-radius: 14px; border: 1px solid rgba(0, 191, 255, 0.2);
+      background: rgba(10, 15, 20, 0.75); padding: 16px 18px; margin-bottom: 14px;
+    }
+
+    .quiz-question h3 { margin: 0 0 10px; font-size: 16px; color: #e5f4ff; display: flex; gap: 10px; }
+    .quiz-question h3 .qnum { color: #00bfff; flex: 0 0 auto; }
+
+    .quiz-option {
+      display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+      border-radius: 10px; border: 1px solid rgba(0, 191, 255, 0.15);
+      margin-bottom: 7px; cursor: pointer; transition: all 0.15s ease; font-size: 14.5px;
+    }
+
+    .quiz-option:hover { border-color: rgba(0, 191, 255, 0.5); background: rgba(0, 191, 255, 0.06); }
+    .quiz-option input { accent-color: #00bfff; width: 16px; height: 16px; }
+    .quiz-option.correct { border-color: #2ecc71; background: rgba(46, 204, 113, 0.12); color: #b8f5d3; }
+    .quiz-option.wrong { border-color: #ff6b35; background: rgba(255, 107, 53, 0.12); color: #ffd9c9; }
+    .quiz-option.locked { cursor: default; }
+
+    .quiz-explain {
+      display: none; margin-top: 6px; font-size: 13.5px; color: #9aa5b1;
+      border-left: 3px solid rgba(0, 191, 255, 0.4); padding-left: 10px;
+    }
+
+    .quiz-result { margin-top: 16px; text-align: center; display: none; }
+    .quiz-result .score { font-size: 44px; font-weight: 700; color: #00bfff; text-shadow: 0 0 16px rgba(0, 191, 255, 0.4); }
+    .quiz-result .grade { color: #c9d1d9; margin-top: 4px; }
+
+    .quiz-bar {
+      height: 14px; border-radius: 999px; background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.35); overflow: hidden; margin: 14px auto 0; max-width: 420px;
+    }
+
+    .quiz-bar span {
+      display: block; height: 100%; width: 0;
+      background: linear-gradient(90deg, #0077aa, #00bfff);
+      box-shadow: 0 0 16px rgba(0, 191, 255, 0.6); transition: width 0.8s ease;
+    }
+
+    .quiz-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+
+    .steps-list { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps-list li {
+      position: relative; padding: 10px 12px 10px 52px; margin-bottom: 8px;
+      border-radius: 12px; border: 1px solid rgba(0, 191, 255, 0.18); background: rgba(10, 15, 20, 0.75);
+      font-size: 14.5px; color: #c9d1d9;
+    }
+
+    .steps-list li::before {
+      counter-increment: step; content: counter(step);
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(0, 191, 255, 0.15); border: 1px solid #00bfff;
+      color: #00bfff; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+
+    code {
+      background: #10181f; border: 1px solid rgba(0, 191, 255, 0.25);
+      border-radius: 6px; padding: 1px 7px; font-size: 13px; color: #7fd4ff;
+    }
+
+    footer { text-align: center; margin-top: 40px; color: #6b7785; font-size: 13.5px; }
+    footer a { color: #00bfff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      body { padding: 22px 10px 46px; }
+      .panel { padding: 16px 14px; }
+      .module-nav a { padding: 5px 10px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Software Defined Radio</h1>
+    <p>Radio im 21. Jahrhundert: Ein Chip liest Rohdaten (IQ-Samples), die Software macht daraus Spektrum, Wasserfall
+       und demoduliert Signale – hier komplett simuliert, mit echter FFT und lokaler IQ-Datei-Analyse im Browser.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Startseite</a>
+      <a class="nav-link" href="elektronik.html"><i class="fas fa-microchip"></i> Elektronik</a>
+      <a class="nav-link" href="funk.html"><i class="fas fa-tower-broadcast"></i> Funktechnik</a>
+      <a class="nav-link active" href="sdr.html"><i class="fas fa-satellite-dish"></i> SDR</a>
+    </div>
+  </header>
+
+  <div class="legal-note">
+    <i class="fas fa-scale-balanced"></i> <strong>Rechtlicher Hinweis:</strong> Alle Simulationen auf dieser Seite sind
+    fiktiv und lösen <strong>keine Funkübertragung</strong> aus. Empfang ist grundsätzlich erlaubt; <strong>Senden</strong>
+    (auch Wiedergeben empfangener Signale) ohne Amateurfunk-Lizenz bzw. Zuteilung ist verboten. Experimente bitte nur
+    mit eigenen Testsignalen oder bei freigegebenen Empfangsfrequenzen durchführen.
+  </div>
+
+  <nav class="module-nav" aria-label="Module SDR">
+    <a href="#was-ist-sdr"><i class="fas fa-circle-question"></i> Was ist SDR</a>
+    <a href="#funktion"><i class="fas fa-diagram-project"></i> Funktionsweise</a>
+    <a href="#hackrf"><i class="fas fa-toolbox"></i> HackRF &amp; PortaPack</a>
+    <a href="#spektrum"><i class="fas fa-chart-simple"></i> Spektrum</a>
+    <a href="#analyzer"><i class="fas fa-wave-square"></i> Analysator</a>
+    <a href="#wasserfall"><i class="fas fa-water"></i> Wasserfall</a>
+    <a href="#amfm"><i class="fas fa-tower-observation"></i> AM/FM-Simulation</a>
+    <a href="#iq"><i class="fas fa-compass"></i> IQ erklärt</a>
+    <a href="#fft"><i class="fas fa-chart-column"></i> FFT</a>
+    <a href="#nyquist"><i class="fas fa-clock"></i> Nyquist</a>
+    <a href="#gain"><i class="fas fa-sliders"></i> LNA &amp; Gain</a>
+    <a href="#swr"><i class="fas fa-arrows-turn-right"></i> Anpassung/SWR</a>
+    <a href="#experimente"><i class="fas fa-flask"></i> Experimente</a>
+    <a href="#kali"><i class="fab fa-linux"></i> HackRF &amp; Kali</a>
+    <a href="#quiz"><i class="fas fa-graduation-cap"></i> Quiz</a>
+  </nav>
+
+  <main>
+
+    <!-- ==================== WAS IST SDR ==================== -->
+    <section class="panel" id="was-ist-sdr">
+      <h2><i class="fas fa-circle-question"></i> Was ist SDR?</h2>
+      <p class="lead">Software Defined Radio = Funkempfänger, bei dem statt fester Analogschaltungen vor allem
+         <strong style="color:#00bfff;">Software</strong> arbeitet. Ein Chip liefert Rohdaten, der Computer demoduliert alles.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <i class="fas fa-microchip"></i>
+          <h3>Hardware macht nur Rohdaten</h3>
+          <span class="unit">Tuner + ADC</span>
+          <p>Der Empfänger wandelt ein Frequenzband in Zahlen um: IQ-Samples. Kein FM-Detektor, kein AM-Filter in Hardware.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-laptop-code"></i>
+          <h3>Software macht alles andere</h3>
+          <span class="unit">DSP</span>
+          <p>Filtern, demodulieren, FFT, Wasserfall – alles in Software (DSP = Digital Signal Processing). Neue Betriebsart = neues Programm.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-infinity"></i>
+          <h3>Ein Gerät, viele Anwendungen</h3>
+          <span class="unit">Breitband</span>
+          <p>FM-Radio, Wetterbilder, Flugfunk (ADS-B), 433-MHz-Sensoren, Satelliten – mit demselben Gerät empfangbar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FUNKTIONSWEISE ==================== -->
+    <section class="panel" id="funktion">
+      <h2><i class="fas fa-diagram-project"></i> Funktionsweise eines SDR-Empfängers</h2>
+      <p class="lead">Der Signalweg von der Antenne bis zur Software – auf einem Chip bzw. per USB in den Rechner.</p>
+
+      <div class="chain">
+        <div class="step"><i class="fas fa-broadcast-tower"></i> Antenne<br>fängt Wellen</div>
+        <div class="arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="step"><i class="fas fa-filter"></i> Vorfilter<br>Band-Auswahl</div>
+        <div class="arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="step"><i class="fas fa-tower-observation"></i> LNA<br>verstärkt schwach</div>
+        <div class="arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="step"><i class="fas fa-shuffle"></i> Tuner + Mischer<br>auf IF/ZF</div>
+        <div class="arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="step"><i class="fas fa-wave-square"></i> ADC<br>Analog → Digital</div>
+        <div class="arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="step"><i class="fas fa-code"></i> IQ-Samples<br>via USB an PC</div>
+        <div class="arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="step"><i class="fas fa-laptop-code"></i> DSP-Software<br>FFT, Demod, Anzeige</div>
+      </div>
+
+      <p style="color:#9aa5b1; font-size:14.5px; margin-top:16px;">
+        Zwei Zufallsdaten pro Moment: <strong style="color:#00bfff;">I</strong> (in-phase) und <strong style="color:#00bfff;">Q</strong> (quadrature) –
+        zusammen beschreiben sie Amplitude <em>und</em> Phase des Signals. Damit kann Software jede Modulation nachrechnen.
+      </p>
+    </section>
+
+    <!-- ==================== HACKRF ==================== -->
+    <section class="panel" id="hackrf">
+      <h2><i class="fas fa-toolbox"></i> HackRF One und PortaPack</h2>
+      <p class="lead">Beliebte SDR-Hardware mit riesigem Frequenzbereich – hier nur als Wissensübersicht.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <i class="fas fa-tower-broadcast"></i>
+          <h3>HackRF One</h3>
+          <span class="unit">1 MHz – 6 GHz · Half-Duplex</span>
+          <p>Open-Source-SDR von Michael Ossmann. Empfangen <em>und</em> senden (Senden nur mit Lizenz/legal!).
+             8- oder 10-bit IQ-Samples über USB 2, bis 20 MS/s.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-tablet-screen-button"></i>
+          <h3>PortaPack H2</h3>
+          <span class="unit">Aufsatz für HackRF</span>
+          <p>Touchscreen + Encoder: macht den HackRF eigenständig ohne PC – Firmware „Havoc" bietet Spektrum-Anzeige, Empfangs-Apps und Signal-Recorder.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-shield-halved"></i>
+          <h3>Wofür (legal) nutzen?</h3>
+          <span class="unit">Empfang &amp; Forschung</span>
+          <p>FM/ADS-B/433-MHz-Empfang, Protokoll-Analyse eigener Geräte, Funk-Security-Labs, Amateurfunk. Senden nur mit Lizenz bzw. in freigegebenen Bändern (z. B. 433 MHz mit strikten Regeln).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FREQUENZSPEKTRUM ==================== -->
+    <section class="panel" id="spektrum">
+      <h2><i class="fas fa-chart-simple"></i> Das Frequenzspektrum für SDR-Empfang</h2>
+      <p class="lead">Typische, legal empfangbare Ziele für Einsteiger-SDRs – mit ungefähren Frequenzen.</p>
+
+      <div style="overflow-x: auto;">
+        <table>
+          <thead><tr><th>Ziel</th><th>Frequenz</th><th>Demodulation</th><th>Wozu</th></tr></thead>
+          <tbody>
+            <tr><td class="hl">UKW-Radio</td><td>87,5–108 MHz</td><td>WFM (Mono/Stereo)</td><td>Musik, RDS-Sendername</td></tr>
+            <tr><td class="hl">ADS-B Flugfunk</td><td>1090 MHz</td><td>Pulspakete (Mode-S)</td><td>Flugzeuge in Echtzeit</td></tr>
+            <tr><td class="hl">Funksteckdosen/Sensoren</td><td>433,92 MHz (ISM)</td><td>AM/ASK (Puls-Bursts)</td><td>Temperatur, Tür, Fernbedienung</td></tr>
+            <tr><td class="hl">Wettersatelliten NOAA</td><td>137–138 MHz</td><td>APT (schmalbandig)</td><td>Wetterbilder von oben</td></tr>
+            <tr><td class="hl">Amateurfunk 2 m</td><td>144–146 MHz</td><td>NFM</td><td>Relais, Runden, APRS</td></tr>
+            <tr><td class="hl">Mittelwelle/Langwelle</td><td>30 kHz – 3 MHz</td><td>AM</td><td>Zeitsender DCF77, Rundfunk</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== VIRTUELLER SPEKTRUMANALYSATOR ==================== -->
+    <section class="panel" id="analyzer">
+      <h2><i class="fas fa-wave-square"></i> Virtueller Spektrumanalysator</h2>
+      <p class="lead">Simuliertes Spektrum einer 2-MHz-„Bandbreite": Rauschteppich, zwei Sendesignale und ein periodischer 433-MHz-Burst.</p>
+
+      <canvas id="spectrum-canvas" class="tall"></canvas>
+      <div class="canvas-caption" id="spectrum-caption">Virtuelles Spektrum (Simulation – keine echte Hardware)</div>
+
+      <div class="slider-row">
+        <label>LNA-Gain (Verstärkung)</label>
+        <input type="range" id="spec-gain" min="0" max="50" step="1" value="20">
+        <span class="val" id="spec-gain-val">20 dB</span>
+      </div>
+      <div class="slider-row">
+        <label>Rauschteppich (Noise Floor)</label>
+        <input type="range" id="spec-noise" min="-110" max="-60" step="1" value="-92">
+        <span class="val" id="spec-noise-val">−92 dB</span>
+      </div>
+    </section>
+
+    <!-- ==================== WASSERFALL ==================== -->
+    <section class="panel" id="wasserfall">
+      <h2><i class="fas fa-water"></i> Interaktives Wasserfalldiagramm</h2>
+      <p class="lead">Der Wasserfall zeigt das Spektrum über der Zeit: oben neu, unten alt. Signale erscheinen als helle Bahnen.</p>
+
+      <canvas id="waterfall-canvas" class="tall"></canvas>
+      <div class="canvas-caption">Simulierter Zeitverlauf – ein wanderndes Trägersignal + periodische Kurz-Bursts (wie 433-MHz-Sensoren)</div>
+
+      <div class="slider-row">
+        <label>Signalwanderung</label>
+        <input type="range" id="wf-drift" min="0" max="100" step="1" value="40">
+        <span class="val" id="wf-drift-val">40 %</span>
+      </div>
+    </section>
+
+    <!-- ==================== AM/FM-SIMULATION ==================== -->
+    <section class="panel" id="amfm">
+      <h2><i class="fas fa-tower-observation"></i> AM- und FM-Signalsimulation</h2>
+      <p class="lead">Oszilloskop-Ansicht: links die modulierende Information (Audio), rechts das modulierte HF-Signal.</p>
+
+      <div class="slider-row">
+        <label>Modulationstyp</label>
+        <select id="sim-type" style="flex:1; min-width:160px;">
+          <option value="am" selected>AM (Amplitudenmodulation)</option>
+          <option value="fm">FM (Frequenzmodulation)</option>
+        </select>
+      </div>
+      <div class="slider-row">
+        <label>Modulationstiefe</label>
+        <input type="range" id="sim-depth" min="10" max="100" step="5" value="60">
+        <span class="val" id="sim-depth-val">60 %</span>
+      </div>
+
+      <canvas id="sim-canvas" class="tall"></canvas>
+      <div class="canvas-caption" id="sim-caption">AM-Signal: Die Hüllkurve (gelb) folgt dem Audio, der Träger (blau) schwingt konstant schnell</div>
+    </section>
+
+    <!-- ==================== IQ ERKLÄRT ==================== -->
+    <section class="panel" id="iq">
+      <h2><i class="fas fa-compass"></i> IQ-Samples verständlich erklärt</h2>
+      <p class="lead">Jedes Sample besteht aus zwei Zahlen: I (cosinusförmig) und Q (sinusförmig). Zusammen geben Betrag (Amplitude)
+         und Winkel (Phase) – wie Zeiger auf einer Uhr.</p>
+
+      <canvas id="iq-canvas" class="tall"></canvas>
+      <div class="canvas-caption">Links: Zeigerdiagramm (I horizontal, Q vertikal) · Rechts: I(t) und Q(t) als Schreibkurve</div>
+
+      <div class="slider-row">
+        <label>Drehgeschwindigkeit</label>
+        <input type="range" id="iq-speed" min="1" max="10" step="0.5" value="3">
+        <span class="val" id="iq-speed-val">3,0×</span>
+      </div>
+
+      <p style="color:#9aa5b1; font-size:14.5px; margin-top:8px;">
+        <strong style="color:#00bfff;">Merkhilfe:</strong> Betrag = √(I² + Q²) ist die Signalstärke,
+        Winkel = atan2(Q, I) ist die Phase. FM-Information steckt in der <em>Phase</em>, AM in der <em>Länge</em> des Zeigers.
+      </p>
+    </section>
+
+    <!-- ==================== FFT ==================== -->
+    <section class="panel" id="fft">
+      <h2><i class="fas fa-chart-column"></i> FFT und Bandbreite</h2>
+      <p class="lead">Die FFT (Fast Fourier Transform) rechnet Zeit in Frequenz um: „Welche Sinusanteile stecken im Signal?"</p>
+
+      <canvas id="fft-time" class="small"></canvas>
+      <div class="canvas-caption">Zeitbereich: Summe aus zwei Sinus-Signalen</div>
+
+      <canvas id="fft-freq" class="small"></canvas>
+      <div class="canvas-caption">Frequenzbereich: Die FFT findet beide Anteile als zwei Spitzen</div>
+
+      <div class="slider-row">
+        <label>Frequenz Signal 2</label>
+        <input type="range" id="fft-f2" min="2" max="8" step="0.25" value="5">
+        <span class="val" id="fft-f2-val">5,00 kHz</span>
+      </div>
+
+      <p style="color:#9aa5b1; font-size:14.5px; margin:10px 0 0;">
+        <strong style="color:#00bfff;">Bandbreite</strong> = das Frequenzband, das ein Signal belegt. UKW-FM braucht
+        ~200 kHz, ein 2 m Funkkontakt (NFM) nur ~12,5 kHz, ADS-B-Pakete 2 MHz. Je schmaler die Bandbreite, desto
+        weniger Rauschen kommt mit – Filterung ist alles beim SDR.
+      </p>
+    </section>
+
+    <!-- ==================== NYQUIST ==================== -->
+    <section class="panel" id="nyquist">
+      <h2><i class="fas fa-clock"></i> Sample Rate und Nyquist-Frequenz</h2>
+      <p class="lead">Nyquist-Shannon: Um ein Signal sauber zu erfassen, muss mindestens <strong style="color:#00bfff;">doppelt so schnell</strong>
+         gesampelt werden wie die höchste Signal-Frequenz. Sonst entsteht Aliasing (falsche Frequenzen).</p>
+
+      <canvas id="nyquist-canvas" class="tall"></canvas>
+      <div class="canvas-caption">Dünne Linie = echtes Signal · Punkte = Samples · Dicke Linie = naive Rekonstruktion aus den Samples</div>
+
+      <div class="slider-row">
+        <label>Signalfrequenz</label>
+        <input type="range" id="nyq-f" min="2" max="30" step="1" value="12">
+        <span class="val" id="nyq-f-val">12 Hz</span>
+      </div>
+      <div class="slider-row">
+        <label>Sample Rate</label>
+        <input type="range" id="nyq-fs" min="10" max="60" step="1" value="30">
+        <span class="val" id="nyq-fs-val">30 Hz</span>
+      </div>
+
+      <div class="result-card" style="margin-top: 8px;">
+        <div class="value" id="nyq-status" style="font-size: 22px;">–</div>
+        <div class="sub" id="nyq-note"></div>
+      </div>
+    </section>
+
+    <!-- ==================== LNA / GAIN ==================== -->
+    <section class="panel" id="gain">
+      <h2><i class="fas fa-sliders"></i> LNA, Gain und Übersteuerung</h2>
+      <p class="lead">Gain verstärkt Empfangssignal <em>und</em> Rauschen. Zu viel Gain übersteuert den ADC – Signale
+         werden „abgeschnitten" (Clipping) und erzeugen Phantomsignale.</p>
+
+      <canvas id="gain-canvas" class="tall"></canvas>
+      <div class="canvas-caption" id="gain-caption">Simuliertes Spektrum – beide Signale + Rauschteppich wandern mit dem Gain nach oben</div>
+
+      <div class="slider-row">
+        <label>LNA / IF Gain</label>
+        <input type="range" id="gain-slider" min="0" max="60" step="1" value="24">
+        <span class="val" id="gain-slider-val">24 dB</span>
+      </div>
+
+      <div class="result-card">
+        <div class="value" id="gain-status" style="font-size: 22px;">–</div>
+        <div class="sub" id="gain-note">Status der simulierten Empfangskette</div>
+      </div>
+      <div class="warn" id="gain-warn"><i class="fas fa-triangle-exclamation"></i> <span></span></div>
+    </section>
+
+    <!-- ==================== SWR / ANPASSUNG ==================== -->
+    <section class="panel" id="swr">
+      <h2><i class="fas fa-arrows-turn-right"></i> Antennenanpassung &amp; SWR</h2>
+      <p class="lead">Passt die Impedanz der Antenne nicht zum Kabel (meist 50 Ω), wird ein Teil der Leistung reflektiert.
+         Das Stehwellenverhältnis (SWR) beschreibt, wie gut die Anpassung ist.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="swr-r">Wirkwiderstand R (Ohm)</label>
+            <input type="number" id="swr-r" step="any" min="0" value="50">
+          </div>
+          <div class="field">
+            <label for="swr-x">Blindwiderstand X (Ohm, ±)</label>
+            <input type="number" id="swr-x" step="any" value="0">
+            <div class="hint">negativ = kapazitiv, positiv = induktiv</div>
+          </div>
+          <div class="field">
+            <label for="swr-z0">Systemimpedanz Z0</label>
+            <select id="swr-z0">
+              <option value="50" selected>50 Ω (Standard Funk)</option>
+              <option value="75">75 Ω (TV/RG-59)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="result-card">
+            <div class="value" id="swr-value">–</div>
+            <div class="sub">Stehwellenverhältnis (SWR)</div>
+            <div class="formula" id="swr-formula"></div>
+          </div>
+          <div class="result-card" style="margin-top: 14px; border-color: rgba(0, 191, 255, 0.3);">
+            <div class="value" id="swr-reflected" style="font-size: 24px;">–</div>
+            <div class="sub">Reflektierte Leistungs­anteil</div>
+          </div>
+          <div class="warn" id="swr-warn"><i class="fas fa-triangle-exclamation"></i> <span></span></div>
+        </div>
+      </div>
+
+      <p style="color:#9aa5b1; font-size:14px; margin-top:10px;">
+        Faustregeln: SWR ≤ 1,5 sehr gut · bis 2,0 völlig okay · bis 3,0 kritisch · über 3,0 Endstufe kann Schaden nehmen.
+        Der Reflexionskoeffizient Γ = (Z − Z0)/(Z + Z0), SWR = (1+|Γ|)/(1−|Γ|).
+      </p>
+    </section>
+
+    <!-- ==================== EXPERIMENTE ==================== -->
+    <section class="panel" id="experimente">
+      <h2><i class="fas fa-flask"></i> SDR-Experimente (nur Empfang &amp; Simulation)</h2>
+      <p class="lead">Praxisnahe Projekte – alle hier beschriebenen Schritte sind reiner Empfang bzw. lokal im Browser simuliert.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <i class="fas fa-radio"></i>
+          <h3>1. FM-Radio empfangen (erklärt)</h3>
+          <span class="unit">87,5–108 MHz · WFM</span>
+          <p>Antenne (~1 m Draht), SDR auf eine UKW-Frequenz tunen, Demodulator „WFM Mono" wählen, Sample Rate ≥ 1,8 MS/s,
+             Audio-Deemphasis an. Das Wasserfallbild zeigt die breite FM-Hüllkurve, RDS-Namen erscheinen bei starken Sendern.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-house-signal"></i>
+          <h3>2. 433-MHz-Signale analysieren (simuliert)</h3>
+          <span class="unit">433,92 MHz · AM/ASK</span>
+          <p>Funksteckdosen- und Sensor-Signale sind kurze OOK-Bursts. Unten im Experiment-Kasten siehst du ein
+             simuliertes Burst-Muster: kurze Pulse + lange Sync-Lücke, wiederholt. Im echten SDR: AM-Demodulator
+             aktivieren und das Zeitsignal anschauen.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-signal"></i>
+          <h3>3. Signalstärken vergleichen</h3>
+          <span class="unit">Freiraumdämpfung</span>
+          <p>Rechner unten: Bei doppelter Distanz gehen −6 dB verloren (Vierfaches der Entfernung = −12 dB).
+             Vergleiche, was z. B. −50 dBm (stark) und −100 dBm (Rauschgrenze) praktisch bedeuten.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-file-import"></i>
+          <h3>4. IQ-Dateien im Browser analysieren</h3>
+          <span class="unit">100 % lokal · keine Uploads</span>
+          <p>Lade unten eine IQ-Aufnahme (z. B. HackRF int8) und die Seite berechnet per FFT Spektrum + Wasserfall
+             direkt in deinem Browser. Es verlässt keine Datei den Rechner.</p>
+        </div>
+      </div>
+
+      <!-- 433 MHz Simulation -->
+      <h3 style="color:#00bfff; margin:20px 0 8px;"><i class="fas fa-house-signal"></i> Simulierter 433-MHz-Burst (OOK)</h3>
+      <canvas id="burst-canvas" class="small"></canvas>
+      <div class="canvas-caption">Typisches Muster: Preamble-Pulse → 24 Bit-Daten → lange Sync-Lücke, dann Wiederholung</div>
+
+      <!-- Signalstärke -->
+      <h3 style="color:#00bfff; margin:20px 0 8px;"><i class="fas fa-signal"></i> Freiraum-Dämpfungsrechner (FSPL)</h3>
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="fspl-freq">Frequenz (MHz)</label>
+            <input type="number" id="fspl-freq" step="any" min="0" value="433.92">
+          </div>
+          <div class="field">
+            <label for="fspl-dist">Entfernung</label>
+            <input type="number" id="fspl-dist" step="any" min="0" value="1">
+            <div class="hint" id="fspl-dist-hint">in Kilometern (0,01 = 10 m)</div>
+          </div>
+          <div class="field">
+            <label for="fspl-tx">Sendeleistung (dBm)</label>
+            <input type="number" id="fspl-tx" step="any" value="10">
+          </div>
+        </div>
+        <div>
+          <div class="result-card">
+            <div class="value" id="fspl-loss">–</div>
+            <div class="sub">Freiraumdämpfung (FSPL)</div>
+            <div class="formula">FSPL = 32,44 + 20·log₁₀(f MHz) + 20·log₁₀(d km)</div>
+          </div>
+          <div class="result-card" style="margin-top: 14px; border-color: rgba(0, 191, 255, 0.3);">
+            <div class="value" id="fspl-rx" style="font-size: 24px;">–</div>
+            <div class="sub">Ankommende Leistung am Empfänger</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== IQ-DATEI-ANALYSE ==================== -->
+    <section class="panel" id="iq-analyze">
+      <h2><i class="fas fa-file-import"></i> IQ-Dateien im Browser analysieren</h2>
+      <p class="lead">Lade eine Roh-IQ-Aufnahme (z. B. HackRF <code>hackrf_transfer -r aufnahme.iq</code>, int8).
+         FFT, Spektrum und Wasserfall werden <strong style="color:#00bfff;">komplett lokal</strong> in deinem Browser berechnet.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="iq-file">IQ-Datei (int8 oder int16 LE)</label>
+            <input type="file" id="iq-file" accept=".iq,.raw,.bin,.cf32,.c8">
+          </div>
+          <div class="field">
+            <label for="iq-format">Datenformat</label>
+            <select id="iq-format">
+              <option value="i8" selected>int8 (HackRF Standard, ±127)</option>
+              <option value="i16">int16 (Little Endian)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="iq-samplerate">Sample Rate (MS/s)</label>
+            <input type="number" id="iq-samplerate" step="any" min="0.1" value="2">
+          </div>
+          <div class="field">
+            <label for="iq-center">Mittenfrequenz (MHz)</label>
+            <input type="number" id="iq-center" step="any" value="433.92">
+          </div>
+          <div class="field">
+            <label for="iq-fftsize">FFT-Größe</label>
+            <select id="iq-fftsize">
+              <option value="512">512</option>
+              <option value="1024">1024</option>
+              <option value="2048" selected>2048</option>
+              <option value="4096">4096</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="result-card">
+            <div class="value" id="iq-status">Warten auf Datei …</div>
+            <div class="sub" id="iq-status-sub">Alles läuft lokal im Browser</div>
+          </div>
+          <div class="result-card" style="margin-top: 14px; border-color: rgba(0, 191, 255, 0.3);">
+            <div class="value" id="iq-peak" style="font-size: 22px;">–</div>
+            <div class="sub">Stärkstes Signal (Peak)</div>
+          </div>
+        </div>
+      </div>
+
+      <canvas id="iq-spectrum" class="tall"></canvas>
+      <div class="canvas-caption">Gemitteltes Spektrum der Aufnahme (x-Achse: Frequenz relativ zur Mittenfrequenz)</div>
+
+      <canvas id="iq-waterfall" class="tall"></canvas>
+      <div class="canvas-caption">Wasserfall der Aufnahme: oben = Beginn der Datei, unten = Ende</div>
+    </section>
+
+    <!-- ==================== HACKRF & KALI ==================== -->
+    <section class="panel" id="kali">
+      <h2><i class="fab fa-linux"></i> Beispiele mit HackRF One und Kali Linux (Empfang)</h2>
+      <p class="lead">Typischer Workflow für reinen <strong style="color:#00bfff;">Empfang</strong> – Senden wird hier bewusst nicht behandelt.</p>
+
+      <ul class="steps-list">
+        <li>Hardware anschließen: HackRF One per USB, Antenne (für UKW reicht ~1 m Draht als λ/2-Ersatz).</li>
+        <li>Treiber &amp; Tools installieren: <code>sudo apt install hackrf gqrx-sdr soapyhackrf</code></li>
+        <li>Funktionstest: <code>hackrf_info</code> muss Board-Nummer und Firmware zeigen.</li>
+        <li>Empfang mit gqrx: Device „HackRF", Sample Rate 2–8 MS/s, UKW-Sender anwählen, Demod „WFM (Mono)".</li>
+        <li>Aufnahme (IQ-Rohdaten): <code>hackrf_transfer -r fm_capture.iq -f 97900000 -s 2000000 -a 1 -l 32 -g 32</code></li>
+        <li>Aufnahme analysieren: Datei oben in den IQ-Analysator ziehen – oder in gqrx/P afforded-Tools öffnen.</li>
+        <li>ADS-B testen: 1090 MHz, z. B. mit <code>dump1090</code> – Flugzeuge erscheinen auf der Karte (nur Empfang).</li>
+      </ul>
+
+      <p style="color:#9aa5b1; font-size:13.5px; margin-top:14px;">
+        Hinweise: <code>-l</code> = LNA-Gain, <code>-g</code> = VGA-Gain (beide in dB, 0–62/0–62).
+        Nach 20–40 dB Gain meist beste Empfindlichkeit; mehr = Übersteuerungsgefahr (siehe Gain-Modul oben).
+        Senden (TX) erfordert eine Amateurfunklizenz bzw. explizite Regelung – lasse es ohne Lizenz bleiben.
+      </p>
+    </section>
+
+    <!-- ==================== QUIZ ==================== -->
+    <section class="panel" id="quiz">
+      <h2><i class="fas fa-graduation-cap"></i> SDR-Quiz</h2>
+      <p class="lead">10 Fragen zu SDR, IQ, FFT und Empfangspraxis.</p>
+      <div id="quiz-container"></div>
+
+      <div class="quiz-result" id="quiz-result">
+        <div class="score" id="quiz-score">–</div>
+        <div class="grade" id="quiz-grade"></div>
+        <div class="quiz-bar"><span id="quiz-bar-fill"></span></div>
+      </div>
+
+      <div class="quiz-actions">
+        <button class="btn" id="quiz-submit" type="button" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; border-radius:12px; border:1px solid #00bfff; background:#00bfff; color:#050807; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer;"><i class="fas fa-check"></i> Auswerten</button>
+        <button class="btn" id="quiz-restart" type="button" style="display:inline-flex; align-items:center; gap:8px; padding:10px 22px; border-radius:12px; border:1px solid rgba(0,191,255,.4); background:transparent; color:#00bfff; font-family:inherit; font-size:15px; cursor:pointer;"><i class="fas fa-rotate-left"></i> Neu starten</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Alle Simulationen ohne SDR-Hardware · IQ-Analyse 100 % lokal im Browser ·
+       <a href="elektronik.html">Elektronik</a> · <a href="funk.html">Funktechnik</a> · <a href="index.html">Startseite</a></p>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const fmt = function (n, digits) {
+        return n.toLocaleString("de-DE", { maximumFractionDigits: digits == null ? 3 : digits });
+      };
+
+      function setupCanvas(id) {
+        const canvas = document.getElementById(id);
+        const ctx = canvas.getContext("2d");
+        function fit() {
+          const rect = canvas.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = Math.max(50, Math.floor(rect.width * dpr));
+          canvas.height = Math.max(50, Math.floor(rect.height * dpr));
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          return { w: rect.width, h: rect.height };
+        }
+        return { canvas: canvas, ctx: ctx, fit: fit };
+      }
+
+      function drawGrid(ctx, size, yTop, yBottom) {
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+        ctx.strokeStyle = "rgba(0,191,255,0.09)";
+        ctx.lineWidth = 1;
+        for (let gx = 0; gx <= size.w; gx += 60) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, size.h); ctx.stroke(); }
+        for (let gy = 0; gy <= size.h; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(size.w, gy); ctx.stroke(); }
+      }
+
+      /* ---------- gemeinsame Simulations-Spektren ---------- */
+      // Signale: relative Frequenz (-0.5..0.5 der Spanne), Amplitude dB über Noise, Breite
+      function simSpectrumDb(nPoints, noiseDb, signals) {
+        const out = new Float32Array(nPoints);
+        for (let i = 0; i < nPoints; i++) {
+          const fRel = i / (nPoints - 1) - 0.5;
+          let db = noiseDb + (Math.random() * 2 - 1) * 1.5;
+          signals.forEach(function (sig) {
+            const d = (fRel - sig.f) / sig.bw;
+            db = Math.max(db, sig.amp - Math.abs(d) * 26 + (Math.random() * 1.6 - 0.8));
+          });
+          out[i] = db;
+        }
+        return out;
+      }
+
+      function drawSpectrum(cv, db, opts) {
+        const size = cv.fit();
+        const ctx = cv.ctx;
+        drawGrid(ctx, size);
+        const min = opts.min, max = opts.max;
+        const yFor = function (dbv) {
+          const t = (dbv - min) / (max - min);
+          return size.h - t * (size.h - 30) - 12;
+        };
+
+        // 0-dBFS-Referenzlinie
+        if (opts.redLine) {
+          ctx.strokeStyle = "rgba(255,107,53,0.6)";
+          ctx.setLineDash([6, 5]);
+          ctx.beginPath();
+          ctx.moveTo(0, yFor(max - 1));
+          ctx.lineTo(size.w, yFor(max - 1));
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // Kurve
+        ctx.beginPath();
+        ctx.strokeStyle = opts.color || "#00bfff";
+        ctx.lineWidth = 1.4;
+        for (let i = 0; i < db.length; i++) {
+          const x = (i / (db.length - 1)) * size.w;
+          const y = yFor(db[i]);
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Fläche unter Kurve
+        ctx.lineTo(size.w, size.h);
+        ctx.lineTo(0, size.h);
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(0, 0, 0, size.h);
+        grad.addColorStop(0, "rgba(0,191,255,0.28)");
+        grad.addColorStop(1, "rgba(0,191,255,0.02)");
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Labels
+        if (opts.labels) {
+          ctx.fillStyle = "rgba(229,244,255,0.85)";
+          ctx.font = "11px Consolas, monospace";
+          opts.labels.forEach(function (lab) {
+            const x = (lab.f + 0.5) * size.w;
+            const y = yFor(lab.amp + (opts.noise || min)) - 8;
+            ctx.fillText(lab.text, Math.min(x, size.w - 70), Math.max(14, y));
+          });
+        }
+      }
+
+      /* =====================================================
+         VIRTUELLER SPEKTRUMANALYSATOR
+         ===================================================== */
+      const specCv = setupCanvas("spectrum-canvas");
+      const specGain = document.getElementById("spec-gain");
+      const specNoise = document.getElementById("spec-noise");
+
+      function specLabel() {
+        document.getElementById("spec-gain-val").textContent = specGain.value + " dB";
+        document.getElementById("spec-noise-val").textContent = "−" + Math.abs(specNoise.value) + " dB";
+      }
+
+      function specFrame() {
+        const gain = Number(specGain.value);
+        const noise = Number(specNoise.value);
+        const signals = [
+          { f: -0.28, amp: noise + gain * 0.9 + 14, bw: 0.06, label: "FM 97,9 MHz" },
+          { f: 0.18,  amp: noise + gain * 0.55 + 8,  bw: 0.025, label: "2 m Relais" },
+          { f: 0.02,  amp: noise + gain * 0.8 + 10,  bw: 0.012, label: "433,92 MHz" }
+        ];
+        const db = simSpectrumDb(320, noise + gain * 0.25, signals);
+        drawSpectrum(specCv, db, { min: -110, max: 10, noise: noise, labels: signals.map(function (s) { return { f: s.f, amp: s.amp - noise, text: s.label }; }) });
+        window.requestAnimationFrame(specFrame);
+      }
+
+      specGain.addEventListener("input", specLabel);
+      specNoise.addEventListener("input", specLabel);
+      specLabel();
+      window.requestAnimationFrame(specFrame);
+
+      /* =====================================================
+         WASSERFALL
+         ===================================================== */
+      const wfCv = setupCanvas("waterfall-canvas");
+      const wfDrift = document.getElementById("wf-drift");
+      const wfBuffer = document.createElement("canvas");
+      let wfTime = 0;
+      let wfRows = 0;
+
+      function wfColorMap(t) {
+        // t 0..1 -> schwarz/blau/cyan/grün/gelb/rot/weiß
+        t = Math.max(0, Math.min(1, t));
+        let r, g, b;
+        if (t < 0.25) { r = 0; g = 0; b = Math.round(255 * (t / 0.25) * 0.9 + 20); }
+        else if (t < 0.5) { const u = (t - 0.25) / 0.25; r = 0; g = Math.round(255 * u); b = Math.round(255 * (1 - u * 0.55)); }
+        else if (t < 0.75) { const u = (t - 0.5) / 0.25; r = Math.round(255 * u); g = 255; b = 0; }
+        else { const u = (t - 0.75) / 0.25; r = 255; g = Math.round(255 * (1 - u)); b = Math.round(255 * u); }
+        return [r, g, b];
+      }
+
+      function waterfallFrame() {
+        const size = wfCv.fit();
+        const ctx = wfCv.ctx;
+        if (wfBuffer.width !== wfCv.canvas.width || wfBuffer.height !== wfCv.canvas.height) {
+          wfBuffer.width = wfCv.canvas.width;
+          wfBuffer.height = wfCv.canvas.height;
+          wfRows = 0;
+        }
+        const bctx = wfBuffer.getContext("2d");
+        bctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        if (wfRows > 0) {
+          // Verschiebe den Inhalt um 1 px nach unten
+          ctx.drawImage(wfBuffer, 0, 0, wfBuffer.width, wfBuffer.height - 1, 0, 1, wfBuffer.width, wfBuffer.height - 1);
+        }
+
+        const drift = Number(wfDrift.value) / 100;
+        wfTime += 0.03;
+        const signals = [
+          { f: Math.sin(wfTime) * 0.32 * drift, amp: -35, bw: 0.03 },
+          { f: 0.22, amp: -52, bw: 0.02 }
+        ];
+        // periodische Bursts
+        const burstPhase = (wfTime * 2) % 1;
+        if (burstPhase < 0.12) {
+          signals.push({ f: 0.02 + (Math.random() - 0.5) * 0.02, amp: -30, bw: 0.008 });
+        }
+
+        const n = Math.max(80, Math.floor(size.w / 2));
+        const db = simSpectrumDb(n, -88, signals);
+
+        // Zeile auf Haupt-Canvas zeichnen
+        const yFor = function (dbv) {
+          const t = (dbv + 100) / 105; // -100..5 -> 0..1
+          return t;
+        };
+        const rowH = 1.4;
+        for (let i = 0; i < n; i++) {
+          const c = wfColorMap(yFor(db[i]));
+          ctx.fillStyle = "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
+          ctx.fillRect((i / n) * size.w, 0, size.w / n + 1, rowH);
+        }
+
+        // Kopiere den Zustand in den Puffer (für nächsten Frame)
+        bctx.clearRect(0, 0, wfBuffer.width, wfBuffer.height);
+        bctx.drawImage(wfCv.canvas, 0, 0);
+        wfRows++;
+
+        window.requestAnimationFrame(waterfallFrame);
+      }
+
+      wfDrift.addEventListener("input", function () {
+        document.getElementById("wf-drift-val").textContent = wfDrift.value + " %";
+      });
+      window.requestAnimationFrame(waterfallFrame);
+
+      /* =====================================================
+         AM/FM-SIMULATION
+         ===================================================== */
+      const simCv = setupCanvas("sim-canvas");
+      const simType = document.getElementById("sim-type");
+      const simDepth = document.getElementById("sim-depth");
+      let simPhase = 0;
+
+      function simLabel() {
+        document.getElementById("sim-depth-val").textContent = simDepth.value + " %";
+        document.getElementById("sim-caption").textContent = simType.value === "am"
+          ? "AM-Signal: Die Hüllkurve (gelb) folgt dem Audio, der Träger (blau) schwingt konstant schnell"
+          : "FM-Signal: Amplitude konstant – Information steckt im Frequenzwechsel (gelb = Audio-Referenz)";
+      }
+
+      function simFrame() {
+        const size = simCv.fit();
+        const ctx = simCv.ctx;
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+        ctx.strokeStyle = "rgba(0,191,255,0.08)";
+        for (let gx = 0; gx < size.w; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, size.h); ctx.stroke(); }
+        for (let gy = 0; gy < size.h; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(size.w, gy); ctx.stroke(); }
+
+        const depth = Number(simDepth.value) / 100;
+        const audioFreq = 2.2;
+        const carrier = 14;
+        const mid = size.h / 2;
+        const max = mid - 16;
+
+        if (simType.value === "am") {
+          ctx.strokeStyle = "rgba(255,212,59,0.85)";
+          ctx.setLineDash([5, 5]); ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          for (let x = 0; x <= size.w; x += 2) {
+            const env = (1 + depth * Math.sin((x / size.w) * Math.PI * 2 * audioFreq - simPhase)) * 0.85;
+            ctx.lineTo(x, mid - env * max);
+          }
+          ctx.stroke(); ctx.setLineDash([]);
+          ctx.strokeStyle = "#00bfff"; ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          for (let x = 0; x <= size.w; x += 1) {
+            const env = (1 + depth * Math.sin((x / size.w) * Math.PI * 2 * audioFreq - simPhase)) * 0.85;
+            const y = mid - Math.sin((x / size.w) * Math.PI * 2 * carrier + simPhase * 3) * env * max;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        } else {
+          ctx.strokeStyle = "rgba(255,212,59,0.85)";
+          ctx.setLineDash([5, 5]); ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          for (let x = 0; x <= size.w; x += 2) {
+            const y = mid - Math.sin((x / size.w) * Math.PI * 2 * audioFreq - simPhase) * max * 0.8;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.stroke(); ctx.setLineDash([]);
+          ctx.strokeStyle = "#00bfff"; ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          for (let x = 0; x <= size.w; x += 1) {
+            const phase = (x / size.w) * Math.PI * 2 * carrier + simPhase * 3 + depth * 4 * Math.sin((x / size.w) * Math.PI * 2 * audioFreq - simPhase);
+            ctx.lineTo(x, mid - Math.sin(phase) * max);
+          }
+          ctx.stroke();
+        }
+
+        simPhase += 0.07;
+        window.requestAnimationFrame(simFrame);
+      }
+
+      simType.addEventListener("change", simLabel);
+      simDepth.addEventListener("input", simLabel);
+      simLabel();
+      window.requestAnimationFrame(simFrame);
+
+      /* =====================================================
+         IQ-PHASOR
+         ===================================================== */
+      const iqCv = setupCanvas("iq-canvas");
+      const iqSpeed = document.getElementById("iq-speed");
+      let iqPhase = 0;
+      const iqTrail = [];
+
+      function iqFrame() {
+        const size = iqCv.fit();
+        const ctx = iqCv.ctx;
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+
+        const speed = Number(iqSpeed.value);
+        iqPhase += 0.05 * speed;
+        const r = Math.min(size.h * 0.36, size.w * 0.18);
+        const cx = size.w * 0.26;
+        const cy = size.h * 0.52;
+
+        // Achsen
+        ctx.strokeStyle = "rgba(0,191,255,0.35)";
+        ctx.beginPath(); ctx.moveTo(cx - r - 22, cy); ctx.lineTo(cx + r + 22, cy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, cy - r - 18); ctx.lineTo(cx, cy + r + 18); ctx.stroke();
+        ctx.strokeStyle = "rgba(0,191,255,0.18)";
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+
+        ctx.fillStyle = "rgba(0,191,255,0.8)";
+        ctx.font = "12px Consolas, monospace";
+        ctx.fillText("I", cx + r + 12, cy - 8);
+        ctx.fillText("Q", cx + 8, cy - r - 4);
+
+        // Zeiger
+        const ix = Math.cos(iqPhase) * r;
+        const qy = -Math.sin(iqPhase) * r;
+        ctx.strokeStyle = "#00bfff";
+        ctx.lineWidth = 2.4;
+        ctx.shadowColor = "rgba(0,191,255,0.7)";
+        ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + ix, cy + qy); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#dff5ff";
+        ctx.beginPath(); ctx.arc(cx + ix, cy + qy, 5, 0, Math.PI * 2); ctx.fill();
+
+        // Projektionen
+        ctx.strokeStyle = "rgba(255,212,59,0.8)";
+        ctx.setLineDash([3, 3]); ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(cx + ix, cy + qy); ctx.lineTo(cx + ix, cy); ctx.stroke();
+        ctx.strokeStyle = "rgba(142,36,170,0.85)";
+        ctx.beginPath(); ctx.moveTo(cx + ix, cy + qy); ctx.lineTo(cx, cy + qy); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Rechts: I(t)/Q(t) Schreibkurve
+        const tx = size.w * 0.52, tw = size.w * 0.44, ty = size.h * 0.5, th = size.h * 0.4;
+        ctx.strokeStyle = "rgba(0,191,255,0.2)";
+        ctx.beginPath(); ctx.moveTo(tx, ty - th / 2); ctx.lineTo(tx + tw, ty - th / 2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(tx, ty + th / 2); ctx.lineTo(tx + tw, ty + th / 2); ctx.stroke();
+
+        iqTrail.push({ phase: iqPhase });
+        if (iqTrail.length > 260) iqTrail.shift();
+
+        function trace(getter, color) {
+          ctx.strokeStyle = color; ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          iqTrail.forEach(function (p, i) {
+            const x = tx + (i / 260) * tw;
+            const y = ty - getter(p.phase) * th / 2;
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+        }
+        trace(function (ph) { return Math.cos(ph); }, "#00bfff");
+        trace(function (ph) { return Math.sin(ph); }, "#8e24aa");
+
+        ctx.fillStyle = "rgba(0,191,255,0.9)";
+        ctx.font = "12px Consolas, monospace";
+        ctx.fillText("I(t) = cos(ωt)", tx, ty - th / 2 - 6);
+        ctx.fillStyle = "rgba(190,120,220,0.95)";
+        ctx.fillText("Q(t) = sin(ωt)", tx, ty + th / 2 + 16);
+
+        window.requestAnimationFrame(iqFrame);
+      }
+
+      iqSpeed.addEventListener("input", function () {
+        document.getElementById("iq-speed-val").textContent = fmt(Number(iqSpeed.value), 1) + "×";
+      });
+      window.requestAnimationFrame(iqFrame);
+
+      /* =====================================================
+         FFT-DEMO (simuliertes Zeitsignal -> Spektrum)
+         ===================================================== */
+      const fftTimeCv = setupCanvas("fft-time");
+      const fftFreqCv = setupCanvas("fft-freq");
+      const fftF2 = document.getElementById("fft-f2");
+
+      function fftFrame() {
+        const f1 = 2, f2 = Number(fftF2.value);
+        document.getElementById("fft-f2-val").textContent = fmt(f2, 2) + " kHz";
+
+        const N = 256;
+        const time = [];
+        for (let i = 0; i < N; i++) {
+          time.push(Math.sin((i / N) * Math.PI * 2 * f1) + 0.7 * Math.sin((i / N) * Math.PI * 2 * f2 + 1.2));
+        }
+
+        // einfache DFT (N=256 -> ok Performance)
+        const mag = [];
+        for (let k = 1; k <= 40; k++) {
+          let re = 0, im = 0;
+          for (let i = 0; i < N; i++) {
+            re += time[i] * Math.cos(-(2 * Math.PI * k * i) / N);
+            im += time[i] * Math.sin(-(2 * Math.PI * k * i) / N);
+          }
+          mag.push(Math.sqrt(re * re + im * im) / N * 2);
+        }
+
+        // Zeitbereich
+        let size = fftTimeCv.fit();
+        let ctx = fftTimeCv.ctx;
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+        ctx.strokeStyle = "rgba(0,191,255,0.08)";
+        for (let gx = 0; gx < size.w; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, size.h); ctx.stroke(); }
+        const midT = size.h / 2, maxT = midT - 12;
+        ctx.strokeStyle = "#00bfff"; ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let i = 0; i < N; i++) {
+          const x = (i / N) * size.w;
+          const y = midT - time[i] * maxT;
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Frequenzbereich
+        size = fftFreqCv.fit();
+        ctx = fftFreqCv.ctx;
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+        const bw = size.w / mag.length;
+        const maxMag = Math.max.apply(null, mag) * 1.15;
+        mag.forEach(function (m, i) {
+          const h = (m / maxMag) * (size.h - 20);
+          ctx.fillStyle = i === 0 || Math.abs(i + 1 - f1) < 0.6 ? "#00bfff" : (Math.abs(i + 1 - f2) < 0.6 ? "#ffd43b" : "rgba(0,191,255,0.35)");
+          ctx.fillRect(i * bw + 1, size.h - h, bw - 2, h);
+        });
+
+        window.requestAnimationFrame(fftFrame);
+      }
+
+      window.requestAnimationFrame(fftFrame);
+
+      /* =====================================================
+         NYQUIST-DEMO
+         ===================================================== */
+      const nyqCv = setupCanvas("nyquist-canvas");
+      const nyqF = document.getElementById("nyq-f");
+      const nyqFs = document.getElementById("nyq-fs");
+
+      function nyquistUpdate() {
+        const f = Number(nyqF.value);
+        const fs = Number(nyqFs.value);
+        document.getElementById("nyq-f-val").textContent = f + " Hz";
+        document.getElementById("nyq-fs-val").textContent = fs + " Hz";
+
+        const ok = fs >= 2 * f;
+        const apparent = Math.abs(((f + fs / 2) % fs) - fs / 2);
+        const status = document.getElementById("nyq-status");
+        const note = document.getElementById("nyq-note");
+        if (ok) {
+          status.textContent = "✅ Kein Aliasing (fs ≥ 2f)";
+          note.textContent = "Mindestens 2 Samples pro Periode – das Signal kann rekonstruiert werden.";
+        } else {
+          status.textContent = "⚠️ Aliasing! Signal erscheint als " + fmt(apparent, 1) + " Hz";
+          note.textContent = "Zu wenig Samples: Der echte " + f + "-Hz-Sinus täuscht ein langsames Signal vor.";
+        }
+
+        const size = nyqCv.fit();
+        const ctx = nyqCv.ctx;
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+        ctx.strokeStyle = "rgba(0,191,255,0.08)";
+        for (let gy = 0; gy < size.h; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(size.w, gy); ctx.stroke(); }
+
+        const mid = size.h / 2;
+        const max = mid - 16;
+        const cycles = 3;
+        const T = size.w / cycles;
+
+        // echtes Signal
+        ctx.strokeStyle = "rgba(0,191,255,0.45)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        for (let x = 0; x <= size.w; x += 1) {
+          const y = mid - Math.sin((x / T) * Math.PI * 2 * (f / 10)) * max;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Samples
+        const sampleStep = (fs / 10) / cycles; // relative Auflösung
+        ctx.fillStyle = "#ffd43b";
+        for (let k = 0; k <= size.w; k += sampleStep) {
+          const y = mid - Math.sin((k / T) * Math.PI * 2 * (f / 10)) * max;
+          ctx.beginPath(); ctx.arc(k, y, 3.2, 0, Math.PI * 2); ctx.fill();
+        }
+
+        // naive Rekonstruktion (linear durch Samples)
+        ctx.strokeStyle = ok ? "#00bfff" : "#ff6b35";
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        for (let k = 0; k <= size.w + sampleStep; k += sampleStep) {
+          const y = mid - Math.sin((k / T) * Math.PI * 2 * (f / 10)) * max;
+          k === 0 ? ctx.moveTo(k, y) : ctx.lineTo(k, y);
+        }
+        ctx.stroke();
+      }
+
+      nyqF.addEventListener("input", nyquistUpdate);
+      nyqFs.addEventListener("input", nyquistUpdate);
+
+      /* =====================================================
+         GAIN / ÜBERSTEUERUNG
+         ===================================================== */
+      const gainCv = setupCanvas("gain-canvas");
+      const gainSlider = document.getElementById("gain-slider");
+
+      function gainFrame() {
+        const gain = Number(gainSlider.value);
+        document.getElementById("gain-slider-val").textContent = gain + " dB";
+
+        const noise = -95 + gain;
+        const sig1 = -38 + gain;
+        const sig2 = -65 + gain;
+        const signals = [
+          { f: -0.3, amp: sig1, bw: 0.05 },
+          { f: 0.25, amp: sig2, bw: 0.03 }
+        ];
+        if (sig1 > -4) {
+          // Übersteuerung: Spurious-Spurious
+          signals.push({ f: -0.05, amp: sig1 + 6, bw: 0.02 });
+          signals.push({ f: 0.42, amp: sig1 + 4, bw: 0.015 });
+        }
+        const db = simSpectrumDb(300, noise, signals);
+        drawSpectrum(gainCv, db, { min: -110, max: 15, redLine: true });
+
+        const status = document.getElementById("gain-status");
+        const note = document.getElementById("gain-note");
+        const warn = document.getElementById("gain-warn");
+        if (sig1 > -3) {
+          status.textContent = "⚠️ Übersteuert!";
+          note.textContent = "Das starke Signal schlägt an die Sättigung (0 dBFS) – Clipping erzeugt Phantomsignale (Spurious).";
+          warn.style.display = "block";
+          warn.querySelector("span").textContent = "Gain reduzieren oder Abschwächer (Attenuator) einsetzen. Regel: So viel Gain wie nötig, so wenig wie möglich.";
+        } else if (noise > -70) {
+          status.textContent = "Rauschteppich hoch";
+          note.textContent = "Viel Gain hebt auch das Rauschen – schwache Signale ertrinken im Rauschteppich.";
+          warn.style.display = "none";
+        } else {
+          status.textContent = "✅ Guter Arbeitspunkt";
+          note.textContent = "Signale kräftig, Rauschteppich niedrig, kein Clipping.";
+          warn.style.display = "none";
+        }
+
+        window.requestAnimationFrame(gainFrame);
+      }
+
+      gainSlider.addEventListener("input", function () {});
+      window.requestAnimationFrame(gainFrame);
+
+      /* =====================================================
+         SWR-RECHNER
+         ===================================================== */
+      const swrR = document.getElementById("swr-r");
+      const swrX = document.getElementById("swr-x");
+      const swrZ0 = document.getElementById("swr-z0");
+
+      function swrUpdate() {
+        const r = parseFloat(swrR.value.replace(",", "."));
+        const x = parseFloat(swrX.value.replace(",", "."));
+        const z0 = parseFloat(swrZ0.value);
+        const value = document.getElementById("swr-value");
+        const formula = document.getElementById("swr-formula");
+        const reflected = document.getElementById("swr-reflected");
+        const warn = document.getElementById("swr-warn");
+        warn.style.display = "none";
+
+        if (!Number.isFinite(r) || !Number.isFinite(x) || r < 0) {
+          value.textContent = "–"; formula.textContent = ""; reflected.textContent = "–"; return;
+        }
+
+        const re = r - z0, im = x;
+        const num = Math.sqrt(re * re + im * im);
+        const den = Math.sqrt((r + z0) * (r + z0) + x * x);
+        const gamma = den > 0 ? num / den : 1;
+        let swr = Math.abs(gamma) > 0.999 ? Infinity : (1 + Math.abs(gamma)) / (1 - Math.abs(gamma));
+
+        value.textContent = swr === Infinity ? "∞" : fmt(swr, 2) + " : 1";
+        formula.textContent = "Γ = |" + fmt(Math.abs(gamma), 3) + "|";
+        reflected.textContent = fmt(Math.abs(gamma) * Math.abs(gamma) * 100, 1) + " %";
+
+        if (swr > 3) {
+          warn.style.display = "block";
+          warn.querySelector("span").textContent = "SWR über 3 – mehr als ein Viertel der Leistung wird reflektiert. Antenne prüfen/kürzen oder Anpassung (Balun/Tuner) nutzen.";
+        } else if (swr > 2) {
+          warn.style.display = "block";
+          warn.querySelector("span").textContent = "SWR über 2 – funktioniert meist, aber ein Tuner/Anpassungsglied verbessert die Lage deutlich.";
+        }
+      }
+
+      [swrR, swrX, swrZ0].forEach(function (el) {
+        el.addEventListener("input", swrUpdate);
+        el.addEventListener("change", swrUpdate);
+      });
+
+      /* =====================================================
+         433-MHZ-BURST-SIMULATION
+         ===================================================== */
+      const burstCv = setupCanvas("burst-canvas");
+      let burstPhase = 0;
+
+      function burstFrame() {
+        const size = burstCv.fit();
+        const ctx = burstCv.ctx;
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+        ctx.strokeStyle = "rgba(0,191,255,0.08)";
+        for (let gx = 0; gx < size.w; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, size.h); ctx.stroke(); }
+
+        const mid = size.h / 2;
+        const max = mid - 12;
+        burstPhase += 0.01;
+        const repeat = (burstPhase % 1);
+
+        // 3 Teilbereiche: Preamble, Daten (24 Bits), Sync-Lücke
+        const sections = [
+          { label: "Preamble", bits: [1, 1, 1, 1, 1, 1, 1, 1, 0, 0], w: 0.22 },
+          { label: "24 Bit Daten", w: 0.56, random: true },
+          { label: "Sync-Lücke", w: 0.22, gap: true }
+        ];
+
+        let x0 = 0;
+        sections.forEach(function (sec, si) {
+          const sw = sec.w * size.w;
+          const bits = sec.gap ? [0, 0, 0, 0, 0, 0] : (sec.bits || [1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0]);
+          const bitW = sw / bits.length;
+          // leichte Bewegung: Phase verschiebt nur die Anzeige-Intensität
+          ctx.strokeStyle = si === 2 ? "rgba(0,191,255,0.25)" : "#00bfff";
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          let y = mid;
+          ctx.moveTo(x0, mid + max * (sec.gap ? 0.8 : 0.6));
+          bits.forEach(function (b, i) {
+            const lvl = b === 1 ? -max * 0.6 : max * 0.6;
+            ctx.lineTo(x0 + i * bitW, mid + lvl);
+            ctx.lineTo(x0 + (i + 1) * bitW, mid + lvl);
+          });
+          ctx.lineTo(x0 + sw, mid + max * (sec.gap ? 0.8 : 0.6));
+          ctx.stroke();
+
+          ctx.fillStyle = "rgba(0,191,255,0.75)";
+          ctx.font = "11px Consolas, monospace";
+          ctx.fillText(sec.label, x0 + 4, size.h - 10);
+          x0 += sw;
+        });
+
+        window.requestAnimationFrame(burstFrame);
+      }
+
+      window.requestAnimationFrame(burstFrame);
+
+      /* =====================================================
+         FSPL
+         ===================================================== */
+      const fsplFreq = document.getElementById("fspl-freq");
+      const fsplDist = document.getElementById("fspl-dist");
+      const fsplTx = document.getElementById("fspl-tx");
+
+      function fsplUpdate() {
+        const f = parseFloat(fsplFreq.value.replace(",", "."));
+        const d = parseFloat(fsplDist.value.replace(",", "."));
+        const tx = parseFloat(fsplTx.value.replace(",", "."));
+        const lossEl = document.getElementById("fspl-loss");
+        const rxEl = document.getElementById("fspl-rx");
+        if (!(f > 0) || !(d > 0) || !Number.isFinite(tx)) {
+          lossEl.textContent = "–"; rxEl.textContent = "–"; return;
+        }
+        const loss = 32.44 + 20 * Math.log10(f) + 20 * Math.log10(d);
+        lossEl.textContent = fmt(loss, 1) + " dB";
+        const rx = tx - loss;
+        rxEl.textContent = fmt(rx, 1) + " dBm";
+        rxEl.title = rx > -60 ? "sehr stark" : rx > -80 ? "gut" : rx > -100 ? "schwach, aber empfangbar" : "unter Rauschgrenze";
+      }
+
+      [fsplFreq, fsplDist, fsplTx].forEach(function (el) { el.addEventListener("input", fsplUpdate); });
+
+      /* =====================================================
+         IQ-DATEI-ANALYSE (echte FFT im Browser)
+         ===================================================== */
+      const iqFile = document.getElementById("iq-file");
+      const iqFormat = document.getElementById("iq-format");
+      const iqSamplerate = document.getElementById("iq-samplerate");
+      const iqCenter = document.getElementById("iq-center");
+      const iqFftSize = document.getElementById("iq-fftsize");
+      const iqStatus = document.getElementById("iq-status");
+      const iqStatusSub = document.getElementById("iq-status-sub");
+      const iqPeak = document.getElementById("iq-peak");
+
+      // Radix-2 FFT (in-place)
+      function fft(re, im) {
+        const n = re.length;
+        for (let i = 1, j = 0; i < n; i++) {
+          let bit = n >> 1;
+          for (; j & bit; bit >>= 1) j ^= bit;
+          j ^= bit;
+          if (i < j) {
+            let t = re[i]; re[i] = re[j]; re[j] = t;
+            t = im[i]; im[i] = im[j]; im[j] = t;
+          }
+        }
+        for (let len = 2; len <= n; len <<= 1) {
+          const ang = -2 * Math.PI / len;
+          const wRe = Math.cos(ang), wIm = Math.sin(ang);
+          for (let i = 0; i < n; i += len) {
+            let cRe = 1, cIm = 0;
+            for (let k = 0; k < len / 2; k++) {
+              const uRe = re[i + k], uIm = im[i + k];
+              const pRe = re[i + k + len / 2], pIm = im[i + k + len / 2];
+              const vRe = pRe * cRe - pIm * cIm;
+              const vIm = pRe * cIm + pIm * cRe;
+              re[i + k] = uRe + vRe; im[i + k] = uIm + vIm;
+              re[i + k + len / 2] = uRe - vRe; im[i + k + len / 2] = uIm - vIm;
+              const nRe = cRe * wRe - cIm * wIm;
+              cIm = cRe * wIm + cIm * wRe;
+              cRe = nRe;
+            }
+          }
+        }
+      }
+
+      function hann(n) {
+        const w = new Float32Array(n);
+        for (let i = 0; i < n; i++) w[i] = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (n - 1)));
+        return w;
+      }
+
+      // Liefert Magnitude-Spektrum (dB, mit DC in der Mitte) für einen Ausschnitt
+      function spectrumFromIq(iq, offset, N, window, bytesPerComponent) {
+        const re = new Float32Array(N);
+        const im = new Float32Array(N);
+        let scale = bytesPerComponent === 1 ? 127 : 32767;
+        for (let i = 0; i < N; i++) {
+          const o = offset + i * 2 * bytesPerComponent;
+          if (o + 1 >= iq.length) return null;
+          re[i] = iq[o] / scale * window[i];
+          im[i] = iq[o + 1] / scale * window[i];
+        }
+        fft(re, im);
+        const mags = new Float32Array(N);
+        for (let i = 0; i < N; i++) {
+          mags[i] = 20 * Math.log10(Math.sqrt(re[i] * re[i] + im[i] * im[i]) / N + 1e-9) + 20;
+        }
+        // DC in die Mitte: [N/2 .. N-1, 0 .. N/2-1]
+        const shifted = new Float32Array(N);
+        for (let i = 0; i < N; i++) shifted[i] = mags[(i + N / 2) % N];
+        return shifted;
+      }
+
+      function colorFor(t) {
+        return wfColorMap(t);
+      }
+
+      function drawIqSpectrum(cv, avgDb, fsMHz, centerMHz) {
+        const size = cv.fit();
+        const ctx = cv.ctx;
+        ctx.fillStyle = "#0a0f14";
+        ctx.fillRect(0, 0, size.w, size.h);
+        ctx.strokeStyle = "rgba(0,191,255,0.09)";
+        for (let gy = 0; gy < size.h; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(size.w, gy); ctx.stroke(); }
+
+        const min = Math.max(-140, Math.min.apply(null, avgDb));
+        const max = Math.max.apply(null, avgDb);
+        ctx.strokeStyle = "#00bfff"; ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        for (let i = 0; i < avgDb.length; i++) {
+          const x = (i / (avgDb.length - 1)) * size.w;
+          const y = size.h - ((avgDb[i] - min) / (max - min)) * (size.h - 30) - 12;
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.lineTo(size.w, size.h); ctx.lineTo(0, size.h); ctx.closePath();
+        const grad = ctx.createLinearGradient(0, 0, 0, size.h);
+        grad.addColorStop(0, "rgba(0,191,255,0.25)"); grad.addColorStop(1, "rgba(0,191,255,0.02)");
+        ctx.fillStyle = grad; ctx.fill();
+
+        // Achsenbeschriftung
+        ctx.fillStyle = "rgba(229,244,255,0.85)";
+        ctx.font = "11px Consolas, monospace";
+        const half = fsMHz / 2;
+        ctx.fillText("−" + fmt(half, 2) + " MHz", 6, size.h - 8);
+        ctx.fillText("Mittenfrequenz " + fmt(centerMHz, 3) + " MHz", size.w / 2 - 60, size.h - 8);
+        ctx.fillText("+" + fmt(half, 2) + " MHz", size.w - 80, size.h - 8);
+      }
+
+      function drawIqWaterfall(cv, rows, fsMHz, centerMHz) {
+        const size = cv.fit();
+        const ctx = cv.ctx;
+        const W = size.w, H = size.h;
+        ctx.fillStyle = "#050807";
+        ctx.fillRect(0, 0, W, H);
+        const rowH = H / rows.length;
+        rows.forEach(function (row, ri) {
+          const min = row.min, max = row.max;
+          for (let i = 0; i < row.db.length; i++) {
+            const t = (row.db[i] - min) / (max - min || 1);
+            const c = colorFor(t);
+            ctx.fillStyle = "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
+            ctx.fillRect((i / row.db.length) * W, ri * rowH, W / row.db.length + 1, rowH + 1);
+          }
+        });
+        ctx.fillStyle = "rgba(229,244,255,0.85)";
+        ctx.font = "11px Consolas, monospace";
+        ctx.fillText("Anfang der Datei", 6, 14);
+        ctx.fillText("Ende der Datei", 6, H - 6);
+      }
+
+      function analyzeIqFile(file) {
+        const N = Number(iqFftSize.value);
+        const bytesPerComponent = iqFormat.value === "i8" ? 1 : 2;
+        const maxBytes = Math.min(file.size, N * 2 * bytesPerComponent * 400); // bis 400 FFT-Blöcke
+        const reader = new FileReader();
+        iqStatus.textContent = "Lese Datei …";
+        iqStatusSub.textContent = file.name + " (" + fmt(file.size / 1024, 0) + " kB) – alles lokal";
+
+        reader.onload = function (e) {
+          try {
+            const buf = new Uint8Array(e.target.result);
+            const iq = bytesPerComponent === 1 ? buf : new Int16Array(buf.buffer, buf.byteOffset, Math.floor(buf.length / 2));
+
+            const windowFn = hann(N);
+            const rows = [];
+            const blockBytes = N * 2 * bytesPerComponent;
+            const maxBlocks = Math.floor(Math.min(buf.byteLength, maxBytes) / blockBytes);
+            if (maxBlocks < 2) {
+              iqStatus.textContent = "Datei zu kurz";
+              iqStatusSub.textContent = "Benötigt werden mindestens 2 FFT-Blöcke (" + blockBytes * 2 + " Byte).";
+              return;
+            }
+            const skip = Math.max(1, Math.floor(maxBlocks / 80)); // bis zu 80 Wasserfall-Zeilen
+
+            for (let b = 0; b < maxBlocks; b += skip) {
+              const db = spectrumFromIq(iq, b * blockBytes, N, windowFn, bytesPerComponent);
+              if (!db) break;
+              rows.push({
+                db: db,
+                min: Math.min.apply(null, Array.prototype.slice.call(db)),
+                max: Math.max.apply(null, Array.prototype.slice.call(db))
+              });
+            }
+
+            // gemitteltes Spektrum
+            const avg = new Float32Array(N);
+            rows.forEach(function (row) { for (let i = 0; i < N; i++) avg[i] += row.db[i] / rows.length; });
+
+            const fsMHz = parseFloat(iqSamplerate.value.replace(",", ".")) || 2;
+            const centerMHz = parseFloat(iqCenter.value.replace(",", ".")) || 0;
+
+            drawIqSpectrum(setupCanvas("iq-spectrum"), avg, fsMHz, centerMHz);
+            drawIqWaterfall(setupCanvas("iq-waterfall"), rows, fsMHz, centerMHz);
+
+            // Peak
+            let peakI = 0;
+            for (let i = 1; i < N; i++) if (avg[i] > avg[peakI]) peakI = i;
+            const rel = (peakI / N) - 0.5; // -0.5..0.5
+            const peakMHz = centerMHz + rel * fsMHz;
+            iqPeak.textContent = fmt(peakMHz, 4) + " MHz";
+            iqStatus.textContent = "✅ Analyse fertig";
+            iqStatusSub.textContent = rows.length + " FFT-Blöcke à " + N + " Samples · DC zentriert";
+          } catch (err) {
+            iqStatus.textContent = "❌ Fehler";
+            iqStatusSub.textContent = err.message || String(err);
+          }
+        };
+        reader.onerror = function () {
+          iqStatus.textContent = "❌ Datei konnte nicht gelesen werden";
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      iqFile.addEventListener("change", function () {
+        if (iqFile.files && iqFile.files[0]) analyzeIqFile(iqFile.files[0]);
+      });
+      [iqFormat, iqSamplerate, iqCenter, iqFftSize].forEach(function (el) {
+        el.addEventListener("change", function () {
+          if (iqFile.files && iqFile.files[0]) analyzeIqFile(iqFile.files[0]);
+        });
+      });
+
+      /* =====================================================
+         QUIZ
+         ===================================================== */
+      const QUIZ = [
+        { q: "Was macht SDR so besonders?", options: ["Es ist besonders günstig", "Software ersetzt viel Analog-Hardware", "Es braucht keine Antenne", "Es funktioniert nur mit Sendelizenz"], answer: 1, explain: "Tuner + ADC liefern IQ-Rohdaten, die Software filtert und demoduliert." },
+        { q: "Was enthalten IQ-Samples?", options: ["Nur Amplitude", "Nur Phase", "Amplitude und Phase (I + Q)", "Audio in Stereo"], answer: 2, explain: "I (in-phase) und Q (quadrature) beschreiben Amplitude UND Phase des Signals." },
+        { q: "Minimale Sample Rate für ein 10 MHz breites Signal (Nyquist)?", options: ["5 MS/s", "10 MS/s", "20 MS/s", "40 MS/s"], answer: 2, explain: "fs ≥ 2 × Bandbreite = 20 MS/s." },
+        { q: "Welchen Frequenzbereich deckt der HackRF One ab?", options: ["24 MHz – 1,7 GHz", "1 MHz – 6 GHz", "100 kHz – 30 MHz", "500 MHz – 10 GHz"], answer: 1, explain: "Der HackRF One empfängt/sendet von 1 MHz bis 6 GHz (Half-Duplex)." },
+        { q: "Was zeigt ein Wasserfalldiagramm?", options: ["Audio-Lautstärke", "Frequenzspektrum über der Zeit", "Antennen-SWR", "Die Batteriespannung"], answer: 1, explain: "X = Frequenz, Y = Zeit (neu oben), Farbe = Signalstärke." },
+        { q: "Wozu dient der LNA (Low Noise Amplifier)?", options: ["Sendeleistung erhöhen", "Schwache Signale vor dem ADC verstärken", "Störungen wegfiltern", "Sample Rate erhöhen"], answer: 1, explain: "Der LNA verstärkt direkt nach der Antenne – mit möglichst wenig eigenem Rauschen." },
+        { q: "Was passiert bei Übersteuerung (zu viel Gain)?", options: ["Empfang wird besser", "Clipping und Phantomsignale (Spurious)", "Nichts", "Die Frequenz wandert"], answer: 1, explain: "Der ADC clippt – es entstehen falsche Signale. Regel: so viel Gain wie nötig, so wenig wie möglich." },
+        { q: "Was bedeutet SWR 1:1?", options: ["Perfekte Anpassung, keine Reflexion", "Total falsche Antenne", "Halbe Leistung reflektiert", "75-Ω-Kabel"], answer: 0, explain: "SWR 1:1 = gesamte Leistung geht in die Antenne." },
+        { q: "Für was ist 433,92 MHz typisch?", options: ["UKW-Radio", "Satelliten-TV", "ISM: Funksteckdosen, Sensoren", "Mittelwelle"], answer: 2, explain: "433,92 MHz ist ein freies ISM-Band für kurze Steuer- und Sensor-Signale (AM/ASK)." },
+        { q: "Was berechnet die FFT?", options: ["Zeitbereich → Frequenzbereich", "Frequenz → Zeit", "Amplitude → Phase", "Impedanz → SWR"], answer: 0, explain: "Die FFT zerlegt ein Zeitsignal in seine Frequenzanteile." }
+      ];
+
+      const quizContainer = document.getElementById("quiz-container");
+      const quizResult = document.getElementById("quiz-result");
+      const quizScore = document.getElementById("quiz-score");
+      const quizGrade = document.getElementById("quiz-grade");
+      const quizBar = document.getElementById("quiz-bar-fill");
+      let quizLocked = false;
+
+      function buildQuiz() {
+        quizLocked = false;
+        quizResult.style.display = "none";
+        quizBar.style.width = "0";
+        quizContainer.innerHTML = "";
+
+        QUIZ.forEach(function (item, qIndex) {
+          const block = document.createElement("div");
+          block.className = "quiz-question";
+          block.innerHTML = '<h3><span class="qnum">' + (qIndex + 1) + '.</span> ' + item.q + "</h3>";
+
+          item.options.forEach(function (option, oIndex) {
+            const label = document.createElement("label");
+            label.className = "quiz-option";
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "squiz-" + qIndex;
+            input.value = String(oIndex);
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(option));
+            block.appendChild(label);
+          });
+
+          const explain = document.createElement("div");
+          explain.className = "quiz-explain";
+          block.appendChild(explain);
+          quizContainer.appendChild(block);
+        });
+      }
+
+      function gradeText(percent) {
+        if (percent === 100) return "🏆 SDR-Nerd-Level erreicht!";
+        if (percent >= 80) return "⭐ Sehr gut – fast alles sitzt!";
+        if (percent >= 60) return "👍 Gut – die Module oben nochmal anschauen.";
+        if (percent >= 40) return "📖 Geht so – IQ und Nyquist wiederholen.";
+        return "🛰️ Viel Interesse, wenig Samples – starte bei „Was ist SDR“!";
+      }
+
+      function quizEvaluate() {
+        if (quizLocked) return;
+        quizLocked = true;
+
+        let correct = 0;
+        QUIZ.forEach(function (item, qIndex) {
+          const block = quizContainer.children[qIndex];
+          const chosen = block.querySelector("input:checked");
+          const chosenIndex = chosen ? Number(chosen.value) : -1;
+          if (chosenIndex === item.answer) correct++;
+
+          Array.prototype.forEach.call(block.querySelectorAll(".quiz-option"), function (label, oIndex) {
+            label.classList.add("locked");
+            if (oIndex === item.answer) label.classList.add("correct");
+            if (oIndex === chosenIndex && chosenIndex !== item.answer) label.classList.add("wrong");
+            label.querySelector("input").disabled = true;
+          });
+
+          const explain = block.querySelector(".quiz-explain");
+          explain.style.display = "block";
+          explain.innerHTML = chosenIndex === item.answer
+            ? "✅ Richtig! " + item.explain
+            : (chosen ? "❌ Leider falsch. " : "⚪ Keine Antwort. ") + item.explain;
+        });
+
+        const percent = Math.round((correct / QUIZ.length) * 100);
+        quizScore.textContent = correct + " / " + QUIZ.length + " (" + percent + " %)";
+        quizGrade.textContent = gradeText(percent);
+        quizResult.style.display = "block";
+        quizBar.style.width = percent + "%";
+      }
+
+      document.getElementById("quiz-submit").addEventListener("click", quizEvaluate);
+      document.getElementById("quiz-restart").addEventListener("click", buildQuiz);
+
+      /* ---------- Start ---------- */
+      nyquistUpdate();
+      swrUpdate();
+      fsplUpdate();
+      buildQuiz();
+    })();
+  </script>
+</body>
+</html>

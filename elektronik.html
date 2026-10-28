@@ -582,6 +582,11 @@
       <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
       <a class="nav-link" href="https://www.reichelt.de/" target="_blank" rel="noopener noreferrer"><i class="fas fa-cart-shopping"></i> Bauteile-Shop</a>
     </div>
+    <div class="nav-row" style="margin-top:10px;">
+      <a class="nav-link" href="elektronik.html" style="background:#00bfff; color:#050807;"><i class="fas fa-microchip"></i> Elektronik</a>
+      <a class="nav-link" href="funk.html"><i class="fas fa-tower-broadcast"></i> Funktechnik</a>
+      <a class="nav-link" href="sdr.html"><i class="fas fa-satellite-dish"></i> Software Defined Radio</a>
+    </div>
   </header>
 
   <nav class="module-nav" aria-label="Lernmodule">
@@ -590,6 +595,7 @@
     <a href="#farben"><i class="fas fa-palette"></i> Farbringe</a>
     <a href="#led"><i class="fas fa-lightbulb"></i> LED</a>
     <a href="#bauteile"><i class="fas fa-microchip"></i> Bauteile</a>
+    <a href="#multimeter"><i class="fas fa-gauge"></i> Multimeter</a>
     <a href="#quiz"><i class="fas fa-graduation-cap"></i> Quiz</a>
   </nav>
 
@@ -772,6 +778,96 @@
       <h2><i class="fas fa-microchip"></i> Elektronische Bauteile</h2>
       <p class="lead">Die wichtigsten Bauteile mit Bild und Erklärung – klicke auf die Quelle für mehr Details.</p>
       <div class="parts-grid" id="parts-grid"></div>
+    </section>
+
+    <!-- ==================== 5b. VIRTUELLES MULTIMETER ==================== -->
+    <section class="panel" id="multimeter">
+      <h2><i class="fas fa-gauge"></i> Virtuelles Multimeter</h2>
+      <p class="lead">Ein Reihenschlusskreis: Batterie + zwei Widerstände. Wähle Messart und Messpunkt – das
+         virtuelle Multimeter zeigt das Ergebnis wie beim echten Gerät.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="mm-mode">Messfunktion (Drehschalter)</label>
+            <select id="mm-mode">
+              <option value="U" selected>V⎓ Spannung (parallel)</option>
+              <option value="I">A⎓ Strom (in Reihe)</option>
+              <option value="R">Ω Widerstand (stromlos)</option>
+              <option value="D">🔔 Durchgangsprüfung</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="mm-point">Messpunkt</label>
+            <select id="mm-point">
+              <option value="R1">Über R1</option>
+              <option value="R2">Über R2</option>
+              <option value="total" selected>Gesamtschaltung</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="mm-battery">Batteriespannung U (Volt)</label>
+            <input type="range" id="mm-battery" min="1.5" max="24" step="0.5" value="9" style="width:100%;">
+            <div class="hint" id="mm-battery-hint">9,0 V</div>
+          </div>
+          <div class="field">
+            <label for="mm-r1">Widerstand R1 (Ohm)</label>
+            <select id="mm-r1">
+              <option>100</option><option selected>220</option><option>470</option><option>1000</option><option>2200</option><option>4700</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="mm-r2">Widerstand R2 (Ohm)</label>
+            <select id="mm-r2">
+              <option>100</option><option>220</option><option selected>470</option><option>1000</option><option>2200</option><option>4700</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <!-- Multimeter-Display -->
+          <div style="border-radius:14px; border:1px solid rgba(0,191,255,0.4); background:linear-gradient(180deg,#0b1a12,#091014); padding:18px 22px; text-align:center; box-shadow:inset 0 0 24px rgba(0,255,140,0.06);">
+            <div style="font-size:12px; letter-spacing:2px; color:#6b7785; text-transform:uppercase; margin-bottom:4px;" id="mm-mode-label">Spannung DC</div>
+            <div style="font-family:'Cascadia Code',Consolas,monospace; font-size:52px; font-weight:700; color:#3aff8c; text-shadow:0 0 18px rgba(58,255,140,0.5); line-height:1.1;" id="mm-display">–</div>
+            <div style="font-size:16px; color:#3aff8c; opacity:0.8; font-family:Consolas,monospace;" id="mm-unit">V</div>
+          </div>
+          <div style="text-align:center; margin-top:10px; font-size:13px; color:#6b7785;">
+            <i class="fas fa-circle" style="color:#e53935;"></i> rot an Minus &nbsp;·&nbsp;
+            <i class="fas fa-circle" style="color:#1e1e1e; border:1px solid #555; border-radius:50%;"></i> schwarz an Masse
+          </div>
+
+          <div class="result-card" style="margin-top:14px;">
+            <div class="value" style="font-size:18px;" id="mm-explain">–</div>
+            <div class="formula" id="mm-calc"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schaltplan -->
+      <div style="text-align:center; margin-top:16px;">
+        <svg viewBox="0 0 560 120" style="max-width:560px; width:100%; height:auto;" aria-label="Schaltplan">
+          <defs>
+            <style>
+              .wire { stroke: #7fd4ff; stroke-width: 2.5; fill: none; }
+              .batt { stroke: #00bfff; stroke-width: 3; }
+              .res { stroke: #ffd43b; stroke-width: 3; fill: rgba(255,212,59,0.08); }
+              text { fill: #9aa5b1; font-family: Consolas, monospace; font-size: 13px; }
+              .lit { fill: rgba(0,191,255,0.25); }
+            </style>
+          </defs>
+          <rect id="svg-r1" class="res" x="90" y="35" width="90" height="50" rx="8"/>
+          <rect id="svg-r2" class="res" x="240" y="35" width="90" height="50" rx="8"/>
+          <rect class="batt" x="408" y="35" width="60" height="50" rx="8"/>
+          <text x="115" y="65" fill="#ffd43b" id="svg-r1-label">R1</text>
+          <text x="265" y="65" fill="#ffd43b" id="svg-r2-label">R2</text>
+          <text x="418" y="65" fill="#00bfff">U</text>
+          <path class="wire" d="M 90 60 L 30 60 L 30 100 L 470 100 L 470 60 L 468 60"/>
+          <path class="wire" d="M 180 60 L 240 60"/>
+          <path class="wire" d="M 330 60 L 408 60"/>
+          <text x="30" y="112">−</text>
+          <text x="462" y="112">+</text>
+          <text x="200" y="45">~</text>
+        </svg>
+      </div>
     </section>
 
     <!-- ==================== 6. QUIZ ==================== -->
@@ -1112,6 +1208,77 @@
       });
 
       /* =====================================================
+         5b. VIRTUELLES MULTIMETER
+         ===================================================== */
+      const mm = {
+        mode: document.getElementById("mm-mode"),
+        point: document.getElementById("mm-point"),
+        battery: document.getElementById("mm-battery"),
+        batteryHint: document.getElementById("mm-battery-hint"),
+        r1: document.getElementById("mm-r1"),
+        r2: document.getElementById("mm-r2"),
+        display: document.getElementById("mm-display"),
+        unit: document.getElementById("mm-unit"),
+        modeLabel: document.getElementById("mm-mode-label"),
+        explain: document.getElementById("mm-explain"),
+        calc: document.getElementById("mm-calc"),
+        svgR1: document.getElementById("svg-r1"),
+        svgR2: document.getElementById("svg-r2")
+      };
+
+      const MM_MODES = {
+        U: { unit: "V", label: "Spannung DC" },
+        I: { unit: "mA", label: "Strom DC" },
+        R: { unit: "Ω", label: "Widerstand" },
+        D: { unit: "", label: "Durchgang" }
+      };
+
+      function mmUpdate() {
+        const mode = mm.mode.value;
+        const point = mm.point.value;
+        const U = parseFloat(mm.battery.value);
+        const R1 = parseFloat(mm.r1.value);
+        const R2 = parseFloat(mm.r2.value);
+        const rTotal = R1 + R2;
+        const i = U / rTotal; // Ampere
+
+        mm.batteryHint.textContent = fmtNum(U, 1) + " V";
+        mm.modeLabel.textContent = MM_MODES[mode].label;
+        mm.unit.textContent = MM_MODES[mode].unit;
+
+        // Schaltplan-Highlight
+        mm.svgR1.classList.toggle("lit", point === "R1");
+        mm.svgR2.classList.toggle("lit", point === "R2");
+
+        // Messpunkt für Spannung/Widerstand; Strom & Durchgang über alles
+        const rSel = point === "R1" ? R1 : (point === "R2" ? R2 : rTotal);
+        const rSelName = point === "R1" ? "R1" : (point === "R2" ? "R2" : "R1+R2");
+
+        if (mode === "U") {
+          const u = U * (rSel / rTotal);
+          mm.display.textContent = fmtNum(u, 2);
+          mm.explain.textContent = "Spannung über " + rSelName + " (Spannungsteiler, parallel gemessen)";
+          mm.calc.textContent = "U = " + fmtNum(U, 1) + " V × " + fmtNum(rSel, 0) + " Ω / " + rTotal + " Ω = " + fmtNum(u, 2) + " V";
+        } else if (mode === "I") {
+          mm.display.textContent = fmtNum(i * 1000, 1);
+          mm.explain.textContent = "Strom im Reihenkreis (überall gleich – Messgerät in Reihe)";
+          mm.calc.textContent = "I = U / R = " + fmtNum(U, 1) + " V / " + rTotal + " Ω = " + fmtNum(i * 1000, 1) + " mA";
+        } else if (mode === "R") {
+          mm.display.textContent = fmtNum(rSel, 0);
+          mm.explain.textContent = "Widerstand von " + rSelName + " (kreisstromlos gemessen)";
+          mm.calc.textContent = "R = " + fmtNum(rSel, 0) + " Ω · Reihenschaltung: R1 + R2 = " + rTotal + " Ω";
+        } else {
+          const connected = rSel > 0;
+          mm.display.textContent = connected ? "BEEP" : "OL";
+          mm.explain.textContent = connected ? "Durchgang OK – Leitung ist verbunden" : "Kein Durchgang (OL = Open Line)";
+          mm.calc.textContent = "Widerstand " + rSelName + ": " + fmtNum(rSel, 0) + " Ω (unter Schwelle)";
+        }
+      }
+
+      [mm.mode, mm.point, mm.r1, mm.r2].forEach(function (el) { el.addEventListener("change", mmUpdate); });
+      mm.battery.addEventListener("input", mmUpdate);
+
+      /* =====================================================
          6. QUIZ
          ===================================================== */
       const QUIZ = [
@@ -1263,6 +1430,7 @@
       ohmUpdate();
       resistorUpdate();
       ledUpdate();
+      mmUpdate();
       buildQuiz();
     })();
   </script>
