@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Gratis Trinkwasser &amp; öffentliche Orte | Los Finkos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+  <style>
+    html {
+      background: radial-gradient(1200px 800px at 50% 0%, #0a1520 0%, #050807 55%, #040604 100%);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 16px 60px;
+      color: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    header { text-align: center; margin-bottom: 24px; }
+
+    header h1 {
+      margin: 0; font-size: clamp(26px, 5.6vw, 52px); letter-spacing: 3px;
+      text-transform: uppercase; color: #00bfff; text-shadow: 0 0 18px rgba(0, 191, 255, 0.3);
+    }
+
+    header p { margin: 10px auto 0; max-width: 800px; color: #c9d1d9; }
+
+    .nav-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+
+    .nav-link {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+      border-radius: 999px; text-decoration: none; color: #00bfff;
+      background: rgba(0, 191, 255, 0.12); border: 1px solid rgba(0, 191, 255, 0.4);
+      transition: all 0.25s ease; font-weight: 500; cursor: pointer; border-width: 1px;
+    }
+
+    .nav-link:hover { background: #00bfff; color: #050807; box-shadow: 0 10px 30px rgba(0, 191, 255, 0.25); }
+
+    main { max-width: 1240px; margin: 0 auto; display: grid; gap: 20px; }
+
+    .panel {
+      border-radius: 18px; border: 1px solid rgba(0, 191, 255, 0.25);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.1) 0%, transparent 60%), rgba(9, 14, 20, 0.9);
+      box-shadow: 0 40px 80px -60px rgba(0, 191, 255, 0.9);
+      padding: 18px 20px;
+    }
+
+    /* ---------- Kategorien & Steuerung ---------- */
+    .cat-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .cat-chip {
+      display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px;
+      border-radius: 999px; cursor: pointer; font-size: 14.5px; font-weight: 500;
+      border: 1px solid rgba(0, 191, 255, 0.35); background: rgba(10, 15, 20, 0.8);
+      color: #9aa5b1; transition: all 0.2s ease; user-select: none;
+    }
+
+    .cat-chip i { color: #6b7785; transition: color 0.2s ease; }
+
+    .cat-chip.on {
+      color: #e5f4ff; border-color: var(--c);
+      background: rgba(10, 15, 20, 0.9);
+      box-shadow: 0 0 14px rgba(0, 191, 255, 0.15), inset 0 0 12px color-mix(in srgb, var(--c) 22%, transparent);
+    }
+
+    .cat-chip.on i { color: var(--c); text-shadow: 0 0 10px var(--c); }
+
+    .cat-chip .count {
+      font-size: 12px; font-family: Consolas, monospace; color: #6b7785;
+      background: rgba(0, 191, 255, 0.1); border-radius: 999px; padding: 1px 8px;
+    }
+
+    .control-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 14px;
+    }
+
+    .control-row select {
+      appearance: none; -webkit-appearance: none;
+      background: #10181f url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300bfff' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+      border: 1px solid rgba(0, 191, 255, 0.35); border-radius: 12px;
+      color: #e5f4ff; font-family: inherit; font-size: 15px;
+      padding: 9px 34px 9px 12px; cursor: pointer; outline: none;
+    }
+
+    .control-row select:focus { border-color: #00bfff; }
+
+    .status {
+      display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: #9aa5b1;
+      margin-left: auto;
+    }
+
+    .status i { color: #00bfff; }
+    .status.busy i { animation: spin 1s linear infinite; }
+    .status.error i { color: #ff7b6b; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---------- Karte ---------- */
+    .map-panel { padding: 12px; }
+
+    #map {
+      height: clamp(430px, 64vh, 680px);
+      border-radius: 12px; z-index: 1;
+    }
+
+    .leaflet-container { background: #050807; font-family: inherit; }
+
+    .leaflet-tile-pane {
+      filter: invert(1) hue-rotate(185deg) brightness(0.95) contrast(0.9) saturate(0.7);
+    }
+
+    /* Custom Marker */
+    .poi-marker {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #050807; font-size: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 10px var(--glow);
+    }
+
+    .user-marker .dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #00bfff; border: 3px solid #dff5ff;
+      box-shadow: 0 0 0 6px rgba(0, 191, 255, 0.25), 0 0 24px rgba(0, 191, 255, 0.8);
+    }
+
+    .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
+      background: rgba(0, 191, 255, 0.18);
+    }
+
+    .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+      background: rgba(0, 191, 255, 0.55); color: #e5f4ff; font-weight: 700;
+      border: 1px solid rgba(0, 191, 255, 0.8);
+      box-shadow: 0 0 14px rgba(0, 191, 255, 0.35);
+    }
+
+    /* ---------- Popups ---------- */
+    .leaflet-popup-content-wrapper {
+      background: rgba(10, 18, 26, 0.97); color: #e5f4ff;
+      border: 1px solid rgba(0, 191, 255, 0.4); border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    .leaflet-popup-tip { background: rgba(10, 18, 26, 0.97); border: 1px solid rgba(0, 191, 255, 0.4); }
+    .leaflet-container a.leaflet-popup-close-button { color: #7f9db4; }
+    .leaflet-popup-content { margin: 12px 16px; max-width: 280px; }
+
+    .poi-popup h3 { margin: 0 0 4px; color: #00bfff; font-size: 17px; display: flex; gap: 8px; align-items: center; }
+    .poi-popup .cat-badge {
+      display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+      padding: 2px 10px; border-radius: 999px; margin-bottom: 8px;
+      border: 1px solid var(--c); color: var(--c); background: transparent;
+    }
+    .poi-popup .dist { color: #6b7785; font-size: 12.5px; margin-bottom: 6px; }
+    .poi-popup table { width: 100%; font-size: 13px; border-collapse: collapse; }
+    .poi-popup td { padding: 3px 0; vertical-align: top; }
+    .poi-popup td.k { color: #6b7785; padding-right: 10px; white-space: nowrap; }
+    .poi-popup td.v { color: #d4e7f5; }
+    .poi-popup .links { margin-top: 10px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .poi-popup .links a { color: #00bfff; text-decoration: none; font-size: 13.5px; }
+    .poi-popup .links a:hover { text-decoration: underline; }
+
+    /* ---------- Hinweise ---------- */
+    .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+
+    .tip-card {
+      border-radius: 14px; border: 1px solid rgba(0, 191, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.1) 0%, transparent 65%), rgba(9, 14, 20, 0.92);
+      padding: 14px 16px; font-size: 14px; color: #c9d1d9;
+    }
+
+    .tip-card i { color: #00bfff; margin-right: 8px; }
+    .tip-card strong { color: #00bfff; }
+
+    .load-error {
+      display: none; margin-top: 12px; border: 1px solid rgba(255, 107, 53, 0.5);
+      background: rgba(255, 107, 53, 0.12); color: #ffd9c9;
+      border-radius: 14px; padding: 12px 16px; font-size: 14px;
+    }
+
+    footer { text-align: center; margin-top: 40px; color: #6b7785; font-size: 13.5px; }
+    footer a { color: #00bfff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      body { padding: 22px 10px 46px; }
+      .panel { padding: 14px 12px; }
+      .control-row select { flex: 1 1 100%; }
+      .status { margin-left: 0; }
+      #map { height: min(70vh, 560px); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Gratis Trinkwasser &amp; Orte</h1>
+    <p>Wo gibt's in der Nähe kostenloses Trinkwasser, ein öffentliches WC, einen Campingplatz –
+       oder einen Friedhof (mit Wasserhahn zum Flaschen füllen)? Live-Daten aus OpenStreetMap für den
+       aktuellen Kartenausschnitt.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+      <a class="nav-link" href="trinkwasser.html"><i class="fas fa-droplet"></i> Trinkwasser-Datenkarte</a>
+      <a class="nav-link" href="travelmap.html"><i class="fas fa-plane"></i> Reisekarte</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Steuerung -->
+    <section class="panel">
+      <div class="cat-row" id="cat-row"></div>
+      <div class="control-row">
+        <select id="radius-mode" aria-label="Suchbereich">
+          <option value="view" selected>📍 Aktueller Kartenausschnitt</option>
+          <option value="500">± 500 m um mich</option>
+          <option value="1000">± 1 km um mich</option>
+          <option value="2000">± 2 km um mich</option>
+          <option value="5000">± 5 km um mich</option>
+        </select>
+        <button class="nav-link" id="locate-btn" type="button"><i class="fas fa-location-crosshairs"></i> Meine Position</button>
+        <button class="nav-link" id="search-btn" type="button"><i class="fas fa-magnifying-glass"></i> Bereich durchsuchen</button>
+        <span class="status" id="status"><i class="fas fa-circle-dot"></i> Bereit</span>
+      </div>
+      <div class="load-error" id="load-error">
+        <i class="fas fa-triangle-exclamation"></i> <span id="load-error-text">Die Overpass-Abfrage ist gerade nicht erreichbar (free Server oft beschäftigt). Bitte gleich nochmal probieren.</span>
+      </div>
+    </section>
+
+    <!-- Karte -->
+    <section class="panel map-panel">
+      <div id="map" aria-label="POI-Karte"></div>
+    </section>
+
+    <!-- Tipps -->
+    <section class="panel">
+      <div class="tips-grid">
+        <div class="tip-card">
+          <i class="fas fa-droplet"></i><strong>Trinkwasser:</strong>
+          Öffentliche Trinkbrunnen, Bahnhofshähne, Friedhofshähne (meist gratis, extra Wasserrohr
+          zum Grab gießen – nicht immer als Trinkwasser klassifiziert, Qualität individuell prüfen).
+        </div>
+        <div class="tip-card">
+          <i class="fas fa-restroom"></i><strong>Öffentliche WC:</strong>
+          Manche verlangen eine kleine Gebühr (<code>fee=yes</code>); im Popup steht's, wenn bekannt.
+        </div>
+        <div class="tip-card">
+          <i class="fas fa-campground"></i><strong>Camping:</strong>
+          Camping- und Stellplätze haben fast immer Trinkwasser – gute Basis für Wandertouren.
+        </div>
+        <div class="tip-card">
+          <i class="fas fa-dove"></i><strong>Friedhöfe:</strong>
+          Auf fast jedem Friedhof gibt es Wasserhähne für Grabpflege. Bitte respektvoll nutzen.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Daten: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap-Mitwirkende</a>
+       (via Overpass API) · Karte: <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer">Leaflet</a> ·
+       Angaben ohne Gewähr – Wasserqualität &amp; Öffnungszeiten vor Ort prüfen</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      /* ---------- Konfiguration ---------- */
+      const CATS = {
+        water: {
+          label: "Trinkwasser", icon: "fa-droplet", color: "#00c9a7",
+          queries: ['node["amenity"="drinking_water"]', 'node["man_made"="water_tap"]["drinking_water"="yes"]']
+        },
+        toilets: {
+          label: "Öffentliche WC", icon: "fa-restroom", color: "#00bfff",
+          queries: ['node["amenity"="toilets"]', 'way["amenity"="toilets"]']
+        },
+        camping: {
+          label: "Camping", icon: "fa-campground", color: "#ffd43b",
+          queries: ['node["tourism"="camp_site"]', 'way["tourism"="camp_site"]', 'node["tourism"="caravan_site"]', 'way["tourism"="caravan_site"]']
+        },
+        cemetery: {
+          label: "Friedhöfe", icon: "fa-dove", color: "#c9a0ff",
+          queries: ['way["landuse"="cemetery"]', 'relation["landuse"="cemetery"]', 'way["amenity"="grave_yard"]', 'node["amenity"="grave_yard"]']
+        }
+      };
+
+      const ENDPOINTS = [
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass.private.coffee/api/interpreter",
+        "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+      ];
+
+      const MIN_ZOOM_AUTO = 13;
+      const DEFAULT_CENTER = [48.208, 16.373]; // Wien
+      const DEFAULT_ZOOM = 13;
+
+      /* ---------- Zustand ---------- */
+      const active = { water: true, toilets: true, camping: true, cemetery: false };
+      const seen = {};
+      let userPos = null;
+      let busy = false;
+      let lastQueryKey = "";
+      let debounceTimer = null;
+
+      const el = {
+        catRow: document.getElementById("cat-row"),
+        radius: document.getElementById("radius-mode"),
+        locate: document.getElementById("locate-btn"),
+        search: document.getElementById("search-btn"),
+        status: document.getElementById("status"),
+        error: document.getElementById("load-error"),
+        errorText: document.getElementById("load-error-text")
+      };
+
+      /* ---------- Karte ---------- */
+      const map = L.map("map", { worldCopyJump: true });
+      map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>'
+      }).addTo(map);
+
+      const cluster = L.markerClusterGroup({
+        showCoverageOnHover: false,
+        maxClusterRadius: 45,
+        disableClusteringAtZoom: 17
+      });
+      map.addLayer(cluster);
+
+      /* ---------- UI: Kategorien ---------- */
+      Object.keys(CATS).forEach(function (key) {
+        const cat = CATS[key];
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "cat-chip" + (active[key] ? " on" : "");
+        chip.style.setProperty("--c", cat.color);
+        chip.innerHTML = '<i class="fas ' + cat.icon + '"></i> ' + cat.label + ' <span class="count" id="count-' + key + '">0</span>';
+        chip.addEventListener("click", function () {
+          active[key] = !active[key];
+          chip.classList.toggle("on", active[key]);
+          runSearch(true);
+        });
+        el.catRow.appendChild(chip);
+      });
+
+      function setStatus(text, cls) {
+        el.status.className = "status" + (cls ? " " + cls : "");
+        const icon = cls === "busy" ? "fa-spinner" : (cls === "error" ? "fa-triangle-exclamation" : (cls === "ok" ? "fa-circle-check" : "fa-circle-dot"));
+        el.status.innerHTML = '<i class="fas ' + icon + '"></i> ' + text;
+      }
+
+      function showError(msg) {
+        el.error.style.display = "block";
+        el.errorText.textContent = msg;
+      }
+
+      function hideError() { el.error.style.display = "none"; }
+
+      /* ---------- Abfrage ---------- */
+      function buildQuery(bboxStr) {
+        const parts = [];
+        Object.keys(CATS).forEach(function (key) {
+          if (!active[key]) return;
+          CATS[key].queries.forEach(function (q) { parts.push(q + "(" + bboxStr + ");"); });
+        });
+        if (!parts.length) return null;
+        return "[out:json][timeout:25];(" + parts.join("") + ");out center tags;";
+      }
+
+      function bboxFor() {
+        const radiusKm = parseFloat(el.radius.value);
+        if (el.radius.value !== "view" && userPos && radiusKm > 0) {
+          const dLat = radiusKm / 111.32;
+          const dLon = radiusKm / (111.32 * Math.cos(userPos[0] * Math.PI / 180));
+          return [userPos[0] - dLat, userPos[1] - dLon, userPos[0] + dLat, userPos[1] + dLon];
+        }
+        const b = map.getBounds();
+        return [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()];
+      }
+
+      function haversine(a, b) {
+        const R = 6371;
+        const dLat = (b[0] - a[0]) * Math.PI / 180;
+        const dLon = (b[1] - a[1]) * Math.PI / 180;
+        const la1 = a[0] * Math.PI / 180, la2 = b[0] * Math.PI / 180;
+        const h = Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLon / 2) ** 2;
+        return 2 * R * Math.asin(Math.sqrt(h));
+      }
+
+      function categoryOf(tags) {
+        if (tags.amenity === "drinking_water" || (tags.man_made === "water_tap" && tags.drinking_water === "yes")) return "water";
+        if (tags.amenity === "toilets") return "toilets";
+        if (tags.tourism === "camp_site" || tags.tourism === "caravan_site") return "camping";
+        if (tags.landuse === "cemetery" || tags.amenity === "grave_yard") return "cemetery";
+        return null;
+      }
+
+      function popupHtml(elData, catKey, cat) {
+        const t = elData.tags || {};
+        const name = t.name || cat.label;
+        const rows = [];
+        if (t.opening_hours) rows.push(["Öffnungszeiten", t.opening_hours]);
+        if (t.fee) rows.push(["Gebühr", t.fee === "no" ? "kostenlos" : t.fee]);
+        if (t.operator) rows.push(["Betreiber", t.operator]);
+        if (t.access) rows.push(["Zugang", t.access]);
+        if (t.bottle) rows.push(["Flaschen füllen", t.bottle === "yes" ? "ja" : t.bottle]);
+        if (t.description) rows.push(["Beschreibung", t.description]);
+        if (catKey === "cemetery" && !t.description) rows.push(["Tipp", "Wasserhahn für Grabpflege meist vorhanden"]);
+
+        let html = '<div class="poi-popup" style="--c:' + cat.color + ';">' +
+          '<h3><i class="fas ' + cat.icon + '"></i> ' + escapeHtml(name) + "</h3>" +
+          '<span class="cat-badge">' + cat.label + "</span>";
+
+        if (userPos) {
+          const d = haversine(userPos, [elData.lat, elData.lon]);
+          html += '<div class="dist"><i class="fas fa-location-arrow"></i> ' +
+            (d < 1 ? Math.round(d * 1000) + " m" : d.toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " km") + " entfernt</div>";
+        }
+
+        if (rows.length) {
+          html += "<table>" + rows.map(function (r) {
+            return '<tr><td class="k">' + r[0] + '</td><td class="v">' + escapeHtml(r[1]) + "</td></tr>";
+          }).join("") + "</table>";
+        }
+
+        const ll = elData.lat + "," + elData.lon;
+        html += '<div class="links">' +
+          '<a href="https://www.google.com/maps/dir/?api=1&destination=' + ll + '" target="_blank" rel="noopener noreferrer"><i class="fas fa-diamond-turn-right"></i> Route</a>' +
+          '<a href="https://www.openstreetmap.org/' + elData.type + "/" + elData.id + '" target="_blank" rel="noopener noreferrer"><i class="fas fa-map"></i> OSM</a>' +
+          "</div></div>";
+        return html;
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = String(text);
+        return div.innerHTML;
+      }
+
+      function render(elements) {
+        cluster.clearLayers();
+        let counts = { water: 0, toilets: 0, camping: 0, cemetery: 0 };
+
+        elements.forEach(function (elData) {
+          if (seen[elData.type + "/" + elData.id]) return;
+          seen[elData.type + "/" + elData.id] = true;
+          if (elData.lat == null) return;
+
+          const catKey = categoryOf(elData.tags || {});
+          if (!catKey || !active[catKey]) return;
+          const cat = CATS[catKey];
+          counts[catKey]++;
+
+          const marker = L.marker([elData.lat, elData.lon], {
+            icon: L.divIcon({
+              className: "",
+              html: '<div class="poi-marker" style="background:' + cat.color + '; --glow:' + cat.color + '55;"><i class="fas ' + cat.icon + '"></i></div>',
+              iconSize: [26, 26],
+              iconAnchor: [13, 13],
+              popupAnchor: [0, -14]
+            }),
+            title: (elData.tags && elData.tags.name) || cat.label
+          });
+          marker.bindPopup(popupHtml(elData, catKey, cat), { maxWidth: 300 });
+          cluster.addLayer(marker);
+        });
+
+        Object.keys(counts).forEach(function (key) {
+          const countEl = document.getElementById("count-" + key);
+          if (countEl) countEl.textContent = counts[key];
+        });
+
+        return counts;
+      }
+
+      function fetchWithTimeout(url, options, ms) {
+        const controller = new AbortController();
+        const timer = window.setTimeout(function () { controller.abort(); }, ms);
+        return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+          .then(function (res) { window.clearTimeout(timer); return res; })
+          .catch(function (err) { window.clearTimeout(timer); throw err; });
+      }
+
+      function fetchViaOverpass(query, cb) {
+        let idx = Math.floor(Math.random() * ENDPOINTS.length);
+        (function attempt(i) {
+          if (i >= ENDPOINTS.length) return cb(new Error("alle Overpass-Mirrors fehlgeschlagen"));
+          fetchWithTimeout(ENDPOINTS[i], {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "data=" + encodeURIComponent(query)
+          }, 20000).then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          }).then(function (json) {
+            cb(null, json.elements || []);
+          }).catch(function () { attempt(i + 1); });
+        })(idx);
+      }
+
+      // Fallback: offizielle OSM-API 0.6 (Rohdaten des Bounding-Box-Ausschnitts)
+      function fetchViaOsmApi(bbox, cb) {
+        const cLat = (bbox[0] + bbox[2]) / 2;
+        const cLon = (bbox[1] + bbox[3]) / 2;
+        const spanLat = Math.min(bbox[2] - bbox[0], 0.12);
+        const spanLon = Math.min(bbox[3] - bbox[1], 0.12);
+        const sb = [cLat - spanLat / 2, cLon - spanLon / 2, cLat + spanLat / 2, cLon + spanLon / 2]
+          .map(function (v) { return v.toFixed(5); }).join(",");
+
+        fetch("https://api.openstreetmap.org/api/0.6/map?bbox=" + sb)
+          .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.text(); })
+          .then(function (xmlText) {
+            const doc = new DOMParser().parseFromString(xmlText, "application/xml");
+            const nodes = {};
+            Array.prototype.forEach.call(doc.getElementsByTagName("node"), function (nd) {
+              const tags = {};
+              Array.prototype.forEach.call(nd.getElementsByTagName("tag"), function (tg) {
+                tags[tg.getAttribute("k")] = tg.getAttribute("v");
+              });
+              nodes[nd.getAttribute("id")] = {
+                lat: parseFloat(nd.getAttribute("lat")),
+                lon: parseFloat(nd.getAttribute("lon")),
+                tags: tags
+              };
+            });
+
+            const elements = [];
+            Object.keys(nodes).forEach(function (id) {
+              const nd = nodes[id];
+              if (categoryOf(nd.tags)) {
+                elements.push({ type: "node", id: id, lat: nd.lat, lon: nd.lon, tags: nd.tags });
+              }
+            });
+
+            Array.prototype.forEach.call(doc.getElementsByTagName("way"), function (wy) {
+              const tags = {};
+              Array.prototype.forEach.call(wy.getElementsByTagName("tag"), function (tg) {
+                tags[tg.getAttribute("k")] = tg.getAttribute("v");
+              });
+              if (!categoryOf(tags)) return;
+              const refs = Array.prototype.map.call(wy.getElementsByTagName("nd"), function (r) { return r.getAttribute("ref"); });
+              let lat = 0, lon = 0, cnt = 0;
+              refs.forEach(function (rid) {
+                if (nodes[rid]) { lat += nodes[rid].lat; lon += nodes[rid].lon; cnt++; }
+              });
+              if (!cnt) return;
+              elements.push({ type: "way", id: wy.getAttribute("id"), lat: lat / cnt, lon: lon / cnt, tags: tags });
+            });
+
+            cb(null, elements);
+          })
+          .catch(function (err) { cb(err); });
+      }
+
+      function runSearch(force) {
+        if (busy) return;
+        const bbox = bboxFor();
+        const query = buildQuery(bbox);
+        const key = bbox.join(",") + "|" + Object.keys(active).filter(function (k) { return active[k]; }).join(",");
+
+        if (!force && key === lastQueryKey) return;
+        lastQueryKey = key;
+
+        if (!query) {
+          setStatus("Keine Kategorie aktiv", "error");
+          return;
+        }
+
+        busy = true;
+        hideError();
+        setStatus("Lade Orte aus OpenStreetMap …", "busy");
+
+        fetchViaOverpass(query, function (overpassErr, elements) {
+          if (!overpassErr && elements) {
+            finishRender(elements, null);
+            return;
+          }
+          // Fallback: offizielle OSM-API
+          setStatus("Overpass blockiert – probiere OSM-API-Fallback …", "busy");
+          fetchViaOsmApi(bbox, function (osmErr, osmElements) {
+            if (osmErr) {
+              busy = false;
+              setStatus("Datenquellen nicht erreichbar", "error");
+              showError("Weder die Overpass-Mirrors noch die offizielle OSM-API sind gerade erreichbar (Netzwerk/Sperre). Bitte später erneut probieren.");
+              return;
+            }
+            finishRender(osmElements, "OSM-API-Fallback");
+          });
+        });
+      }
+
+      function finishRender(elements, note) {
+        const counts = render(elements);
+        const total = counts.water + counts.toilets + counts.camping + counts.cemetery;
+        busy = false;
+        if (note) {
+          setStatus(total + " Orte geladen (" + note + ")", total ? "ok" : "");
+        } else if (total) {
+          setStatus(total + " Orte geladen", "ok");
+        } else {
+          setStatus("Keine Einträge in diesem Bereich – Karte verschieben oder größer suchen", "");
+        }
+      }
+
+      /* ---------- Position ---------- */
+      function locate() {
+        if (!navigator.geolocation) {
+          setStatus("Geolocation nicht verfügbar", "error");
+          return;
+        }
+        setStatus("Position wird ermittelt …", "busy");
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          userPos = [pos.coords.latitude, pos.coords.longitude];
+          map.setView(userPos, Math.max(map.getZoom(), 15));
+          L.marker(userPos, {
+            icon: L.divIcon({ className: "user-marker", html: '<div class="dot"></div>', iconSize: [16, 16], iconAnchor: [8, 8] })
+          }).addTo(map).bindPopup("<b>Du bist hier</b>");
+          setStatus("Position gefunden ✓", "ok");
+          runSearch(true);
+        }, function () {
+          setStatus("Position nicht verfügbar (Erlaubnis?)", "error");
+        }, { enableHighAccuracy: true, timeout: 10000 });
+      }
+
+      /* ---------- Events ---------- */
+      el.locate.addEventListener("click", locate);
+      el.search.addEventListener("click", function () { runSearch(true); });
+      el.radius.addEventListener("change", function () {
+        if (el.radius.value !== "view" && !userPos) { locate(); return; }
+        runSearch(true);
+      });
+
+      map.on("moveend", function () {
+        if (map.getZoom() < MIN_ZOOM_AUTO) {
+          setStatus("Zoome näher (ab Stufe " + MIN_ZOOM_AUTO + ") für Auto-Abfrage", "");
+          return;
+        }
+        window.clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(function () { runSearch(false); }, 900);
+      });
+
+      /* ---------- Start ---------- */
+      setStatus("Bereit – Bereich durchsuchen klicken oder Karte bewegen", "");
+      runSearch(true);
+    })();
+  </script>
+</body>
+</html>
