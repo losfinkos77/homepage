@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Ladestationen | Los Finkos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+  <style>
+    html {
+      background: radial-gradient(1200px 800px at 50% 0%, #0a1520 0%, #050807 55%, #040604 100%);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 16px 60px;
+      color: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    header { text-align: center; margin-bottom: 24px; }
+
+    header h1 {
+      margin: 0; font-size: clamp(26px, 5.6vw, 52px); letter-spacing: 3px;
+      text-transform: uppercase; color: #00bfff; text-shadow: 0 0 18px rgba(0, 191, 255, 0.3);
+    }
+
+    header p { margin: 10px auto 0; max-width: 800px; color: #c9d1d9; }
+
+    .nav-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+
+    .nav-link {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+      border-radius: 999px; text-decoration: none; color: #00bfff;
+      background: rgba(0, 191, 255, 0.12); border: 1px solid rgba(0, 191, 255, 0.4);
+      transition: all 0.25s ease; font-weight: 500; cursor: pointer; font-family: inherit; font-size: 15px;
+    }
+
+    .nav-link:hover { background: #00bfff; color: #050807; box-shadow: 0 10px 30px rgba(0, 191, 255, 0.25); }
+
+    main { max-width: 1240px; margin: 0 auto; display: grid; gap: 20px; }
+
+    .panel {
+      border-radius: 18px; border: 1px solid rgba(0, 191, 255, 0.25);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.1) 0%, transparent 60%), rgba(9, 14, 20, 0.9);
+      box-shadow: 0 40px 80px -60px rgba(0, 191, 255, 0.9);
+      padding: 18px 20px;
+    }
+
+    .filter-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .cat-chip {
+      display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px;
+      border-radius: 999px; cursor: pointer; font-size: 14.5px; font-weight: 500;
+      border: 1px solid rgba(0, 191, 255, 0.35); background: rgba(10, 15, 20, 0.8);
+      color: #9aa5b1; transition: all 0.2s ease; user-select: none;
+    }
+
+    .cat-chip i { color: #6b7785; }
+    .cat-chip.on { color: #e5f4ff; border-color: var(--c); box-shadow: 0 0 14px rgba(0, 191, 255, 0.15); }
+    .cat-chip.on i { color: var(--c); text-shadow: 0 0 10px var(--c); }
+    .cat-chip .count { font-size: 12px; font-family: Consolas, monospace; color: #6b7785; background: rgba(0, 191, 255, 0.1); border-radius: 999px; padding: 1px 8px; }
+
+    .control-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 14px; }
+
+    .control-row select {
+      appearance: none; -webkit-appearance: none;
+      background: #10181f url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300bfff' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+      border: 1px solid rgba(0, 191, 255, 0.35); border-radius: 12px;
+      color: #e5f4ff; font-family: inherit; font-size: 15px;
+      padding: 9px 34px 9px 12px; cursor: pointer; outline: none;
+    }
+
+    .control-row select:focus { border-color: #00bfff; }
+
+    .status { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: #9aa5b1; margin-left: auto; }
+    .status i { color: #00bfff; }
+    .status.busy i { animation: spin 1s linear infinite; }
+    .status.error i { color: #ff7b6b; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .load-error {
+      display: none; margin-top: 12px; border: 1px solid rgba(255, 107, 53, 0.5);
+      background: rgba(255, 107, 53, 0.12); color: #ffd9c9;
+      border-radius: 14px; padding: 12px 16px; font-size: 14px;
+    }
+
+    .map-panel { padding: 12px; }
+
+    #map { height: clamp(430px, 64vh, 680px); border-radius: 12px; z-index: 1; }
+    .leaflet-container { background: #050807; font-family: inherit; }
+
+    .leaflet-tile-pane { filter: invert(1) hue-rotate(185deg) brightness(0.95) contrast(0.9) saturate(0.7); }
+
+    .poi-marker {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #050807; font-size: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 10px var(--glow);
+    }
+
+    .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background: rgba(0, 191, 255, 0.18); }
+    .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+      background: rgba(0, 191, 255, 0.55); color: #e5f4ff; font-weight: 700;
+      border: 1px solid rgba(0, 191, 255, 0.8); box-shadow: 0 0 14px rgba(0, 191, 255, 0.35);
+    }
+
+    .leaflet-popup-content-wrapper {
+      background: rgba(10, 18, 26, 0.97); color: #e5f4ff;
+      border: 1px solid rgba(0, 191, 255, 0.4); border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    .leaflet-popup-tip { background: rgba(10, 18, 26, 0.97); border: 1px solid rgba(0, 191, 255, 0.4); }
+    .leaflet-container a.leaflet-popup-close-button { color: #7f9db4; }
+    .leaflet-popup-content { margin: 12px 16px; max-width: 300px; }
+
+    .poi-popup h3 { margin: 0 0 4px; color: #00bfff; font-size: 17px; display: flex; gap: 8px; align-items: center; }
+    .poi-popup .cat-badge {
+      display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+      padding: 2px 10px; border-radius: 999px; margin-bottom: 8px;
+      border: 1px solid var(--c); color: var(--c);
+    }
+    .poi-popup .dist { color: #6b7785; font-size: 12.5px; margin-bottom: 6px; }
+    .poi-popup table { width: 100%; font-size: 13px; border-collapse: collapse; }
+    .poi-popup td { padding: 3px 0; vertical-align: top; }
+    .poi-popup td.k { color: #6b7785; padding-right: 10px; white-space: nowrap; }
+    .poi-popup td.v { color: #d4e7f5; }
+    .poi-popup .links { margin-top: 10px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .poi-popup .links a { color: #00bfff; text-decoration: none; font-size: 13.5px; }
+    .poi-popup .links a:hover { text-decoration: underline; }
+
+    .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+
+    .concept-card {
+      border-radius: 14px; border: 1px solid rgba(0, 191, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.12) 0%, transparent 65%), rgba(9, 14, 20, 0.92);
+      padding: 14px 16px; font-size: 14px; color: #c9d1d9;
+    }
+
+    .concept-card i { color: #00bfff; margin-right: 8px; }
+    .concept-card h3 { margin: 0 0 4px; color: #00bfff; font-size: 16px; }
+    .concept-card code {
+      background: #10181f; border: 1px solid rgba(0, 191, 255, 0.25);
+      border-radius: 6px; padding: 1px 7px; font-size: 12.5px; color: #7fd4ff;
+    }
+
+    footer { text-align: center; margin-top: 40px; color: #6b7785; font-size: 13.5px; }
+    footer a { color: #00bfff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      body { padding: 22px 10px 46px; }
+      .panel { padding: 14px 12px; }
+      #map { height: min(70vh, 560px); }
+      .control-row select { flex: 1 1 100%; }
+      .status { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><i class="fas fa-charging-station"></i> Ladestationen</h1>
+    <p>Tesla &amp; Co: Ladestationen in deiner Nähe – live aus OpenStreetMap. Filter nach Tesla, Schnellladen
+       (≥ 100 kW) und kostenlos, mit Ladezeit-Rechner und Stecktypen-Wissen.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+      <a class="nav-link" href="poi-karte.html"><i class="fas fa-faucet"></i> Trinkwasser &amp; Orte</a>
+      <a class="nav-link" href="travelmap.html"><i class="fas fa-plane"></i> Reisekarte</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Steuerung -->
+    <section class="panel">
+      <div class="filter-row" id="chip-row">
+        <button class="cat-chip on" data-chip="all" type="button" style="--c:#00bfff;"><i class="fas fa-list"></i> Alle <span class="count" id="count-all">0</span></button>
+        <button class="cat-chip" data-chip="tesla" type="button" style="--c:#ff4d4d;"><i class="fas fa-bolt"></i> Tesla <span class="count" id="count-tesla">0</span></button>
+        <button class="cat-chip" data-chip="fast" type="button" style="--c:#3aff8c;"><i class="fas fa-gauge-high"></i> Schnell ≥ 100 kW <span class="count" id="count-fast">0</span></button>
+        <button class="cat-chip" data-chip="free" type="button" style="--c:#ffd43b;"><i class="fas fa-gift"></i> Kostenlos <span class="count" id="count-free">0</span></button>
+      </div>
+      <div class="control-row">
+        <select id="radius-mode" aria-label="Suchbereich">
+          <option value="view" selected>📍 Aktueller Kartenausschnitt</option>
+          <option value="2">± 2 km um mich</option>
+          <option value="5">± 5 km um mich</option>
+          <option value="15">± 15 km um mich</option>
+          <option value="30">± 30 km um mich</option>
+        </select>
+        <button class="nav-link" id="locate-btn" type="button"><i class="fas fa-location-crosshairs"></i> Meine Position</button>
+        <button class="nav-link" id="search-btn" type="button"><i class="fas fa-magnifying-glass"></i> Bereich durchsuchen</button>
+        <button class="nav-link" id="diagnose-btn" type="button"><i class="fas fa-stethoscope"></i> Verbindung testen</button>
+        <span class="status" id="status"><i class="fas fa-circle-dot"></i> Bereit</span>
+      </div>
+      <div class="load-error" id="load-error">
+        <i class="fas fa-triangle-exclamation"></i> <span id="load-error-text"></span>
+        <div id="probe-result" style="margin-top:10px; font-size:13px; font-family:Consolas,monospace; text-align:left;"></div>
+      </div>
+    </section>
+
+    <!-- Karte -->
+    <section class="panel map-panel">
+      <div id="map" aria-label="Ladestationen-Karte"></div>
+      <div style="display:flex; flex-wrap:wrap; gap:16px; padding:10px 6px 0; font-size:13px; color:#9aa5b1;">
+        <span><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:#3aff8c; margin-right:6px;"></span>Schnell ≥ 100 kW</span>
+        <span><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:#00bfff; margin-right:6px;"></span>AC / DC 22–99 kW</span>
+        <span><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:#9aa5b1; margin-right:6px;"></span>Leistung unbekannt</span>
+        <span id="filter-hint" style="color:#00bfff;"></span>
+      </div>
+    </section>
+
+    <!-- Ladezeit-Rechner -->
+    <section class="panel">
+      <h2 style="margin:0 0 12px; color:#00bfff; font-size:20px;"><i class="fas fa-clock"></i> Ladezeit-Rechner</h2>
+      <div style="display:grid; gap:16px; grid-template-columns:1fr;">
+        <div style="display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));">
+          <div>
+            <label style="display:block; font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:#9aa5b1; margin-bottom:4px;">Akkugröße (kWh)</label>
+            <input type="number" id="lc-battery" value="75" min="5" max="200" step="0.5" style="width:100%; box-sizing:border-box; background:#10181f; border:1px solid rgba(0,191,255,.35); border-radius:10px; color:#e5f4ff; font-family:inherit; font-size:15px; padding:9px 12px;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:#9aa5b1; margin-bottom:4px;">Ladestand von (%)</label>
+            <input type="number" id="lc-from" value="20" min="0" max="100" style="width:100%; box-sizing:border-box; background:#10181f; border:1px solid rgba(0,191,255,.35); border-radius:10px; color:#e5f4ff; font-family:inherit; font-size:15px; padding:9px 12px;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:#9aa5b1; margin-bottom:4px;">Ladestand bis (%)</label>
+            <input type="number" id="lc-to" value="80" min="0" max="100" style="width:100%; box-sizing:border-box; background:#10181f; border:1px solid rgba(0,191,255,.35); border-radius:10px; color:#e5f4ff; font-family:inherit; font-size:15px; padding:9px 12px;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:#9aa5b1; margin-bottom:4px;">Ø Ladeleistung (kW)</label>
+            <input type="number" id="lc-power" value="100" min="1" max="400" step="1" style="width:100%; box-sizing:border-box; background:#10181f; border:1px solid rgba(0,191,255,.35); border-radius:10px; color:#e5f4ff; font-family:inherit; font-size:15px; padding:9px 12px;">
+            <div style="font-size:12px; color:#6b7785; margin-top:4px;">realer Mittelwert – 150-kW-Säule lädt selten konstant spitz</div>
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:#9aa5b1; margin-bottom:4px;">Verbrauch (kWh/100 km)</label>
+            <input type="number" id="lc-consumption" value="18" min="5" max="40" step="0.5" style="width:100%; box-sizing:border-box; background:#10181f; border:1px solid rgba(0,191,255,.35); border-radius:10px; color:#e5f4ff; font-family:inherit; font-size:15px; padding:9px 12px;">
+          </div>
+        </div>
+        <div class="result-card" style="border-radius:14px; border:1px solid rgba(0,191,255,.45); background:rgba(0,191,255,.1); padding:14px 18px; text-align:center;">
+          <div style="font-size:30px; font-weight:700; color:#00bfff; font-family:Consolas,monospace;" id="lc-time">–</div>
+          <div style="color:#9aa5b1; font-size:14px;" id="lc-range">Ladedauer</div>
+        </div>
+        <div class="warn" id="lc-warn" style="display:none; border-radius:12px; border:1px solid rgba(255,107,53,.5); background:rgba(255,107,53,.12); color:#ffd9c9; padding:10px 14px; font-size:14px;"></div>
+      </div>
+    </section>
+
+    <!-- Wissen -->
+    <section class="panel">
+      <h2 style="margin:0 0 12px; color:#00bfff; font-size:20px;"><i class="fas fa-plug-circle-bolt"></i> Stecker &amp; Lade-Basics</h2>
+      <div class="concept-grid">
+        <div class="concept-card"><i class="fas fa-plug"></i><h3>Type 2 (AC)</h3>Der europäische AC-Standard für Wallbox und AC-Säule: 11–22 kW ein-/dreiphasig. Tesla Model 3/Y laden hier ebenfalls (NACS-Adapter nicht nötig in Europa).</div>
+        <div class="concept-card"><i class="fas fa-bolt"></i><h3>CCS (Combo 2)</h3>DC-Schnellladen ab 50 kW bis 350 kW. Tesla Supercharger in Europa nutzen CCS (Model 3/Y ab Werk). Beste Wahl auf Langstrecke.</div>
+        <div class="concept-card"><i class="fas fa-battery-half"></i><h3>CHAdeMO</h3>Älterer DC-Standard (Nissan Leaf, ältere也是). Wird Schritt für Schritt von CCS abgelöst.</div>
+        <div class="concept-card"><i class="fas fa-shield-halved"></i><h3>Tesla Supercharger</h3>Eigenes DC-Netz, meist 150–250 kW. In Europa sind vielerorts offene CCS-Slots an vielen Standorten – im Popup steht der Betreiber (Tesla vs. andere).</div>
+        <div class="concept-card"><i class="fas fa-gauge-high"></i><h3>kW → Lade-Tempo</h3>Faustformel: 100 kW ≈ 500 km Range pro Stunde (bei 20 kWh/100 km). AC 22 kW ≈ 110 km/h — perfekt über Nacht bzw. im Hotel.</div>
+        <div class="concept-card"><i class="fas fa-chart-line"></i><h3>Ladekurve</h3>DC-Säulen laden am Anfang am stärksten und bremsen ab ~80 % stark ab (Zellschutz). Deshalb: auf Reise 10–80 % laden, zu Hause 80–100 %.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Daten: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap-Mitwirkende</a>
+       (via Overpass API / OSM-API-Fallback) · Karte: <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer">Leaflet</a> ·
+       Angaben ohne Gewähr – Preise &amp; Verfügbarkeit vor Ort prüfen · <a href="index.html">Startseite</a></p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      const ENDPOINTS = [
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass.private.coffee/api/interpreter",
+        "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+      ];
+      const MIN_ZOOM_AUTO = 13;
+      const DEFAULT_CENTER = [48.208, 16.373];
+
+      let userPos = null, busy = false, lastQueryKey = "", debounceTimer = null;
+      let allStations = [];   // zuletzt geladene (ungefilterte) Stationen
+      let activeChip = "all";
+
+      const map = L.map("map", { worldCopyJump: true });
+      map.setView(DEFAULT_CENTER, 14);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>'
+      }).addTo(map);
+      const cluster = L.markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 45, disableClusteringAtZoom: 17 });
+      map.addLayer(cluster);
+
+      const el = {
+        radius: $("radius-mode"), locate: $("locate-btn"), search: $("search-btn"),
+        status: $("status"), error: $("load-error"), errorText: $("load-error-text")
+      };
+      function $(id) { return document.getElementById(id); }
+      function esc(t) { const d = document.createElement("div"); d.textContent = String(t); return d.innerHTML; }
+      function fmt(n, d) { return n.toLocaleString("de-DE", { maximumFractionDigits: d == null ? 2 : d }); }
+
+      function setStatus(text, cls) {
+        el.status.className = "status" + (cls ? " " + cls : "");
+        const icon = cls === "busy" ? "fa-spinner" : (cls === "error" ? "fa-triangle-exclamation" : (cls === "ok" ? "fa-circle-check" : "fa-circle-dot"));
+        el.status.innerHTML = '<i class="fas ' + icon + '"></i> ' + text;
+      }
+      function showError(msg) { $("load-error-text").textContent = msg; el.error.style.display = "block"; }
+      function hideError() { el.error.style.display = "none"; }
+
+      /* ---------- Netzwerk-Kette (Overpass + OSM-API-Fallback) ---------- */
+      function fetchWithTimeout(url, options, ms) {
+        const controller = new AbortController();
+        const timer = window.setTimeout(function () { controller.abort(); }, ms);
+        return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+          .then(function (res) { window.clearTimeout(timer); return res; })
+          .catch(function (err) { window.clearTimeout(timer); throw err; });
+      }
+
+      function fetchViaOverpass(query, cb, progress) {
+        let idx = Math.floor(Math.random() * ENDPOINTS.length);
+        (function attempt(i) {
+          if (i >= ENDPOINTS.length) return cb(new Error("alle Overpass-Mirrors fehlgeschlagen"));
+          const host = ENDPOINTS[i].replace(/^https:\/\/([^/]+)\/.*$/, "$1");
+          if (progress) progress("Overpass " + (i + 1) + "/" + ENDPOINTS.length + " (" + host + ")");
+          fetchWithTimeout(ENDPOINTS[i], {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "data=" + encodeURIComponent(query)
+          }, 10000).then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          }).then(function (json) { cb(null, json.elements || []); })
+            .catch(function () { attempt(i + 1); });
+        })(idx);
+      }
+
+      function fetchViaOsmApi(bbox, cb, span, note) {
+        span = span || 0.12;
+        const cLat = (bbox[0] + bbox[2]) / 2;
+        const cLon = (bbox[1] + bbox[3]) / 2;
+        const spanLat = Math.min(bbox[2] - bbox[0], span);
+        const spanLon = Math.min(bbox[3] - bbox[1], span);
+        const sb = [cLat - spanLat / 2, cLon - spanLon / 2, cLat + spanLat / 2, cLon + spanLon / 2]
+          .map(function (v) { return v.toFixed(5); }).join(",");
+        const radiusKm = Math.round(span * 111.32);
+
+        fetchWithTimeout("https://api.openstreetmap.org/api/0.6/map?bbox=" + sb, {}, 45000)
+          .then(function (res) {
+            if (res.status === 400) {
+              // „Too many nodes" – Suche um Kartenmitte verkleinern und erneut versuchen
+              if (span > 0.02) return fetchViaOsmApi(bbox, cb, span / 2);
+              throw new Error("zu dichtes Gebiet (OSM-API-Limit 50.000 Knoten)");
+            }
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.text();
+          })
+          .then(function (xmlText) {
+            if (xmlText === undefined) return; // rekursiver Aufruf hat bereits cb aufgerufen
+            const doc = new DOMParser().parseFromString(xmlText, "application/xml");
+            if (doc.getElementsByTagName("parsererror").length) {
+              throw new Error("OSM-Antwort war kein gültiges XML");
+            }
+            const nodes = {};
+            Array.prototype.forEach.call(doc.getElementsByTagName("node"), function (nd) {
+              nodes[nd.getAttribute("id")] = {
+                lat: parseFloat(nd.getAttribute("lat")), lon: parseFloat(nd.getAttribute("lon")), tags: {}
+              };
+              Array.prototype.forEach.call(nd.getElementsByTagName("tag"), function (tg) {
+                nodes[nd.getAttribute("id")].tags[tg.getAttribute("k")] = tg.getAttribute("v");
+              });
+            });
+            const elements = [];
+            Object.keys(nodes).forEach(function (id) {
+              if (nodes[id].tags.amenity === "charging_station") {
+                elements.push({ type: "node", id: id, lat: nodes[id].lat, lon: nodes[id].lon, tags: nodes[id].tags });
+              }
+            });
+            Array.prototype.forEach.call(doc.getElementsByTagName("way"), function (wy) {
+              const tags = {};
+              Array.prototype.forEach.call(wy.getElementsByTagName("tag"), function (tg) {
+                tags[tg.getAttribute("k")] = tg.getAttribute("v");
+              });
+              if (tags.amenity !== "charging_station") return;
+              const refs = Array.prototype.map.call(wy.getElementsByTagName("nd"), function (r) { return r.getAttribute("ref"); });
+              let lat = 0, lon = 0, cnt = 0;
+              refs.forEach(function (rid) {
+                if (nodes[rid]) { lat += nodes[rid].lat; lon += nodes[rid].lon; cnt++; }
+              });
+              if (!cnt) return;
+              elements.push({ type: "way", id: wy.getAttribute("id"), lat: lat / cnt, lon: lon / cnt, tags: tags });
+            });
+            cb(null, elements, "OSM-API-Fallback ±" + (radiusKm / 2).toFixed(1) + " km");
+          })
+          .catch(function (err) {
+            if (typeof err === "object" && err && err.shrink) return fetchViaOsmApi(bbox, cb, span / 2);
+            cb(err);
+          });
+      }
+
+      /* ---------- Datenverarbeitung ---------- */
+      function maxKwOf(tags) {
+        let best = null;
+        Object.keys(tags || {}).forEach(function (k) {
+          if (k.indexOf("kw=") !== -1 || k === "maxpower" || k === "charging_station:output" || k.indexOf("output") !== -1) {
+            const m = String(tags[k]).match(/(\d+(?:[.,]\d+)?)/);
+            if (m) {
+              const v = parseFloat(m[1].replace(",", "."));
+              if (best == null || v > best) best = v;
+            }
+          }
+        });
+        return best;
+      }
+
+      function socketsOf(tags) {
+        const out = [];
+        Object.keys(tags || {}).forEach(function (k) {
+          if (k.indexOf("socket:") === 0 && k.indexOf(":output") === -1) {
+            out.push(k.replace("socket:", "").replace(/_/g, " ") + (tags[k] === "yes" ? "" : " (" + tags[k] + ")"));
+          }
+        });
+        return out;
+      }
+
+      function isTesla(tags) {
+        const s = ((tags.operator || "") + " " + (tags.network || "") + " " + (tags.brand || " ")).toLowerCase();
+        return s.indexOf("tesla") !== -1;
+      }
+
+      function chipMatches(tags) {
+        if (chipActive === "all") return true;
+        if (chipActive === "tesla") return isTesla(tags);
+        if (chipActive === "fast") return (maxKwOf(tags) || 0) >= 100;
+        if (chipActive === "free") return tags.fee === "no";
+        return true;
+      }
+
+      let chipActive = "all";
+
+      function markerColor(tags) {
+        if (isTesla(tags)) return "#ff4d4d";
+        const kw = maxKwOf(tags);
+        if (kw != null && kw >= 100) return "#3aff8c";
+        if (kw != null && kw >= 22) return "#00bfff";
+        if (kw != null) return "#9aa5b1";
+        return "#9aa5b1";
+      }
+
+      function popupHtml(s) {
+        const t = s.tags || {};
+        const cat = colorOf(s);
+        const name = t.name || t.operator || "Ladestation";
+        const rows = [];
+        if (t.operator) rows.push(["Betreiber", t.operator]);
+        if (t.network) rows.push(["Netz", t.network]);
+        const kw = maxKwOf(t);
+        if (kw != null) rows.push(["Max. Leistung", fmt(kw, 0) + " kW"]);
+        const caps = t.capacity || t["charge"];
+        if (caps) rows.push(["Anzahl Ladepunkte", caps]);
+        if (t.fee) rows.push(["Gebühr", t.fee === "no" ? "kostenlos" : t.fee]);
+        if (t.access) rows.push(["Zugang", t.access]);
+        if (t.opening_hours) rows.push(["Zeiten", t.opening_hours]);
+        if (t["authentication:app"]) rows.push(["Authentifizierung", "App"]);
+        if (t["authentication:membership_card"]) rows.push(["Authentifizierung", "Karte"]);
+        const socks = socketsOf(t);
+        if (socks.length) rows.push(["Stecker", socks.join(", ")]);
+        if (isTesla(t)) rows.push(["Besonderheit", "Tesla-Netz"]);
+
+        let html = '<div class="poi-popup" style="--c:' + cat + ';">' +
+          '<h3><i class="fas fa-charging-station"></i> ' + esc(name) + "</h3>" +
+          '<span class="cat-badge">' + (isTesla(t) ? "Tesla" : (kw != null && kw >= 100 ? "Schnellladen" : "Ladestation")) + "</span>";
+        if (userPos) {
+          const d = haversine(userPos, [s.lat, s.lon]);
+          html += '<div class="dist"><i class="fas fa-location-arrow"></i> ' +
+            (d < 1 ? Math.round(d * 1000) + " m" : fmt(d, 1) + " km") + " entfernt</div>";
+        }
+        if (rows.length) {
+          html += "<table>" + rows.map(function (r) {
+            return '<tr><td class="k">' + esc(r[0]) + '</td><td class="v">' + esc(r[1]) + "</td></tr>";
+          }).join("") + "</table>";
+        }
+        const ll = s.lat + "," + s.lon;
+        html += '<div class="links">' +
+          '<a href="https://www.google.com/maps/dir/?api=1&destination=' + ll + '" target="_blank" rel="noopener noreferrer"><i class="fas fa-diamond-turn-right"></i> Route</a>' +
+          '<a href="https://www.openstreetmap.org/' + s.type + "/" + s.id + '" target="_blank" rel="noopener noreferrer"><i class="fas fa-map"></i> OSM</a></div></div>';
+        return html;
+      }
+
+      function haversine(a, b) {
+        const R = 6371;
+        const dLat = (b[0] - a[0]) * Math.PI / 180;
+        const dLon = (b[1] - a[1]) * Math.PI / 180;
+        const la1 = a[0] * Math.PI / 180, la2 = b[0] * Math.PI / 180;
+        const h = Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLon / 2) ** 2;
+        return 2 * R * Math.asin(Math.sqrt(h));
+      }
+
+      function colorOf(s) { return { c: markerColor(s.tags || {}) }.c; }
+
+      /* ---------- Marker zeichnen ---------- */
+      function renderMarkers() {
+        cluster.clearLayers();
+        const counts = { all: 0, tesla: 0, fast: 0, free: 0 };
+        allStations.forEach(function (s) {
+          counts.all++;
+          const t = s.tags || {};
+          if (isTesla(t)) counts.tesla++;
+          if ((maxKwOf(t) || 0) >= 100) counts.fast++;
+          if (t.fee === "no") counts.free++;
+          if (!chipMatches(t)) return;
+
+          const color = markerColor(t);
+          const marker = L.marker([s.lat, s.lon], {
+            icon: L.divIcon({
+              className: "",
+              html: '<div class="poi-marker" style="background:' + color + '; --glow:' + color + '66;"><i class="fas fa-charging-station"></i></div>',
+              iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -14]
+            }),
+            title: (t.name || t.operator || "Ladestation")
+          });
+          marker.bindPopup(popupHtml(s), { maxWidth: 300 });
+          cluster.addLayer(marker);
+        });
+        Object.keys(counts).forEach(function (k) {
+          const c = $("count-" + k);
+          if (c) c.textContent = counts[k];
+        });
+      }
+
+      /* ---------- Suche ---------- */
+      function bboxFor() {
+        const radiusKm = parseFloat(el.radius.value);
+        if (el.radius.value !== "view" && userPos && radiusKm > 0) {
+          const dLat = radiusKm / 111.32;
+          const dLon = radiusKm / (111.32 * Math.cos(userPos[0] * Math.PI / 180));
+          return [userPos[0] - dLat, userPos[1] - dLon, userPos[0] + dLat, userPos[1] + dLon];
+        }
+        const b = map.getBounds();
+        return [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()];
+      }
+
+      function finishRender(elements, note) {
+        allStations = [];
+        (elements || []).forEach(function (elData) {
+          if (elData.lat == null) return;
+          allStations.push({ type: elData.type, id: elData.id, lat: elData.lat, lon: elData.lon, tags: elData.tags || {} });
+        });
+        renderMarkers();
+        const visible = cluster.getLayers().length;
+        busy = false;
+        if (note) setStatus(visible + " Stationen geladen (" + note + ")", visible ? "ok" : "");
+        else if (visible) setStatus(visible + " Stationen geladen", "ok");
+        else setStatus("Keine Stationen in diesem Bereich – Radius erhöhen oder Karte verschieben", "");
+        dumpFilterHint();
+      }
+
+      function dumpFilterHint() {
+        $("filter-hint").textContent = chipActive === "all" ? "" :
+          "Filter aktiv: nur passende Stationen sichtbar (alle " + allStations.length + " geladen)";
+      }
+
+      function runSearch(force) {
+        if (busy) return;
+        const bbox = bboxFor();
+        const query = '[out:json][timeout:25];(' +
+          ['node["amenity"="charging_station"]', 'way["amenity"="charging_station"]'].map(function (q) {
+            return q + "(" + bbox.join(",") + ");";
+          }).join("") + ');out center tags;';
+        const key = bbox.join(",") + "|" + chipActive;
+        if (!force && key === lastQueryKey) return;
+        lastQueryKey = key;
+
+        busy = true;
+        hideError();
+        setStatus("Lade Ladestationen …", "busy");
+
+        fetchViaOverpass(query, function (overpassErr, elements) {
+          if (!overpassErr && elements) { finishRender(elements, null); return; }
+          setStatus("Overpass blockiert – probiere OSM-API-Fallback …", "busy");
+          fetchViaOsmApi(bbox, function (osmErr, osmElements, osmNote) {
+            if (osmErr) {
+              busy = false;
+              setStatus("Datenquellen nicht erreichbar – Verbindung testen zeigt Details", "error");
+              showError("Weder Overpass noch offizielle OSM-API erreichbar (Netzwerk/Sperre). Verbindung testen zeigt Details.");
+              runDiagnose();
+              return;
+            }
+            finishRender(osmElements, osmNote || "OSM-API-Fallback");
+          });
+        }, function (progressText) { setStatus(progressText + " …", "busy"); });
+      }
+
+      /* ---------- Diagnose ---------- */
+      function runDiagnose() {
+        const probeBox = $("probe-result");
+        probeBox.innerHTML = '<i class="fas fa-stethoscope" style="color:#00bfff;"></i> Teste Datenquellen …';
+        el.error.style.display = "block";
+        const lines = [];
+        const results = [];
+        let pending = ENDPOINTS.length + 1;
+
+        function finishIfDone() {
+          pending--;
+          if (pending > 0) return;
+          const ok = results.filter(function (r) { return r.ok; });
+          probeBox.innerHTML = lines.join("<br>") +
+            "<br>" + (ok.length
+              ? '→ <span style="color:#3aff8c;">Mindestens eine Quelle funktioniert – erneut Bereich durchsuchen klicken.</span>'
+              : '→ <span style="color:#ff7b6b;">Keine Quelle erreichbar – vermutlich blockiert dein Netzwerk (Filter/Firewall). Anderes Netz (Hotspot) probieren.</span>');
+        }
+        function addLine(text, okFlag) {
+          const color = okFlag === true ? "#3aff8c" : (okFlag === false ? "#ff7b6b" : "#9aa5b1");
+          lines.push('<span style="color:' + color + ';">' + text + "</span>");
+          probeBox.innerHTML = lines.join("<br>");
+        }
+
+        ENDPOINTS.forEach(function (url) {
+          const host = url.replace(/^https:\/\/([^/]+)\/.*$/, "$1");
+          addLine("⏳ Teste " + host + " …");
+          fetchWithTimeout(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "data=" + encodeURIComponent('[out:json][timeout:8];(node["amenity"="charging_station"](48.20,16.35,48.21,16.36););out 1;')
+          }, 12000).then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          }).then(function (json) {
+            results.push({ ok: true });
+            addLine("✅ Overpass " + host + ": erreichbar (" + (json.elements || []).length + ")", true);
+            finishIfDone();
+          }).catch(function (err) {
+            const msg = err.name === "AbortError" ? "Timeout" : (err.message || "Netzwerkfehler");
+            results.push({ ok: false });
+            addLine("❌ Overpass " + host + ": " + msg, false);
+            finishIfDone();
+          });
+        });
+
+        fetchWithTimeout("https://api.openstreetmap.org/api/0.6/map?bbox=16.355,48.200,16.365,48.210", {}, 20000)
+          .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.text(); })
+          .then(function (text) {
+            results.push({ ok: true });
+            addLine("✅ OSM-API (Fallback): erreichbar (" + Math.round(text.length / 1024) + " kB)", true);
+            finishIfDone();
+          }).catch(function (err) {
+            const msg = err.name === "AbortError" ? "Timeout" : (err.message || "Netzwerkfehler");
+            results.push({ ok: false });
+            addLine("❌ OSM-API (Fallback): " + msg, false);
+            finishIfDone();
+          });
+      }
+
+      /* ---------- Ladezeitrechner ---------- */
+      function initCalc() {
+        function update() {
+          const warn = $("lc-warn");
+          warn.style.display = "none";
+          const B = parseFloat($("lc-battery").value.replace(",", "."));
+          const from = parseFloat($("lc-from").value.replace(",", "."));
+          const to = parseFloat($("lc-to").value.replace(",", "."));
+          const p = parseFloat($("lc-power").value.replace(",", "."));
+          const cons = parseFloat($("lc-consumption").value.replace(",", "."));
+
+          function fail(msg) {
+            $("lc-time").textContent = "–";
+            $("lc-range").textContent = "Ladedauer";
+            warn.style.display = "block";
+            warn.textContent = msg;
+          }
+
+          if (!(B > 0) || !(from >= 0 && to <= 100) || !(to > from)) return fail("Akkugröße und Ladestand prüfen: bis muss größer als von sein (0–100 %).");
+          if (!(p > 0)) return fail("Ladeleistung muss größer 0 kW sein.");
+          if (!(cons > 0)) return fail("Verbrauch in kWh/100 km eingeben.");
+
+          const energy = B * (to - from) / 100;
+          const hours = energy / p;
+          const minutes = Math.round(hours * 60);
+          const range = energy / cons * 100;
+
+          $("lc-time").textContent = (minutes >= 60
+            ? Math.floor(minutes / 60) + " h " + (minutes % 60) + " min"
+            : minutes + " min");
+          $("lc-range").textContent = "+" + fmt(energy, 1) + " kWh geladen · ≈ " + fmt(range, 0) + " km Reichweite (bei " + fmt(cons, 1) + " kWh/100 km)";
+        }
+        ["lc-battery", "lc-from", "lc-to", "lc-power", "lc-consumption"].forEach(function (id) {
+          $(id).addEventListener("input", update);
+        });
+        update();
+      }
+
+      /* ---------- Events ---------- */
+      document.querySelectorAll(".cat-chip").forEach(function (chip) {
+        chip.addEventListener("click", function () {
+          document.querySelectorAll(".cat-chip").forEach(function (c) { c.classList.remove("on"); });
+          chip.classList.add("on");
+          chipActive = chip.dataset.chip;
+          lastQueryKey = ""; // erzwingen neu zeichnen
+          renderMarkers();
+          dumpFilterHint();
+          setStatus(cluster.getLayers().length + " Stationen sichtbar (Filter: " + chipActive + ")", cluster.getLayers().length ? "ok" : "");
+        });
+      });
+
+      el.locate.addEventListener("click", function () {
+        if (!navigator.geolocation) { setStatus("Geolocation nicht verfügbar", "error"); return; }
+        setStatus("Position wird ermittelt …", "busy");
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          userPos = [pos.coords.latitude, pos.coords.longitude];
+          map.setView(userPos, Math.max(map.getZoom(), 14));
+          L.marker(userPos, {
+            icon: L.divIcon({ className: "user-marker", html: '<div style="width:16px;height:16px;border-radius:50%;background:#00bfff;border:3px solid #dff5ff;box-shadow:0 0 0 6px rgba(0,191,255,.25);"></div>', iconSize: [16, 16], iconAnchor: [8, 8] })
+          }).addTo(map).bindPopup("<b>Du bist hier</b>");
+          setStatus("Position gefunden ✓", "ok");
+          runSearch(true);
+        }, function () {
+          setStatus("Position nicht verfügbar (Erlaubnis?)", "error");
+        }, { enableHighAccuracy: true, timeout: 10000 });
+      });
+
+      el.search.addEventListener("click", function () { runSearch(true); });
+      $("diagnose-btn").addEventListener("click", function () { hideError(); window.setTimeout(runDiagnose, 50); });
+      el.radius.addEventListener("change", function () {
+        if (el.radius.value !== "view" && !userPos) return;
+        runSearch(true);
+      });
+
+      map.on("moveend", function () {
+        if (map.getZoom() < MIN_ZOOM_AUTO) {
+          setStatus("Zoome näher (ab Stufe " + MIN_ZOOM_AUTO + ") für Auto-Abfrage", "");
+          return;
+        }
+        window.clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(function () { runSearch(false); }, 900);
+      });
+
+      /* ---------- Start ---------- */
+      initCalc();
+      runSearch(true);
+    })();
+  </script>
+</body>
+</html>
