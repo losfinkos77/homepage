@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Netzwerklabor | Los Finkos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="netzwerk.css">
+</head>
+<body>
+
+  <header>
+    <h1><i class="fas fa-network-wired"></i> Netzwerklabor</h1>
+    <p>Interaktive Lernplattform für Netzwerktechnik: Grundlagen verstehen, Subnetze berechnen,
+       Protokolle simulieren und ein virtuelles Heimnetzwerk erkunden. Alles läuft lokal im Browser.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+    </div>
+    <div class="nav-row" style="margin-top:10px;">
+      <a class="nav-link" href="elektronik.html"><i class="fas fa-microchip"></i> Elektronik</a>
+      <a class="nav-link" href="funk.html"><i class="fas fa-tower-broadcast"></i> Funktechnik</a>
+      <a class="nav-link" href="sdr.html"><i class="fas fa-satellite-dish"></i> SDR</a>
+      <a class="nav-link" style="background:#00bfff; color:#050807;"><i class="fas fa-network-wired"></i> Netzwerk</a>
+    </div>
+  </header>
+
+  <nav class="module-nav" aria-label="Lernmodule">
+    <a href="#grundlagen"><i class="fas fa-book-open"></i> Grundwissen</a>
+    <a href="#simulator"><i class="fas fa-cubes"></i> Simulator</a>
+    <a href="#subnetz"><i class="fas fa-calculator"></i> Subnetzrechner</a>
+    <a href="#pakete"><i class="fas fa-envelope-open-text"></i> Pakete</a>
+    <a href="#terminal"><i class="fas fa-terminal"></i> Terminal</a>
+    <a href="#topologien"><i class="fas fa-diagram-project"></i> Topologien</a>
+    <a href="#wlan"><i class="fas fa-wifi"></i> WLAN</a>
+    <a href="#quiz"><i class="fas fa-graduation-cap"></i> Quiz</a>
+    <a href="#pilab"><i class="fab fa-raspberry-pi"></i> Pi-Labor</a>
+  </nav>
+
+  <main>
+
+    <!-- ============ MODUL 1: GRUNDWISSEN ============ -->
+    <section class="panel" id="grundlagen">
+      <h2><i class="fas fa-book-open"></i> Modul 1 – Netzwerk-Grundwissen</h2>
+      <p class="lead">Die wichtigsten Bausteine eines Netzwerks – klicke auf die OSI-Zeilen, um die Entsprechung im TCP/IP-Modell zu sehen.</p>
+
+      <h3 class="sub-title"><i class="fas fa-globe"></i> Netzwerkarten</h3>
+      <div class="concept-grid" id="net-types"></div>
+
+      <h3 class="sub-title"><i class="fas fa-address-card"></i> IP-Adresse vs. MAC-Adresse</h3>
+      <div class="compare-table-wrap"><table class="data-table" id="ipmac-table"></table></div>
+
+      <h3 class="sub-title"><i class="fas fa-hard-drive"></i> Geräte im Netzwerk</h3>
+      <div class="concept-grid" id="net-devices"></div>
+
+      <h3 class="sub-title"><i class="fas fa-user-group"></i> Client &amp; Server · TCP &amp; UDP · DNS &amp; DHCP</h3>
+      <div class="concept-grid" id="net-pairs"></div>
+
+      <h3 class="sub-title"><i class="fas fa-layer-group"></i> IPv4 vs. IPv6</h3>
+      <div class="compare-table-wrap"><table class="data-table" id="ip46-table"></table></div>
+
+      <h3 class="sub-title"><i class="fas fa-layer-group"></i> OSI-Modell ↔ TCP/IP-Modell</h3>
+      <p style="color:#9aa5b1; font-size:14px; margin:0 0 10px;">Klicke auf eine OSI-Schicht → die passende TCP/IP-Schicht leuchtet auf (und umgekehrt).</p>
+      <div class="osi-grid">
+        <div><h4>OSI (7 Schichten)</h4><ul class="layer-list" id="osi-list"></ul></div>
+        <div><h4>TCP/IP (4 Schichten)</h4><ul class="layer-list" id="tcpi-list"></ul></div>
+      </div>
+    </section>
+
+    <!-- ============ MODUL 2: SIMULATOR ============ -->
+    <section class="panel" id="simulator">
+      <h2><i class="fas fa-cubes"></i> Modul 2 – Interaktiver Netzwerksimulator
+        <span class="sim-badge"><i class="fas fa-flask"></i> SIMULATION</span>
+      </h2>
+      <p class="lead">Baue dein eigenes Netzwerk: Geräte hinzufügen, verbinden, IPs vergeben und Pings testen.
+         Erreichbarkeit folgt vereinfachten Regeln (gleiche Subnetze → Switch/Link; unterschiedliche → über Router).</p>
+
+      <div class="sim-toolbar">
+        <span class="tb-label"><i class="fas fa-plus"></i> Gerät hinzufügen:</span>
+        <div id="sim-add-buttons"></div>
+        <span class="tb-label"><i class="fas fa-hand-pointer"></i> Modus:</span>
+        <select id="sim-mode">
+          <option value="move" selected>Verschieben</option>
+          <option value="connect">Verbinden</option>
+          <option value="ping">Ping</option>
+          <option value="delete">Löschen</option>
+        </select>
+        <button class="mini-btn" id="sim-example" type="button"><i class="fas fa-wand-magic-sparkles"></i> Beispiel laden</button>
+        <button class="mini-btn danger" id="sim-clear" type="button"><i class="fas fa-trash"></i> Alles löschen</button>
+      </div>
+
+      <div class="sim-layout">
+        <div class="sim-canvas-wrap">
+          <canvas id="sim-canvas"></canvas>
+          <div class="sim-hint" id="sim-hint">Modus „Verschieben": Geräte ziehen · „Verbinden": erst Quelle, dann Ziel anklicken · „Ping": erst Quelle, dann Ziel</div>
+        </div>
+        <div class="sim-side">
+          <div class="inspector" id="sim-inspector">
+            <h4><i class="fas fa-screwdriver-wrench"></i> Gerät auswählen …</h4>
+            <p style="color:#6b7785; font-size:13px;">Klicke im Canvas auf ein Gerät (im Verschieben-Modus), um IP und Maske zu bearbeiten.</p>
+          </div>
+          <div class="sim-log" id="sim-log" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODUL 3: SUBNETZRECHNER ============ -->
+    <section class="panel" id="subnetz">
+      <h2><i class="fas fa-calculator"></i> Modul 3 – IP- &amp; Subnetzrechner</h2>
+      <p class="lead">Netzadresse, Broadcast, nutzbare Hosts – inklusive korrekter Behandlung von /31 und /32.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="sn-ip">IPv4-Adresse</label>
+            <input type="text" id="sn-ip" value="192.168.1.130" maxlength="15" spellcheck="false" autocomplete="off">
+            <div class="hint">z. B. 192.168.1.130, 10.0.0.5, 172.16.8.200</div>
+          </div>
+          <div class="field">
+            <label for="sn-prefix">CIDR-Präfix (0–32)</label>
+            <input type="number" id="sn-prefix" min="0" max="32" value="26">
+            <div class="hint">ODER Subnetzmaske unten – eines von beiden genügt</div>
+          </div>
+          <div class="field">
+            <label for="sn-mask">Subnetzmaske (optional)</label>
+            <input type="text" id="sn-mask" placeholder="z. B. 255.255.255.192" maxlength="15" spellcheck="false" autocomplete="off">
+            <div class="hint">überschreibt das CIDR-Präfix, wenn gültig</div>
+          </div>
+        </div>
+        <div>
+          <div class="result-card">
+            <div class="value" id="sn-network">–</div>
+            <div class="sub">Netzadresse</div>
+          </div>
+          <div class="sn-results" id="sn-results"></div>
+          <div class="warn" id="sn-warn"><i class="fas fa-triangle-exclamation"></i> <span></span></div>
+        </div>
+      </div>
+
+      <h3 class="sub-title"><i class="fas fa-1"></i> Binärische Ansicht (Netzanteil hervorgehoben)</h3>
+      <div class="binary-wrap" id="sn-binary"></div>
+    </section>
+
+    <!-- ============ MODUL 4: PAKET-SIMULATOR ============ -->
+    <section class="panel" id="pakete">
+      <h2><i class="fas fa-envelope-open-text"></i> Modul 4 – Paket-Simulator
+        <span class="sim-badge"><i class="fas fa-flask"></i> SIMULATION</span>
+      </h2>
+      <p class="lead">Wie ARP, DHCP, DNS, TCP-Handshake, HTTP und ICMP im Detail ablaufen – Paket für Paket animiert.</p>
+
+      <div class="sim-toolbar">
+        <select id="pk-scenario"></select>
+        <button class="mini-btn primary" id="pk-play" type="button"><i class="fas fa-play"></i> Abspielen</button>
+        <button class="mini-btn" id="pk-step" type="button"><i class="fas fa-forward-step"></i> Einzelschritt</button>
+        <button class="mini-btn" id="pk-reset" type="button"><i class="fas fa-rotate-left"></i> Zurücksetzen</button>
+      </div>
+
+      <canvas id="pk-canvas"></canvas>
+      <div class="canvas-caption" id="pk-caption">Zeitachse: der Punkt wandert vom Sender zum Empfänger</div>
+
+      <div class="pk-current" id="pk-current"></div>
+
+      <div class="compare-table-wrap">
+        <table class="data-table" id="pk-table">
+          <thead><tr><th>#</th><th>Quelle</th><th>Ziel</th><th>Protokoll</th><th>Inhalt</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ MODUL 5: TERMINAL ============ -->
+    <section class="panel" id="terminal">
+      <h2><i class="fas fa-terminal"></i> Modul 5 – Virtuelles Terminal
+        <span class="sim-badge"><i class="fas fa-flask"></i> SIMULATION</span>
+      </h2>
+      <p class="lead">Übliche Netzwerkbefehle gegen ein simuliertes Heimnetzwerk. Es werden <strong>keine echten
+         Befehle ausgeführt</strong> und keine echten Netzwerke berührt – alles ist Demo-Daten.</p>
+
+      <div class="terminal" id="term">
+        <div class="term-out" id="term-out"></div>
+        <div class="term-input-row">
+          <span class="term-prompt">pi@raspberrypi:~$</span>
+          <input type="text" id="term-in" spellcheck="false" autocomplete="off" aria-label="Simulierter Terminal-Befehl">
+        </div>
+      </div>
+      <p style="color:#6b7785; font-size:13px; margin-top:8px;">
+        Verfügbare Befehle: <code>help</code> · <code>ping</code> · <code>ip addr</code> · <code>ip route</code> ·
+        <code>traceroute</code> · <code>nslookup</code> · <code>dig</code> · <code>ss</code> · <code>arp</code> ·
+        <code>hostname</code> · <code>clear</code>
+      </p>
+    </section>
+
+    <!-- ============ MODUL 6: TOPOLOGIEN ============ -->
+    <section class="panel" id="topologien">
+      <h2><i class="fas fa-diagram-project"></i> Modul 6 – Netzwerk-Topologien</h2>
+      <p class="lead">Fünf Grundformen, wie Geräte miteinander verbunden werden können.</p>
+      <div class="topo-tabs" id="topo-tabs"></div>
+      <div class="topo-layout">
+        <div class="topo-svg-wrap" id="topo-svg"></div>
+        <div>
+          <h3 class="sub-title" style="color:#3aff8c;"><i class="fas fa-thumbs-up"></i> Vorteile</h3>
+          <ul class="pros-cons pros" id="topo-pros"></ul>
+          <h3 class="sub-title" style="color:#ff7b6b;"><i class="fas fa-thumbs-down"></i> Nachteile</h3>
+          <ul class="pros-cons cons" id="topo-cons"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODUL 7: WLAN ============ -->
+    <section class="panel" id="wlan">
+      <h2><i class="fas fa-wifi"></i> Modul 7 – WLAN-Grundlagen</h2>
+      <p class="lead">Frequenzbänder, Kanäle, Verschlüsselung und was Signalstärke wirklich bedeutet.</p>
+
+      <div class="concept-grid" id="wlan-bands"></div>
+
+      <h3 class="sub-title"><i class="fas fa-tower-cell"></i> Kanäle im 2,4-GHz-Band (nur 1, 6, 11 überlappen nicht)</h3>
+      <canvas id="wlan-channels" style="height: 200px;"></canvas>
+
+      <div class="concept-grid" id="wlan-more"></div>
+
+      <h3 class="sub-title"><i class="fas fa-signal"></i> Signalstärke: dBm → Qualität</h3>
+      <div class="slider-row">
+        <label>Empfangene Signalstärke</label>
+        <input type="range" id="wlan-dbm" min="-100" max="-30" step="1" value="-55">
+        <span class="val" id="wlan-dbm-val">−55 dBm</span>
+      </div>
+      <div class="wlan-meter"><div id="wlan-meter-fill"></div></div>
+      <div class="result-card" style="margin-top: 10px;">
+        <div class="value" id="wlan-quality" style="font-size: 22px;">–</div>
+        <div class="sub" id="wlan-quality-note"></div>
+      </div>
+
+      <h3 class="sub-title"><i class="fas fa-arrows-left-right"></i> Bandbreite vs. Durchsatz</h3>
+      <p style="color:#c9d1d9; font-size:14.5px; margin-top:0;">
+        <strong style="color:#00bfff;">Bandbreite</strong> = theoretisches Maximum der Leitung (z. B. „600 Mbit/s" auf dem Karton).
+        <strong style="color:#00bfff;">Durchsatz</strong> = was wirklich ankommt (Überhead, Störungen, Distanz, viele Geräte) –
+        in der Praxis oft nur 40–70 % davon. WLAN 600 Mbit/s ≈ 250–400 Mbit/s realer Durchsatz.
+      </p>
+    </section>
+
+    <!-- ============ MODUL 8: QUIZ ============ -->
+    <section class="panel" id="quiz">
+      <h2><i class="fas fa-graduation-cap"></i> Modul 8 – Netzwerk-Quiz</h2>
+      <p class="lead">30+ Fragen in drei Stufen. Jede Antwort wird sofort erklärt – dein Fortschritt wird lokal gespeichert.</p>
+
+      <div class="sim-toolbar">
+        <select id="quiz-diff">
+          <option value="all" selected>Alle Stufen (gemischt)</option>
+          <option value="1">Leicht</option>
+          <option value="2">Mittel</option>
+          <option value="3">Schwer</option>
+        </select>
+        <button class="mini-btn primary" id="quiz-start" type="button"><i class="fas fa-play"></i> Quiz starten</button>
+        <span class="status" id="quiz-stats-info"></span>
+      </div>
+
+      <div class="quiz-progress" id="quiz-progress-wrap" style="display:none;">
+        <div class="lbl"><span id="quiz-progress-text">Frage 1/10</span><span id="quiz-score-live">0 Punkte</span></div>
+        <div class="quiz-bar"><span id="quiz-bar-fill"></span></div>
+      </div>
+
+      <div id="quiz-container"></div>
+
+      <div class="quiz-actions" id="quiz-actions" style="display:none;">
+        <button class="mini-btn primary" id="quiz-next" type="button"><i class="fas fa-forward"></i> Nächste Frage</button>
+        <button class="mini-btn" id="quiz-abort" type="button"><i class="fas fa-xmark"></i> Beenden</button>
+      </div>
+    </section>
+
+    <!-- ============ MODUL 9: PI-LABOR ============ -->
+    <section class="panel" id="pilab">
+      <h2><i class="fab fa-raspberry-pi"></i> Modul 9 – Raspberry-Pi-Netzwerklabor
+        <span class="sim-badge"><i class="fas fa-flask"></i> SIMULATION · DEMO-DATEN</span>
+      </h2>
+      <p class="lead">Ein vollständig simuliertes Heimnetzwerk mit privaten Beispieladressen – nur Empfang/Demo, keine echten Verbindungen.</p>
+
+      <div class="topo-svg-wrap" id="pilab-svg"></div>
+
+      <h3 class="sub-title"><i class="fas fa-satellite-dish"></i> Ping-Simulation</h3>
+      <div class="sim-toolbar">
+        <select id="pi-src"></select>
+        <i class="fas fa-arrow-right" style="color:#00bfff;"></i>
+        <select id="pi-dst"></select>
+        <button class="mini-btn primary" id="pi-ping" type="button"><i class="fas fa-satellite-dish"></i> Ping!</button>
+      </div>
+      <div class="terminal small" id="pi-console" style="height:220px;">
+        <div class="term-out" id="pi-out"></div>
+      </div>
+
+      <h3 class="sub-title"><i class="fas fa-lock"></i> SSH-Verbindung (konzeptioneller Ablauf)</h3>
+      <div class="ssh-steps" id="ssh-steps"></div>
+      <div style="margin-top: 10px;">
+        <button class="mini-btn primary" id="ssh-run" type="button"><i class="fas fa-play"></i> SSH-Aufbau abspielen</button>
+      </div>
+
+      <h3 class="sub-title"><i class="fas fa-wifi"></i> WLAN vs. Ethernet (simulierte Werte)</h3>
+      <div class="compare-table-wrap"><table class="data-table" id="wlan-eth-table"></table></div>
+
+      <h3 class="sub-title"><i class="fas fa-bug"></i> Typische Netzwerkfehler (und wie man sie findet)</h3>
+      <div class="concept-grid" id="pi-errors"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Alle Simulationen sind Demo-Daten und laufen 100 % lokal im Browser – es werden keine echten Netzwerke berührt ·
+       Teil der Los-Finkos-Lernplattform: <a href="elektronik.html">Elektronik</a> ·
+       <a href="funk.html">Funktechnik</a> · <a href="sdr.html">SDR</a></p>
+  </footer>
+
+  <script src="netzwerk.js"></script>
+</body>
+</html>
