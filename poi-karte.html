@@ -225,10 +225,12 @@
         </select>
         <button class="nav-link" id="locate-btn" type="button"><i class="fas fa-location-crosshairs"></i> Meine Position</button>
         <button class="nav-link" id="search-btn" type="button"><i class="fas fa-magnifying-glass"></i> Bereich durchsuchen</button>
+        <button class="nav-link" id="diagnose-btn" type="button"><i class="fas fa-stethoscope"></i> Verbindung testen</button>
         <span class="status" id="status"><i class="fas fa-circle-dot"></i> Bereit</span>
       </div>
       <div class="load-error" id="load-error">
-        <i class="fas fa-triangle-exclamation"></i> <span id="load-error-text">Die Overpass-Abfrage ist gerade nicht erreichbar (free Server oft beschäftigt). Bitte gleich nochmal probieren.</span>
+        <i class="fas fa-triangle-exclamation"></i> <span id="load-error-text">Die Datenquellen sind gerade nicht erreichbar. Bitte gleich nochmal probieren.</span>
+        <div id="probe-result" style="margin-top:10px; font-size:13px; font-family:Consolas,monospace; text-align:left;"></div>
       </div>
     </section>
 
@@ -492,20 +494,34 @@
           .catch(function (err) { window.clearTimeout(timer); throw err; });
       }
 
-      function fetchViaOverpass(query, cb) {
+      function fetchViaOverpass(query, cb, progress) {
         let idx = Math.floor(Math.random() * ENDPOINTS.length);
         (function attempt(i) {
           if (i >= ENDPOINTS.length) return cb(new Error("alle Overpass-Mirrors fehlgeschlagen"));
-          fetchWithTimeout(ENDPOINTS[i], {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "data=" + encodeURIComponent(query)
-          }, 20000).then(function (res) {
-            if (!res.ok) throw new Error("HTTP " + res.status);
-            return res.json();
-          }).then(function (json) {
-            cb(null, json.elements || []);
-          }).catch(function () { attempt(i + 1); });
+          const host = ENDPOINTS[i].replace(/^https:\/\/([^/]+)\/.*$/, "$1");
+          if (progress) progress("Overpass " + (i + 1) + "/" + ENDPOINTS.length + " (" + host + ")");
+          const attemptOnce = function (method) {
+            const options = method === "POST"
+              ? { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(query) }
+              : { method: "GET" };
+            const url = method === "GET" ? ENDPOINTS[i] + "?data=" + encodeURIComponent(query) : ENDPOINTS[i];
+            return fetchWithTimeout(url, options, 15000);
+          };
+          attemptOnce("POST")
+            .then(function (res) {
+              if (!res.ok) throw new Error("HTTP " + res.status);
+              return res.json();
+            })
+            .then(function (json) { cb(null, json.elements || []); })
+            .catch(function () {
+              attemptOnce("GET")
+                .then(function (res) {
+                  if (!res.ok) throw new Error("HTTP " + res.status);
+                  return res.json();
+                })
+                .then(function (json) { cb(null, json.elements || []); })
+                .catch(function () { attempt(i + 1); });
+            });
         })(idx);
       }
 
@@ -518,7 +534,7 @@
         const sb = [cLat - spanLat / 2, cLon - spanLon / 2, cLat + spanLat / 2, cLon + spanLon / 2]
           .map(function (v) { return v.toFixed(5); }).join(",");
 
-        fetch("https://api.openstreetmap.org/api/0.6/map?bbox=" + sb)
+        fetchWithTimeout("https://api.openstreetmap.org/api/0.6/map?bbox=" + sb, {}, 30000)
           .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.text(); })
           .then(function (xmlText) {
             const doc = new DOMParser().parseFromString(xmlText, "application/xml");
@@ -591,13 +607,94 @@
           fetchViaOsmApi(bbox, function (osmErr, osmElements) {
             if (osmErr) {
               busy = false;
-              setStatus("Datenquellen nicht erreichbar", "error");
-              showError("Weder die Overpass-Mirrors noch die offizielle OSM-API sind gerade erreichbar (Netzwerk/Sperre). Bitte später erneut probieren.");
+              setStatus("Datenquellen nicht erreichbar – „Verbindung testen“ zeigt Details", "error");
+              showError("Weder die Overpass-Mirrors noch die offizielle OSM-API sind gerade erreichbar (Netzwerk/Sperre). „Verbindung testen“ zeigt, welcher Server antwortet.");
+              runDiagnose();
               return;
             }
             finishRender(osmElements, "OSM-API-Fallback");
           });
+        }, function (progressText) {
+          setStatus(progressText + " …", "busy");
         });
+      }
+
+      /* ---------- Verbindungsdiagnose ---------- */
+      function runDiagnose() {
+        const probeBox = document.getElementById("probe-result");
+        probeBox.innerHTML = '<i class="fas fa-stethoscope" style="color:#00bfff;"></i> Teste Datenquellen …';
+        el.error.style.display = "block";
+
+        const lines = [];
+        const results = [];
+
+        function render() {
+          probeBox.innerHTML = lines.join("<br>") || "…";
+        }
+
+        function addLine(text, ok) {
+          const color = ok === true ? "#3aff8c" : (ok === false ? "#ff7b6b" : "#9aa5b1");
+          lines.push('<span style="color:' + color + ';">' + text + "</span>");
+          render();
+        }
+
+        function probeOverpass(url, name) {
+          const query = '[out:json][timeout:8];(node["amenity"="drinking_water"](48.20,16.35,48.21,16.36););out 1;';
+          fetchWithTimeout(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "data=" + encodeURIComponent(query)
+          }, 12000).then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          }).then(function (json) {
+            results.push({ name: name, ok: true, detail: (json.elements || []).length + " Test-Objekte" });
+            addLine("✅ Overpass " + name + ": erreichbar (" + (json.elements || []).length + " Test-Objekte)", true);
+            finishIfDone();
+          }).catch(function (err) {
+            const msg = err.name === "AbortError" ? "Timeout" : (err.message || "Netzwerkfehler");
+            results.push({ name: name, ok: false, detail: msg });
+            addLine("❌ Overpass " + name + ": " + msg, false);
+            finishIfDone();
+          });
+        }
+
+        fetchWithTimeout("https://api.openstreetmap.org/api/0.6/map?bbox=16.355,48.200,16.365,48.210", {}, 20000)
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.text();
+          })
+          .then(function (text) {
+            results.push({ name: "OSM-API", ok: true, detail: Math.round(text.length / 1024) + " kB" });
+            addLine("✅ OSM-API (Fallback): erreichbar (" + Math.round(text.length / 1024) + " kB Testdaten)", true);
+            finishIfDone();
+          })
+          .catch(function (err) {
+            const msg = err.name === "AbortError" ? "Timeout" : (err.message || "Netzwerkfehler");
+            results.push({ name: "OSM-API", ok: false, detail: msg });
+            addLine("❌ OSM-API (Fallback): " + msg, false);
+            finishIfDone();
+          });
+
+        ENDPOINTS.forEach(function (url) {
+          const host = url.replace(/^https:\/\/([^/]+)\/.*$/, "$1");
+          addLine("⏳ Teste " + host + " …", null);
+          probeOverpass(url, host);
+        });
+
+        let pending = ENDPOINTS.length + 1;
+        function finishIfDone() {
+          pending--;
+          if (pending <= 0) {
+            render();
+            const okCount = results.filter(function (r) { return r.ok; }).length;
+            if (okCount > 0) {
+              addLine("→ Mindestens eine Quelle funktioniert – bitte erneut „Bereich durchsuchen“ klicken.", true);
+            } else {
+              addLine("→ Keine Quelle erreichbar: vermutlich blockiert dein Netzwerk/Firewall diese Server (z. B. Werbe-/Trackerfilter, Firmen- oder Schulnetz). Anderes Netz (Handy-Hotspot) probieren.", false);
+            }
+          }
+        }
       }
 
       function finishRender(elements, note) {
@@ -636,6 +733,10 @@
       /* ---------- Events ---------- */
       el.locate.addEventListener("click", locate);
       el.search.addEventListener("click", function () { runSearch(true); });
+      document.getElementById("diagnose-btn").addEventListener("click", function () {
+        hideError();
+        window.setTimeout(runDiagnose, 50);
+      });
       el.radius.addEventListener("change", function () {
         if (el.radius.value !== "view" && !userPos) { locate(); return; }
         runSearch(true);
