@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Elektronik-Lernseite | Los Finkos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    html {
+      background: radial-gradient(1200px 800px at 50% 0%, #0a1520 0%, #050807 55%, #040604 100%);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 16px 60px;
+      color: #f5f7fa;
+      line-height: 1.7;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(28px, 6vw, 56px);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #00bfff;
+      text-shadow: 0 0 18px rgba(0, 191, 255, 0.3);
+    }
+
+    header p {
+      margin: 10px auto 0;
+      max-width: 760px;
+      color: #c9d1d9;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #00bfff;
+      background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      transition: all 0.25s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background: #00bfff;
+      color: #050807;
+      box-shadow: 0 10px 30px rgba(0, 191, 255, 0.25);
+    }
+
+    .module-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      margin: 0 auto 26px;
+      max-width: 1240px;
+      background: rgba(5, 8, 7, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 0 0 18px 18px;
+      border: 1px solid rgba(0, 191, 255, 0.15);
+    }
+
+    .module-nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #9aa5b1;
+      border: 1px solid rgba(0, 191, 255, 0.25);
+      font-size: 13.5px;
+      transition: all 0.2s ease;
+    }
+
+    .module-nav a:hover {
+      color: #00bfff;
+      border-color: #00bfff;
+      background: rgba(0, 191, 255, 0.08);
+    }
+
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      gap: 26px;
+    }
+
+    .panel {
+      border-radius: 18px;
+      border: 1px solid rgba(0, 191, 255, 0.25);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.1) 0%, transparent 60%), rgba(9, 14, 20, 0.9);
+      box-shadow: 0 40px 80px -60px rgba(0, 191, 255, 0.9);
+      padding: 22px 24px;
+      scroll-margin-top: 70px;
+    }
+
+    .panel h2 {
+      margin: 0 0 6px;
+      font-size: clamp(19px, 3vw, 26px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #00bfff;
+    }
+
+    .panel > p.lead {
+      margin: 0 0 18px;
+      color: #9aa5b1;
+      font-size: 15px;
+    }
+
+    /* ---------- Grundlagen ---------- */
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .concept-card {
+      border-radius: 16px;
+      border: 1px solid rgba(0, 191, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.12) 0%, transparent 65%), rgba(9, 14, 20, 0.92);
+      padding: 18px 20px;
+    }
+
+    .concept-card i {
+      color: #00bfff;
+      font-size: 22px;
+    }
+
+    .concept-card h3 {
+      margin: 8px 0 2px;
+      font-size: 19px;
+      color: #00bfff;
+    }
+
+    .concept-card .unit {
+      display: inline-block;
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #9aa5b1;
+      margin-bottom: 8px;
+    }
+
+    .concept-card p {
+      margin: 0;
+      color: #c9d1d9;
+      font-size: 14.5px;
+    }
+
+    .ohm-triangle-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      margin-top: 8px;
+    }
+
+    .triangle {
+      position: relative;
+      width: 0;
+      height: 0;
+      border-left: 90px solid transparent;
+      border-right: 90px solid transparent;
+      border-bottom: 155px solid rgba(0, 191, 255, 0.18);
+      border-bottom-color: rgba(0, 191, 255, 0.22);
+      filter: drop-shadow(0 0 18px rgba(0, 191, 255, 0.25));
+    }
+
+    .triangle span {
+      position: absolute;
+      font-size: 26px;
+      font-weight: 700;
+      color: #00bfff;
+    }
+
+    .triangle .u { top: 8px;  left: -8px; }
+    .triangle .i { bottom: 10px; left: -52px; }
+    .triangle .r { bottom: 10px; right: -54px; }
+
+    .formula-text {
+      font-size: 19px;
+      color: #e5f4ff;
+      text-align: center;
+    }
+
+    .formula-text b { color: #00bfff; font-size: 24px; }
+
+    .formula-text small {
+      display: block;
+      color: #9aa5b1;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    /* ---------- Rechner-Layouts ---------- */
+    .calc-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 860px) {
+      .calc-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #9aa5b1;
+      margin-bottom: 5px;
+    }
+
+    .field input[type="number"],
+    .field select {
+      width: 100%;
+      box-sizing: border-box;
+      background: #10181f;
+      border: 1px solid rgba(0, 191, 255, 0.35);
+      border-radius: 12px;
+      color: #e5f4ff;
+      font-family: inherit;
+      font-size: 16px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .field select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: #10181f url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300bfff' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+      cursor: pointer;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #00bfff;
+      box-shadow: 0 0 14px rgba(0, 191, 255, 0.25);
+    }
+
+    .field .hint {
+      font-size: 12.5px;
+      color: #6b7785;
+      margin-top: 4px;
+    }
+
+    .result-card {
+      border-radius: 14px;
+      border: 1px solid rgba(0, 191, 255, 0.45);
+      background: rgba(0, 191, 255, 0.1);
+      padding: 16px 20px;
+      text-align: center;
+    }
+
+    .result-card .value {
+      font-size: 34px;
+      font-weight: 700;
+      color: #00bfff;
+      text-shadow: 0 0 14px rgba(0, 191, 255, 0.4);
+      word-break: break-word;
+    }
+
+    .result-card .sub {
+      color: #9aa5b1;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .result-card .formula {
+      color: #7fd4ff;
+      font-family: Consolas, monospace;
+      font-size: 15px;
+      margin-top: 8px;
+    }
+
+    .warn {
+      margin-top: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 107, 53, 0.5);
+      background: rgba(255, 107, 53, 0.12);
+      color: #ffd9c9;
+      padding: 10px 14px;
+      font-size: 14px;
+      display: none;
+    }
+
+    /* ---------- Widerstands-Farbrechner ---------- */
+    .band-selects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .resistor-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 30px 10px;
+      overflow-x: auto;
+    }
+
+    .resistor-body {
+      position: relative;
+      width: 250px;
+      height: 74px;
+      border-radius: 36px;
+      background: linear-gradient(180deg, #e8d8b8 0%, #d4bd8d 45%, #b99f6b 100%);
+      box-shadow: inset 0 -10px 22px rgba(0,0,0,0.35), 0 0 24px rgba(0, 191, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex: 0 0 auto;
+    }
+
+    .resistor-body::before,
+    .resistor-body::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 60px;
+      height: 8px;
+      background: linear-gradient(180deg, #cfd8dc, #90a4ae, #cfd8dc);
+      transform: translateY(-50%);
+      border-radius: 4px;
+    }
+
+    .resistor-body::before { right: -70px; }
+    .resistor-body::after  { left: -70px; }
+
+    .band {
+      width: 16px;
+      height: 58px;
+      border-radius: 4px;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.45);
+      transition: background 0.2s ease;
+    }
+
+    .res-output-name {
+      text-align: center;
+      color: #9aa5b1;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    /* ---------- Bauteile ---------- */
+    .parts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 18px;
+    }
+
+    .part-card {
+      border-radius: 16px;
+      border: 1px solid rgba(0, 191, 255, 0.2);
+      background: linear-gradient(180deg, rgba(0, 191, 255, 0.08) 0%, transparent 60%), rgba(9, 14, 20, 0.92);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .part-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(0, 191, 255, 0.18);
+    }
+
+    .part-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+    }
+
+    .part-card .part-body {
+      padding: 14px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .part-card h3 {
+      margin: 0;
+      color: #00bfff;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .part-card p {
+      margin: 0;
+      color: #c9d1d9;
+      font-size: 14px;
+      flex: 1;
+    }
+
+    .part-card .src {
+      font-size: 12px;
+      color: #6b7785;
+    }
+
+    .part-card .src a { color: #00bfff; text-decoration: none; }
+    .part-card .src a:hover { text-decoration: underline; }
+
+    /* ---------- Quiz ---------- */
+    .quiz-question {
+      border-radius: 14px;
+      border: 1px solid rgba(0, 191, 255, 0.2);
+      background: rgba(10, 15, 20, 0.75);
+      padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+
+    .quiz-question h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: #e5f4ff;
+      display: flex;
+      gap: 10px;
+    }
+
+    .quiz-question h3 .qnum {
+      color: #00bfff;
+      flex: 0 0 auto;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 191, 255, 0.15);
+      margin-bottom: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 14.5px;
+    }
+
+    .quiz-option:hover {
+      border-color: rgba(0, 191, 255, 0.5);
+      background: rgba(0, 191, 255, 0.06);
+    }
+
+    .quiz-option input {
+      accent-color: #00bfff;
+      width: 16px;
+      height: 16px;
+    }
+
+    .quiz-option.correct {
+      border-color: #2ecc71;
+      background: rgba(46, 204, 113, 0.12);
+      color: #b8f5d3;
+    }
+
+    .quiz-option.wrong {
+      border-color: #ff6b35;
+      background: rgba(255, 107, 53, 0.12);
+      color: #ffd9c9;
+    }
+
+    .quiz-option.locked { cursor: default; }
+
+    .quiz-explain {
+      display: none;
+      margin-top: 6px;
+      font-size: 13.5px;
+      color: #9aa5b1;
+      border-left: 3px solid rgba(0, 191, 255, 0.4);
+      padding-left: 10px;
+    }
+
+    .quiz-result {
+      margin-top: 16px;
+      text-align: center;
+      display: none;
+    }
+
+    .quiz-result .score {
+      font-size: 44px;
+      font-weight: 700;
+      color: #00bfff;
+      text-shadow: 0 0 16px rgba(0, 191, 255, 0.4);
+    }
+
+    .quiz-result .grade {
+      color: #c9d1d9;
+      margin-top: 4px;
+    }
+
+    .quiz-bar {
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.35);
+      overflow: hidden;
+      margin: 14px auto 0;
+      max-width: 420px;
+    }
+
+    .quiz-bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #0077aa, #00bfff);
+      box-shadow: 0 0 16px rgba(0, 191, 255, 0.6);
+      transition: width 0.8s ease;
+    }
+
+    .quiz-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #6b7785;
+      font-size: 13.5px;
+    }
+
+    footer a { color: #00bfff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      body { padding: 22px 10px 46px; }
+      .panel { padding: 16px 14px; }
+      .module-nav a { padding: 6px 11px; font-size: 12.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Elektronik</h1>
+    <p>Interaktive Lernmodule für den Einstieg in die Elektronik: rechnen, Farben entziffern, Bauteile kennenlernen
+       und Wissen testen. Alles läuft direkt im Browser.</p>
+    <div class="nav-row">
+      <a class="nav-link" href="index.html"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+      <a class="nav-link" href="https://www.reichelt.de/" target="_blank" rel="noopener noreferrer"><i class="fas fa-cart-shopping"></i> Bauteile-Shop</a>
+    </div>
+  </header>
+
+  <nav class="module-nav" aria-label="Lernmodule">
+    <a href="#grundlagen"><i class="fas fa-book-open"></i> Grundlagen</a>
+    <a href="#ohm"><i class="fas fa-calculator"></i> Ohmsches Gesetz</a>
+    <a href="#farben"><i class="fas fa-palette"></i> Farbringe</a>
+    <a href="#led"><i class="fas fa-lightbulb"></i> LED</a>
+    <a href="#bauteile"><i class="fas fa-microchip"></i> Bauteile</a>
+    <a href="#quiz"><i class="fas fa-graduation-cap"></i> Quiz</a>
+  </nav>
+
+  <main>
+
+    <!-- ==================== 1. GRUNDLAGEN ==================== -->
+    <section class="panel" id="grundlagen">
+      <h2><i class="fas fa-book-open"></i> Grundlagen: Spannung, Strom &amp; Widerstand</h2>
+      <p class="lead">Die drei Grundgrößen der Elektronik – vergleiche sie am besten mit einem Wasserkreislauf.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <i class="fas fa-battery-three-quarters"></i>
+          <h3>Spannung U</h3>
+          <span class="unit">Einheit: Volt (V)</span>
+          <p>Der elektrische „Druck", der die Ladungsträger antreibt – wie der Wasserdruck in einem Tank. Je höher die Spannung, desto stärker der Antrieb.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-bolt"></i>
+          <h3>Strom I</h3>
+          <span class="unit">Einheit: Ampere (A)</span>
+          <p>Die Menge an Ladung, die pro Sekunde fließt – wie die Durchflussmenge im Rohr. 1 A = 1000 mA.</p>
+        </div>
+        <div class="concept-card">
+          <i class="fas fa-gauge-high"></i>
+          <h3>Widerstand R</h3>
+          <span class="unit">Einheit: Ohm (Ω)</span>
+          <p>Der Widerstand gegen den Stromfluss – wie eine Engstelle im Rohr. Er begrenzt den Strom und wandelt Energie in Wärme um.</p>
+        </div>
+      </div>
+
+      <div class="ohm-triangle-wrap">
+        <div class="triangle" aria-hidden="true">
+          <span class="u">U</span>
+          <span class="i">I</span>
+          <span class="r">R</span>
+        </div>
+        <div class="formula-text">
+          <b>U = I × R</b>
+          Merk-Dreieck: U oben, I und R unten.<br>
+          I = U / R &nbsp;·&nbsp; R = U / I
+          <small>U in Volt · I in Ampere · R in Ohm</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. OHMSCHESES GESETZ ==================== -->
+    <section class="panel" id="ohm">
+      <h2><i class="fas fa-calculator"></i> Ohmsches Gesetz – interaktiver Rechner</h2>
+      <p class="lead">Wähle, was berechnet werden soll, gib die anderen beiden Größen ein – das Ergebnis erscheint sofort.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="ohm-target">Was soll berechnet werden?</label>
+            <select id="ohm-target">
+              <option value="U">Spannung U (Volt)</option>
+              <option value="I" selected>Strom I (Ampere)</option>
+              <option value="R">Widerstand R (Ohm)</option>
+            </select>
+          </div>
+          <div class="field" id="ohm-field-U">
+            <label for="ohm-U">Spannung U (Volt)</label>
+            <input type="number" id="ohm-U" step="any" min="0" placeholder="z. B. 12" value="12">
+          </div>
+          <div class="field" id="ohm-field-I">
+            <label for="ohm-I">Strom I (Milliampere)</label>
+            <input type="number" id="ohm-I" step="any" min="0" placeholder="z. B. 20" value="20">
+            <div class="hint">1 A = 1000 mA</div>
+          </div>
+          <div class="field" id="ohm-field-R">
+            <label for="ohm-R">Widerstand R (Ohm)</label>
+            <input type="number" id="ohm-R" step="any" min="0" placeholder="z. B. 100" value="100">
+          </div>
+        </div>
+        <div>
+          <div class="result-card" style="margin-top: 34px;">
+            <div class="value" id="ohm-result">–</div>
+            <div class="sub" id="ohm-result-label">Ergebnis</div>
+            <div class="formula" id="ohm-formula"></div>
+          </div>
+          <div class="warn" id="ohm-warn"><i class="fas fa-triangle-exclamation"></i> <span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. WIDERSTANDS-FARBRECHNER ==================== -->
+    <section class="panel" id="farben">
+      <h2><i class="fas fa-palette"></i> Widerstands-Farbrechner (4 &amp; 5 Ringe)</h2>
+      <p class="lead">Stelle die Farbringe eines Widerstands ein – Wert und Toleranz werden sofort berechnet und der Widerstand wird farblich angezeigt.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label>Anzahl Ringe</label>
+            <select id="band-count">
+              <option value="4" selected>4 Ringe (2 Ziffern + Multiplikator + Toleranz)</option>
+              <option value="5">5 Ringe (3 Ziffern + Multiplikator + Toleranz)</option>
+            </select>
+          </div>
+
+          <div class="band-selects">
+            <div class="field"><label for="band1">1. Ring (Ziffer)</label><select id="band1"></select></div>
+            <div class="field"><label for="band2">2. Ring (Ziffer)</label><select id="band2"></select></div>
+            <div class="field" id="band3-field"><label for="band3">3. Ring (Ziffer)</label><select id="band3"></select></div>
+            <div class="field"><label for="bandM">Multiplikator</label><select id="bandM"></select></div>
+            <div class="field"><label for="bandT">Toleranz</label><select id="bandT"></select></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="resistor-visual">
+            <div class="resistor-body" id="resistor-visual">
+              <span class="band" id="vb1"></span>
+              <span class="band" id="vb2"></span>
+              <span class="band" id="vb3"></span>
+              <span class="band" id="vbM"></span>
+              <span class="band" id="vbT"></span>
+            </div>
+          </div>
+          <div class="res-output-name" id="visual-caption">Widerstand mit 4 Farbringen</div>
+
+          <div class="result-card" style="margin-top: 14px;">
+            <div class="value" id="res-result">–</div>
+            <div class="sub" id="res-tolerance">Toleranz</div>
+            <div class="formula" id="res-calc"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. LED-VORWIDERSTAND ==================== -->
+    <section class="panel" id="led">
+      <h2><i class="fas fa-lightbulb"></i> LED-Vorwiderstandsrechner</h2>
+      <p class="lead">Eine LED braucht immer einen Vorwiderstand, der den Strom begrenzt. Rechne hier den passenden Wert aus.</p>
+
+      <div class="calc-grid">
+        <div>
+          <div class="field">
+            <label for="led-uv">Versorgungsspannung (Volt)</label>
+            <input type="number" id="led-uv" step="any" min="0" value="9">
+            <div class="hint">z. B. 9-V-Batterie, 5 V USB, 3,7 V LiPo</div>
+          </div>
+          <div class="field">
+            <label for="led-color">LED-Farbe</label>
+            <select id="led-color">
+              <option value="1.4">Infrarot (U&#8347; ≈ 1,4 V)</option>
+              <option value="2.0">Rot (U&#8347; ≈ 2,0 V)</option>
+              <option value="2.1">Gelb (U&#8347; ≈ 2,1 V)</option>
+              <option value="2.2">Grün (U&#8347; ≈ 2,2 V)</option>
+              <option value="3.2" selected>Blau (U&#8347; ≈ 3,2 V)</option>
+              <option value="3.3">Weiß (U&#8347; ≈ 3,3 V)</option>
+              <option value="3.5">UV (U&#8347; ≈ 3,5 V)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="led-current">LED-Strom (Milliampere)</label>
+            <input type="number" id="led-current" step="any" min="1" max="100" value="20">
+            <div class="hint">Standard-LEDs: 10–20 mA</div>
+          </div>
+        </div>
+        <div>
+          <div class="result-card" style="margin-top: 34px;">
+            <div class="value" id="led-result">–</div>
+            <div class="sub">Berechneter Vorwiderstand</div>
+            <div class="formula" id="led-formula"></div>
+          </div>
+          <div class="result-card" style="margin-top: 14px; border-color: rgba(0, 191, 255, 0.3);">
+            <div class="value" id="led-e12" style="font-size: 26px;">–</div>
+            <div class="sub">Nächster E12-Standardwert (im Handel)</div>
+            <div class="formula" id="led-power"></div>
+          </div>
+          <div class="warn" id="led-warn"><i class="fas fa-triangle-exclamation"></i> <span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. BAUTEILE ==================== -->
+    <section class="panel" id="bauteile">
+      <h2><i class="fas fa-microchip"></i> Elektronische Bauteile</h2>
+      <p class="lead">Die wichtigsten Bauteile mit Bild und Erklärung – klicke auf die Quelle für mehr Details.</p>
+      <div class="parts-grid" id="parts-grid"></div>
+    </section>
+
+    <!-- ==================== 6. QUIZ ==================== -->
+    <section class="panel" id="quiz">
+      <h2><i class="fas fa-graduation-cap"></i> Elektronik-Quiz</h2>
+      <p class="lead">10 Fragen zu den Lernmodulen – wähle pro Frage eine Antwort und werte am Ende aus.</p>
+      <div id="quiz-container"></div>
+
+      <div class="quiz-result" id="quiz-result">
+        <div class="score" id="quiz-score">–</div>
+        <div class="grade" id="quiz-grade"></div>
+        <div class="quiz-bar"><span id="quiz-bar-fill"></span></div>
+      </div>
+
+      <div class="quiz-actions">
+        <button class="btn primary" id="quiz-submit" type="button" style="border-radius:12px;"><i class="fas fa-check"></i> Auswerten</button>
+        <button class="btn" id="quiz-restart" type="button" style="border-radius:12px;"><i class="fas fa-rotate-left"></i> Neu starten</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Fotos: <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a> ·
+       Alle Berechnungen laufen lokal im Browser · <a href="index.html">Zurück zur Startseite</a></p>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =====================================================
+         2. OHMSCHESES GESETZ
+         ===================================================== */
+      const ohm = {
+        target: document.getElementById("ohm-target"),
+        U: document.getElementById("ohm-U"),
+        I: document.getElementById("ohm-I"),
+        R: document.getElementById("ohm-R"),
+        result: document.getElementById("ohm-result"),
+        label: document.getElementById("ohm-result-label"),
+        formula: document.getElementById("ohm-formula"),
+        warn: document.getElementById("ohm-warn"),
+        fields: { U: document.getElementById("ohm-field-U"), I: document.getElementById("ohm-field-I"), R: document.getElementById("ohm-field-R") }
+      };
+
+      function fmtNum(n, digits) {
+        return n.toLocaleString("de-DE", { maximumFractionDigits: digits == null ? 3 : digits });
+      }
+
+      function ohmUpdate() {
+        const target = ohm.target.value;
+        ["U", "I", "R"].forEach(function (key) {
+          const input = ohm[key];
+          const field = ohm.fields[key];
+          if (key === target) {
+            input.value = "";
+            input.disabled = true;
+            field.style.opacity = "0.45";
+            input.placeholder = "wird berechnet …";
+          } else {
+            input.disabled = false;
+            field.style.opacity = "1";
+          }
+        });
+        ohm.warn.style.display = "none";
+        ohm.formula.textContent = "";
+
+        const U = parseFloat(ohm.U.value.replace(",", "."));
+        const I_mA = parseFloat(ohm.I.value.replace(",", "."));
+        const R = parseFloat(ohm.R.value.replace(",", "."));
+        const I = Number.isFinite(I_mA) ? I_mA / 1000 : NaN;
+
+        function fail(msg) {
+          ohm.result.textContent = "–";
+          ohm.label.textContent = "Ergebnis";
+          ohm.warn.style.display = "block";
+          ohm.warn.querySelector("span").textContent = msg;
+        }
+
+        if (target === "U") {
+          if (!(I > 0) || !(R >= 0)) return fail("Bitte Strom und Widerstand eingeben.");
+          const u = I * R;
+          ohm.result.textContent = fmtNum(u) + " V";
+          ohm.label.textContent = "Spannung U";
+          ohm.formula.textContent = "U = I × R = " + fmtNum(I, 4) + " A × " + fmtNum(R) + " Ω";
+        } else if (target === "I") {
+          if (!(U >= 0) || !(R > 0)) return fail(R === 0 ? "R darf nicht 0 sein." : "Bitte Spannung und Widerstand eingeben.");
+          const i = U / R;
+          ohm.result.textContent = fmtNum(i * 1000, 2) + " mA";
+          ohm.label.textContent = "Strom I";
+          ohm.formula.textContent = "I = U / R = " + fmtNum(U) + " V / " + fmtNum(R) + " Ω";
+        } else {
+          if (!(U >= 0) || !(I > 0)) return fail(I === 0 ? "I darf nicht 0 sein." : "Bitte Spannung und Strom eingeben.");
+          const r = U / I;
+          ohm.result.textContent = fmtNum(r) + " Ω";
+          ohm.label.textContent = "Widerstand R";
+          ohm.formula.textContent = "R = U / I = " + fmtNum(U) + " V / " + fmtNum(I, 4) + " A";
+        }
+      }
+
+      ohm.target.addEventListener("change", ohmUpdate);
+      ["U", "I", "R"].forEach(function (k) { ohm[k].addEventListener("input", ohmUpdate); });
+
+      /* =====================================================
+         3. WIDERSTANDS-FARBRECHNER
+         ===================================================== */
+      const COLORS = [
+        { name: "Schwarz",  hex: "#1b1b1b", digit: 0, mult: 1,     tol: null },
+        { name: "Braun",    hex: "#7a5230", digit: 1, mult: 10,    tol: 1 },
+        { name: "Rot",      hex: "#e53935", digit: 2, mult: 100,   tol: 2 },
+        { name: "Orange",   hex: "#fb8c00", digit: 3, mult: 1e3,   tol: null },
+        { name: "Gelb",     hex: "#f4d63a", digit: 4, mult: 1e4,   tol: null },
+        { name: "Grün",     hex: "#43a047", digit: 5, mult: 1e5,   tol: 0.5 },
+        { name: "Blau",     hex: "#1e88e5", digit: 6, mult: 1e6,   tol: 0.25 },
+        { name: "Violett",  hex: "#8e24aa", digit: 7, mult: 1e7,   tol: 0.1 },
+        { name: "Grau",     hex: "#9e9e9e", digit: 8, mult: 1e8,   tol: null },
+        { name: "Weiß",     hex: "#f5f5f5", digit: 9, mult: 1e9,   tol: null },
+        { name: "Gold",     hex: "#d4af37", digit: null, mult: 0.1, tol: 5 },
+        { name: "Silber",   hex: "#c0c0c0", digit: null, mult: 0.01, tol: 10 }
+      ];
+
+      const resCalc = {
+        count: document.getElementById("band-count"),
+        b: {
+          1: document.getElementById("band1"),
+          2: document.getElementById("band2"),
+          3: document.getElementById("band3"),
+          M: document.getElementById("bandM"),
+          T: document.getElementById("bandT")
+        },
+        v: { 1: document.getElementById("vb1"), 2: document.getElementById("vb2"), 3: document.getElementById("vb3"), M: document.getElementById("vbM"), T: document.getElementById("vbT") },
+        band3Field: document.getElementById("band3-field"),
+        result: document.getElementById("res-result"),
+        tolerance: document.getElementById("res-tolerance"),
+        calc: document.getElementById("res-calc"),
+        caption: document.getElementById("visual-caption")
+      };
+
+      function fillSelect(select, filter, labelSuffix) {
+        select.innerHTML = "";
+        COLORS.forEach(function (c, index) {
+          if (!filter(c)) return;
+          const opt = document.createElement("option");
+          opt.value = String(index);
+          let label = c.name;
+          if (labelSuffix === "digit" && c.digit !== null) label += " = " + c.digit;
+          if (labelSuffix === "mult") label += " × " + (c.mult >= 1 ? c.mult : c.mult.toString().replace(".", ","));
+          if (labelSuffix === "tol" && c.tol !== null) label += " ± " + c.tol.toString().replace(".", ",") + " %";
+          opt.textContent = label;
+          select.appendChild(opt);
+        });
+      }
+
+      fillSelect(resCalc.b[1], function (c) { return c.digit !== null; }, "digit");
+      fillSelect(resCalc.b[2], function (c) { return c.digit !== null; }, "digit");
+      fillSelect(resCalc.b[3], function (c) { return c.digit !== null; }, "digit");
+      fillSelect(resCalc.b.M, function (c) { return c.mult !== null && c.tol !== 5 && c.tol !== 10 || c.name === "Gold" || c.name === "Silber"; }, "mult");
+      fillSelect(resCalc.b.T, function (c) { return c.tol !== null; }, "tol");
+
+      // Defaults: 4 Ringe Braun-Schwarz-Rot-Gold = 1 kΩ ±5 %
+      resCalc.b[1].value = "1";  // Braun
+      resCalc.b[2].value = "0";  // Schwarz
+      resCalc.b[3].value = "0";  // Schwarz
+      resCalc.b.M.value = String(COLORS.findIndex(function (c) { return c.name === "Rot"; })); // ×100
+      resCalc.b.T.value = String(COLORS.findIndex(function (c) { return c.name === "Gold"; }));
+
+      function fmtOhm(ohms) {
+        if (ohms >= 1e6) return fmtNum(ohms / 1e6, 2) + " MΩ";
+        if (ohms >= 1e3) return fmtNum(ohms / 1e3, 2) + " kΩ";
+        return fmtNum(ohms, 2) + " Ω";
+      }
+
+      function resistorUpdate() {
+        const five = resCalc.count.value === "5";
+        resCalc.b[3].parentElement.style.display = five ? "" : "none";
+        resCalc.v[3].style.display = five ? "" : "none";
+        resCalc.caption.textContent = "Widerstand mit " + (five ? 5 : 4) + " Farbringen";
+
+        const d1 = COLORS[Number(resCalc.b[1].value)];
+        const d2 = COLORS[Number(resCalc.b[2].value)];
+        const d3 = COLORS[Number(resCalc.b[3].value)];
+        const M = COLORS[Number(resCalc.b.M.value)];
+        const T = COLORS[Number(resCalc.b.T.value)];
+
+        resCalc.v[1].style.background = d1.hex;
+        resCalc.v[2].style.background = d2.hex;
+        resCalc.v[3].style.background = d3.hex;
+        resCalc.v.M.style.background = M.hex;
+        resCalc.v.T.style.background = T.hex;
+
+        const base = five ? d1.digit * 100 + d2.digit * 10 + d3.digit : d1.digit * 10 + d2.digit;
+        const value = base * M.mult;
+
+        resCalc.result.textContent = fmtOhm(value);
+        resCalc.tolerance.textContent = "Toleranz: ± " + fmtNum(T.tol, 2) + " %";
+        const digitsStr = five ? (d1.digit + "·" + d2.digit + "·" + d3.digit) : (d1.digit + "·" + d2.digit);
+        resCalc.calc.textContent = "(" + digitsStr + ") × " + M.mult + " = " + value.toLocaleString("de-DE", { maximumFractionDigits: 2 }) + " Ω";
+      }
+
+      ["1", "2", "3", "M", "T"].forEach(function (k) { resCalc.b[k].addEventListener("change", resistorUpdate); });
+      resCalc.count.addEventListener("change", resistorUpdate);
+
+      /* =====================================================
+         4. LED-VORWIDERSTAND
+         ===================================================== */
+      const E12 = [1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2];
+
+      const led = {
+        uv: document.getElementById("led-uv"),
+        color: document.getElementById("led-color"),
+        current: document.getElementById("led-current"),
+        result: document.getElementById("led-result"),
+        formula: document.getElementById("led-formula"),
+        e12: document.getElementById("led-e12"),
+        power: document.getElementById("led-power"),
+        warn: document.getElementById("led-warn")
+      };
+
+      function nextE12(r) {
+        for (let exp = 0; exp <= 5; exp++) {
+          for (let i = 0; i < E12.length; i++) {
+            const value = E12[i] * Math.pow(10, exp);
+            if (value >= r - 1e-9) return value;
+          }
+        }
+        return null;
+      }
+
+      function ledUpdate() {
+        led.warn.style.display = "none";
+
+        const uv = parseFloat(led.uv.value.replace(",", "."));
+        const uf = parseFloat(led.color.value);
+        const if_mA = parseFloat(led.current.value.replace(",", "."));
+
+        function fail(msg) {
+          led.result.textContent = "–";
+          led.e12.textContent = "–";
+          led.formula.textContent = "";
+          led.power.textContent = "";
+          led.warn.style.display = "block";
+          led.warn.querySelector("span").textContent = msg;
+        }
+
+        if (!(uv > 0) || !(if_mA > 0)) return fail("Bitte Versorgungsspannung und LED-Strom eingeben.");
+        if (uv <= uf) return fail("Die Versorgungsspannung (" + fmtNum(uv) + " V) muss größer als die LED-Spannung (" + fmtNum(uf) + " V) sein.");
+
+        const i = if_mA / 1000;
+        const r = (uv - uf) / i;
+        const p = (uv - uf) * i;
+
+        led.result.textContent = fmtOhm(r);
+        led.formula.textContent = "R = (Uv − U꜀) / I = (" + fmtNum(uv) + " V − " + fmtNum(uf) + " V) / " + fmtNum(if_mA, 2) + " mA";
+
+        const e12 = nextE12(r);
+        led.e12.textContent = e12 ? fmtOhm(e12) : "–";
+        led.power.textContent = "Leistung am Widerstand: " + fmtNum(p, 3) + " W → mindestens 0,25-W-Typ verwenden" + (p > 0.2 ? " (lieber 0,5 W)" : "");
+      }
+
+      ["uv", "color", "current"].forEach(function (k) { led[k].addEventListener("input", ledUpdate); });
+      ["color"].forEach(function (k) { led[k].addEventListener("change", ledUpdate); });
+
+      /* =====================================================
+         5. BAUTEILE
+         ===================================================== */
+      const PARTS = [
+        {
+          name: "Widerstand",
+          icon: "fa-gauge-high",
+          text: "Begrenzt den Stromfluss und erzeugt Spannungsteiler. Der Wert wird über den Farbcode der Ringe angegeben – probiere ihn im Farbrechner oben aus!",
+          img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ec/ResistorColorCodeGuide.jpg/500px-ResistorColorCodeGuide.jpg",
+          src: "https://commons.wikimedia.org/wiki/File:ResistorColorCodeGuide.jpg"
+        },
+        {
+          name: "LED",
+          icon: "fa-lightbulb",
+          text: "Leuchtdiode: wandelt Strom in Licht um. Sie hat eine Polung (langer Pin = Plus) und braucht immer einen Vorwiderstand – siehe LED-Rechner oben.",
+          img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/RGB_LED_5mm.jpg/500px-RGB_LED_5mm.jpg",
+          src: "https://commons.wikimedia.org/wiki/File:RGB_LED_5mm.jpg"
+        },
+        {
+          name: "Diode",
+          icon: "fa-right-left",
+          text: "Elektrisches Einwegetor: Strom fließt nur in Durchlassrichtung (Anode → Kathode). Wird z. B. zur Gleichrichtung und zum Schutz vor Verpolung genutzt.",
+          img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/EFD108_Point_Contact_Germanium_Diode.jpg/500px-EFD108_Point_Contact_Germanium_Diode.jpg",
+          src: "https://commons.wikimedia.org/wiki/File:EFD108_Point_Contact_Germanium_Diode.jpg"
+        },
+        {
+          name: "Elektrolytkondensator",
+          icon: "fa-battery-half",
+          text: "Speichert größere Ladungsmengen und glättet Spannungen in Netzteilen. Hat eine Polung – Minus-Pin darf nicht falsch herum angeschlossen werden!",
+          img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Electrolytic_capacitors-P1090328.JPG/500px-Electrolytic_capacitors-P1090328.JPG",
+          src: "https://commons.wikimedia.org/wiki/File:Electrolytic_capacitors-P1090328.JPG"
+        },
+        {
+          name: "Keramikkondensator",
+          icon: "fa-circle-dot",
+          text: "Kleine, unpolarisierte Kondensatoren für kurze Blitz-Ladungen: Entstörung, Abblocken direkt am IC, Taktung. Kapazität ist oft als Code aufgedruckt.",
+          img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Cylindric_ceramic_capacitor_for_45mm_transmitter_tubes_06.jpg/500px-Cylindric_ceramic_capacitor_for_45mm_transmitter_tubes_06.jpg",
+          src: "https://commons.wikimedia.org/wiki/File:Cylindric_ceramic_capacitor_for_45mm_transmitter_tubes_06.jpg"
+        },
+        {
+          name: "Spule",
+          icon: "fa-wind",
+          text: "Speichert Energie im Magnetfeld und wirkt gegen Gleichstrom wie ein widerstandsloser Draht, gegen Wechselstrom als Drossel. Grundlage von Schaltnetzteilen.",
+          img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Drosselspule_im_Umspannwerk_Bisamberg.jpg/500px-Drosselspule_im_Umspannwerk_Bisamberg.jpg",
+          src: "https://commons.wikimedia.org/wiki/File:Drosselspule_im_Umspannwerk_Bisamberg.jpg"
+        },
+        {
+          name: "Transistor",
+          icon: "fa-toggle-on",
+          text: "Der wichtigste Baustein der Elektronik: ein elektronischer Schalter und Verstärker. Drei Anschlüsse (Basis, Kollektor, Emitter) – winzig verpackt stecken Billionen in Chips.",
+          img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/BC547_Transistor_-_01.jpg/500px-BC547_Transistor_-_01.jpg",
+          src: "https://commons.wikimedia.org/wiki/File:BC547_Transistor_-_01.jpg"
+        },
+        {
+          name: "IC / Chip",
+          icon: "fa-microchip",
+          text: "Integrierte Schaltung: hunderte bis Milliarden Transistoren in einem Gehäuse (z. B. der Timer-Chip NE555). Verfügbare Logik, Timer, Verstärker – alles im Mini-Format.",
+          img: "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/NE555_DIP_%26_SOIC.jpg/500px-NE555_DIP_%26_SOIC.jpg",
+          src: "https://commons.wikimedia.org/wiki/File:NE555_DIP_%26_SOIC.jpg"
+        }
+      ];
+
+      const partsGrid = document.getElementById("parts-grid");
+      PARTS.forEach(function (part) {
+        const card = document.createElement("article");
+        card.className = "part-card";
+        card.innerHTML =
+          '<img src="' + part.img + '" alt="' + part.name + '" loading="lazy">' +
+          '<div class="part-body">' +
+            '<h3><i class="fas ' + part.icon + '"></i> ' + part.name + "</h3>" +
+            "<p>" + part.text + "</p>" +
+            '<span class="src">Foto: <a href="' + part.src + '" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></span>' +
+          "</div>";
+        partsGrid.appendChild(card);
+      });
+
+      /* =====================================================
+         6. QUIZ
+         ===================================================== */
+      const QUIZ = [
+        {
+          q: "In welcher Einheit misst man elektrische Spannung?",
+          options: ["Ampere", "Volt", "Ohm", "Watt"],
+          answer: 1,
+          explain: "Spannung U wird in Volt (V) gemessen – benannt nach Alessandro Volta."
+        },
+        {
+          q: "In welcher Einheit misst man elektrischen Strom?",
+          options: ["Volt", "Watt", "Ampere", "Ohm"],
+          answer: 2,
+          explain: "Strom I wird in Ampere (A) gemessen – 1 A = 1000 mA."
+        },
+        {
+          q: "Ein Gerät läuft mit 12 V und hat 100 Ω Widerstand. Wie groß ist der Strom?",
+          options: ["0,012 A", "0,12 A", "1,2 A", "12 A"],
+          answer: 1,
+          explain: "I = U / R = 12 V / 100 Ω = 0,12 A (= 120 mA)."
+        },
+        {
+          q: "Wofür steht die Abkürzung LED?",
+          options: ["Low Energy Display", "Light Emitting Diode", "Long Electron Device", "Light Energy Diode"],
+          answer: 1,
+          explain: "LED = Light Emitting Diode (Leuchtdiode)."
+        },
+        {
+          q: "Warum braucht eine LED einen Vorwiderstand?",
+          options: ["Damit sie heller leuchtet", "Um die Spannung zu erhöhen", "Um den Strom zu begrenzen", "Damit sie blinkt"],
+          answer: 2,
+          explain: "Eine LED hat keinen eigenen Widerstand – ohne Vorwiderstand würde zu viel Strom fließen und sie zerstören."
+        },
+        {
+          q: "Welchen Widerstandswert haben die Ringe Rot – Rot – Braun – Gold?",
+          options: ["22 Ω", "220 Ω", "2,2 kΩ", "22 kΩ"],
+          answer: 1,
+          explain: "Rot=2, Rot=2, Braun=×10 → 22 × 10 = 220 Ω, Gold = ±5 %."
+        },
+        {
+          q: "Was speichert ein Kondensator?",
+          options: ["Strom dauerhaft", "Magnetische Energie", "Elektrische Ladung", "Licht"],
+          answer: 2,
+          explain: "Ein Kondensator speichert elektrische Ladung – die Fähigkeit nennt man Kapazität (Farad)."
+        },
+        {
+          q: "Wie misst man den Strom eines Verbrauchers?",
+          options: ["Amperemeter in Reihe", "Amperemeter parallel", "Voltmeter in Reihe", "Mit dem Ohmmeter"],
+          answer: 0,
+          explain: "Das Amperemeter wird in Reihe geschaltet – es fließt der gesamte Strom hindurch. Spannung misst man parallel."
+        },
+        {
+          q: "Wofür kann ein Transistor verwendet werden?",
+          options: ["Nur als Schalter", "Nur als Verstärker", "Als Schalter und Verstärker", "Nur als Diode"],
+          answer: 2,
+          explain: "Ein kleiner Basis-Strom kann einen großen Kollektor-Strom schalten (Schalter) oder verstärken (Verstärker)."
+        },
+        {
+          q: "5 V Versorgung, 20 mA LED-Strom, LED-Spannung vernachlässigt. Welcher Vorwiderstand?",
+          options: ["25 Ω", "250 Ω", "2,5 kΩ", "25 kΩ"],
+          answer: 1,
+          explain: "R = U / I = 5 V / 0,02 A = 250 Ω."
+        }
+      ];
+
+      const quizContainer = document.getElementById("quiz-container");
+      const quizResult = document.getElementById("quiz-result");
+      const quizScore = document.getElementById("quiz-score");
+      const quizGrade = document.getElementById("quiz-grade");
+      const quizBar = document.getElementById("quiz-bar-fill");
+      let quizLocked = false;
+
+      function buildQuiz() {
+        quizLocked = false;
+        quizResult.style.display = "none";
+        quizBar.style.width = "0";
+        quizContainer.innerHTML = "";
+
+        QUIZ.forEach(function (item, qIndex) {
+          const block = document.createElement("div");
+          block.className = "quiz-question";
+          block.innerHTML = "<h3><span class=\"qnum\">" + (qIndex + 1) + ".</span> " + item.q + "</h3>";
+
+          item.options.forEach(function (option, oIndex) {
+            const label = document.createElement("label");
+            label.className = "quiz-option";
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "quiz-" + qIndex;
+            input.value = String(oIndex);
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(option));
+            block.appendChild(label);
+          });
+
+          const explain = document.createElement("div");
+          explain.className = "quiz-explain";
+          block.appendChild(explain);
+          quizContainer.appendChild(block);
+        });
+      }
+
+      function gradeText(percent) {
+        if (percent === 100) return "🏆 Perfekt! Elektronik-Profi!";
+        if (percent >= 80) return "⭐ Sehr gut – fast alles sitzt!";
+        if (percent >= 60) return "👍 Gut – ein Blick in die Module oben hilft.";
+        if (percent >= 40) return "📖 Geht so – schau nochmal in die Grundlagen.";
+        return "🔌 Noch viel Spannung zum Lernen – probiere die Module oben!";
+      }
+
+      function quizEvaluate() {
+        if (quizLocked) return;
+        quizLocked = true;
+
+        let correct = 0;
+        QUIZ.forEach(function (item, qIndex) {
+          const block = quizContainer.children[qIndex];
+          const chosen = block.querySelector("input:checked");
+          const chosenIndex = chosen ? Number(chosen.value) : -1;
+          if (chosenIndex === item.answer) correct++;
+
+          Array.prototype.forEach.call(block.querySelectorAll(".quiz-option"), function (label, oIndex) {
+            label.classList.add("locked");
+            if (oIndex === item.answer) label.classList.add("correct");
+            if (oIndex === chosenIndex && chosenIndex !== item.answer) label.classList.add("wrong");
+            const input = label.querySelector("input");
+            input.disabled = true;
+          });
+
+          const explain = block.querySelector(".quiz-explain");
+          explain.style.display = "block";
+          explain.innerHTML = chosenIndex === item.answer
+            ? "✅ Richtig! " + item.explain
+            : (chosen ? "❌ Leider falsch. " : "⚪ Keine Antwort. ") + item.explain;
+        });
+
+        const percent = Math.round((correct / QUIZ.length) * 100);
+        quizScore.textContent = correct + " / " + QUIZ.length + " (" + percent + " %)";
+        quizGrade.textContent = gradeText(percent);
+        quizResult.style.display = "block";
+        quizBar.style.width = percent + "%";
+        quizResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      document.getElementById("quiz-submit").addEventListener("click", quizEvaluate);
+      document.getElementById("quiz-restart").addEventListener("click", buildQuiz);
+
+      /* ---------- Start ---------- */
+      ohmUpdate();
+      resistorUpdate();
+      ledUpdate();
+      buildQuiz();
+    })();
+  </script>
+</body>
+</html>
